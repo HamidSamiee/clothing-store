@@ -1,0 +1,53 @@
+/* src/components/TextField/TextField.module.css */
+.textFieldContainer {
+    margin-bottom: 1rem;
+    font-family: 'VazirMatn';
+}
+
+.label {
+    display: block;
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+    text-align: right;
+}
+
+.requiredIndicator {
+    color: #ef4444;
+    /* قرمز */
+}
+
+.input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    /* خاکستری */
+    border-radius: 0.375rem;
+    box-sizing: border-box;
+    font-size: 1rem;
+    font-family: 'VazirMatn';
+}
+
+.input::placeholder{
+    font-family: 'VazirMatn';
+}
+
+.input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    /* آبی */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.input:disabled {
+    background-color: #f3f4f6;
+    /* خاکستری روشن */
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #ef4444;
+    /* قرمز */
+    text-align: right; }

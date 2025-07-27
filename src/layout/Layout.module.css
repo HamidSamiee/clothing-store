@@ -1,0 +1,81 @@
+/* src/components/Layout/Layout.module.css */
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.mainContent {
+    flex: 1;
+    padding: 20px 0;
+}
+
+/* استایل‌های عمومی برای صفحات */
+.pageContainer {
+    box-sizing: border-box;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+}
+
+/* استایل‌های واکنش‌گرا */
+@media (max-width: 992px) {
+    .pageContainer {
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .mainContent {
+        padding: 15px 0;
+    }
+}
+
+/* استایل‌های تم تاریک */
+.dark .mainContent {
+    background-color: #1a1a1a;
+    color: #f0f0f0; }
+
+        .toast {
+            font-family: 'Vazirmatn', sans-serif;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    
+        .toastBody {
+            direction: rtl;
+            text-align: right;
+            padding: 12px 16px;
+        }
+    
+        /* استایل‌های تم تاریک برای Toast */
+        .Toastify__toast-theme--dark {
+            background-color: #2c3e50;
+            color: #f0f0f0;
+        }
+    
+        .Toastify__toast-theme--light {
+            background-color: #ffffff;
+            color: #2c3e50;
+        }
+    
+        /* استایل‌های مختلف برای انواع Toast */
+        .Toastify__toast--success {
+            background-color: #2ecc71;
+            color: white;
+        }
+    
+        .Toastify__toast--error {
+            background-color: #e74c3c;
+            color: white;
+        }
+    
+        .Toastify__toast--warning {
+            background-color: #f39c12;
+            color: white;
+        }
+    
+        .Toastify__toast--info {
+            background-color: #3498db;
+            color: white;     }

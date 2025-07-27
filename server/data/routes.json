@@ -1,0 +1,6 @@
+{
+    "/payment": "/payment",
+    "/users/:id": "/users/:id",
+    "/products/:id": "/products/:id",
+    "/wishlist/:userId": "/users/:userId"
+  }

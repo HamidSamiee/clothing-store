@@ -1,0 +1,96 @@
+/* src/components/CartItem/CartItem.module.css */
+.cartItem {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    gap: 20px;
+}
+
+.itemImage {
+    width: 100px;
+    height: 100px;
+}
+
+.itemImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.itemDetails {
+    flex: 1;
+}
+
+.itemDetails h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+}
+
+.itemDetails p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.price {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.quantityControl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantityInput {
+    width: 60px;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.removeButton {
+    padding: 5px 10px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-family: 'VazirMatn';
+}
+
+.removeButton:hover {
+    background-color: #c0392b;
+}
+
+.itemTotal {
+    font-weight: bold;
+    min-width: 150px;
+    text-align: left;
+}
+
+/* واکنش‌گرا */
+@media (max-width: 768px) {
+    .cartItem {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .quantityControl {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+
+    .itemTotal {
+        margin-top: 15px;
+        width: 100%;
+        text-align: right;
+    } }

@@ -1,0 +1,122 @@
+/* src/pages/Cart/Cart.module.css */
+.cartContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.emptyCart {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.emptyCart h1 {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.shopLink {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #2c3e50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.shopLink:hover {
+    background-color: #1a252f;
+}
+
+.cartTitle {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+.itemsList {
+    margin-bottom: 40px;
+}
+
+.cartSummary {
+    border-top: 2px solid #eee;
+    padding-top: 30px;
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    font-family: 'VazirMatn';
+}
+
+.clearCart {
+    padding: 12px 25px;
+    background-color: #bdc3c7;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-family: 'VazirMatn' !important;
+}
+
+
+.checkoutButton {
+    padding: 12px 30px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    font-family: 'VazirMatn';
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.checkoutButton:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Cart.module.css */
+.loginModalContent {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modalFooter {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem; }
+
+/* تم تاریک */
+.dark .cartTitle {
+    color: #f0f0f0;
+}
+
+.dark .emptyCart h1 {
+    color: #bdc3c7;
+}
+
+/* واکنش‌گرا */
+@media (max-width: 768px) {
+    .actions {
+        flex-direction: column;
+    }
+
+    .clearButton,
+    .checkoutButton {
+        width: 100%;
+        text-align: center;
+    } }

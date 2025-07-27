@@ -1,0 +1,86 @@
+/* متغیرهای اصلی */
+:root {
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --error: #e74c3c;
+    --border-color: #ecf0f1;
+    --bg-light: #f9f9f9;
+}
+
+[data-theme="dark"] {
+    --text-primary: #f0f0f0;
+    --text-secondary: #bdc3c7;
+    --error: #ff6b6b;
+    --border-color: #444;
+    --bg-light: #333;
+}
+
+/* استایل‌های اصلی */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.productsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.paginationContainer {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.error {
+    color: var(--error);
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    grid-column: 1 / -1;
+}
+
+/* رسپانسیو */
+@media (max-width: 768px) {
+    .productsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .title {
+        font-size: 1.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .productsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 1rem;
+    } }

@@ -1,0 +1,254 @@
+/* src/components/ProductInfo/ProductInfo.module.css */
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 1;
+}
+
+.productTitle {
+    font-size: 1.8rem;
+    margin: 0;
+    color: #333;
+}
+
+.metaContainer {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stars {
+    color: #FFD700;
+    font-size: 1.2rem;
+}
+
+.ratingNumber {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.category {
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.priceContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.discountSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.originalPrice {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.discountBadge {
+    background-color: #FF5252;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.finalPrice {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #3f51b5;
+}
+
+.stock {
+    font-size: 0.9rem;
+    padding: 0.5rem 0;
+}
+
+.inStock {
+    color: #4CAF50;
+}
+
+.outOfStock {
+    color: #F44336;
+}
+
+.sizeSection,
+.colorSection,
+.quantitySection {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.sizeOptions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.sizeButton {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    background: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 40px;
+    text-align: center;
+}
+
+.sizeButton:hover {
+    border-color: #3f51b5;
+}
+
+.sizeButton.selected {
+    background-color: #3f51b5;
+    color: white;
+    border-color: #3f51b5;
+}
+
+.colorOptions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.colorButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #9E9E9E;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.colorButton:hover {
+    border-color: #3f51b5;
+}
+
+.colorButton.selected {
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #3f51b5;
+}
+
+.quantityControl {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.quantityButton {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ddd;
+    background: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantityButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantityNumber {
+    font-size: 1.1rem;
+    min-width: 30px;
+    text-align: center;
+    font-family: 'VazirMatn';
+}
+
+.actionButtons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.addToCartButton {
+    flex: 1;
+    padding: 0.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: 'VazirMatn';
+}
+
+.addToCartButton:hover {
+    background-color: var(--primary-dark);
+}
+
+.addToCartButton:disabled {
+    background-color: #9E9E9E;
+    cursor: not-allowed;
+}
+
+.secondaryActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.wishlistButton,
+.shareButton {
+    width: 48px;
+    height: 48px;
+    border: 1px solid #ddd;
+    background: none;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.wishlistButton:hover,
+.shareButton:hover {
+    border-color: #3f51b5;
+    color: #3f51b5;
+}
+
+.wishlistButton .active {
+    color: #FF5252;
+    border-color: #FF5252;
+    fill: #FF5252;
+}
+
+@media (max-width: 768px) {
+    .productTitle {
+        font-size: 1.5rem;
+    }
+
+    .actionButtons {
+        flex-direction: column;
+    }
+
+    .secondaryActions {
+        justify-content: space-between;
+    }
+
+    .wishlistButton,
+    .shareButton {
+        flex: 1;
+        width: auto;
+    } }

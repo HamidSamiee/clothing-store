@@ -1,0 +1,133 @@
+.notFoundContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+}
+
+.notFoundContent {
+    max-width: 600px;
+    width: 100%;
+}
+
+.errorCode {
+    font-size: 8rem;
+    font-weight: bold;
+    color: #e74c3c;
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.errorTitle {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.errorMessage {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+    margin-bottom: 40px;
+}
+
+.homeLink {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #e74c3c;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 30px;
+}
+
+.homeLink:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* انیمیشن لباس‌ها */
+.animationContainer {
+    position: relative;
+    height: 200px;
+    margin: 40px 0;
+}
+
+.clothesHanger {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border: 8px solid #2c3e50;
+    border-radius: 50% 50% 0 0;
+    border-bottom: none;
+}
+
+.shirt {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%) rotate(10deg);
+    width: 80px;
+    height: 80px;
+    background-color: #3498db;
+    border-radius: 10px;
+    animation: floatShirt 3s ease-in-out infinite;
+}
+
+.pants {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%) rotate(-5deg);
+    width: 90px;
+    height: 60px;
+    background-color: #2ecc71;
+    border-radius: 10px 10px 0 0;
+    animation: floatPants 3.5s ease-in-out infinite;
+}
+
+@keyframes floatShirt {
+
+    0%,
+    100% {
+        transform: translateX(-50%) rotate(10deg) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) rotate(10deg) translateY(-15px);
+    }
+}
+
+@keyframes floatPants {
+
+    0%,
+    100% {
+        transform: translateX(-50%) rotate(-5deg) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) rotate(-5deg) translateY(-10px);
+    }
+}
+
+/* واکنش‌گرا */
+@media (max-width: 768px) {
+    .errorCode {
+        font-size: 6rem;
+    }
+
+    .errorTitle {
+        font-size: 2rem;
+    }
+
+    .errorMessage {
+        font-size: 1rem;
+    } }

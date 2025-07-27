@@ -1,0 +1,33 @@
+/* src/pages/Home/Home.module.css */
+.homePage {
+    padding-bottom: 40px;
+}
+
+.heroSection {
+    margin-bottom: 40px;
+}
+
+.featuredSection {
+    margin: 60px 0;
+}
+
+.sectionTitle {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    font-size: 2rem;
+}
+
+/* تم تاریک */
+.dark .sectionTitle {
+    color: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+    .featuredSection {
+        margin: 40px 0;
+    }
+
+    .sectionTitle {
+        font-size: 1.6rem;
+    } }

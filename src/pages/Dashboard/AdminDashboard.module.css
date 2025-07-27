@@ -1,0 +1,105 @@
+/* ساختار اصلی */
+.dashboardContainer {
+    display: flex;
+    min-height: 100vh;
+    direction: rtl;
+}
+
+/* سایدبار */
+.sidebar {
+    background: #2c3e50;
+    color: white;
+    width: 250px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.closed {
+    width: 70px;
+}
+
+.sidebarHeader {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebarHeader h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.toggleButton {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* منوی ناوبری */
+.navMenu {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.navLink:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.navLink.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.navIcon {
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+/* پاورقی سایدبار */
+.sidebarFooter {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logoutButton {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'VazirMatn';
+}
+
+.logoutButton:hover {
+    color: white;
+}
+
+/* محتوای اصلی */
+.mainContent {
+    flex: 1;
+    padding: 20px;
+    background: #f5f7fa;
+    transition: all 0.3s ease;
+}
+
+.mainContent.expanded {
+    margin-right: 70px; }

@@ -1,0 +1,61 @@
+/* src/pages/PaymentSuccess/PaymentSuccess.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: 2rem;
+}
+
+.successIcon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 2rem;
+    color: #4CAF50;
+}
+
+.title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2E7D32;
+}
+
+.message {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #555;
+}
+
+.details {
+    background-color: #F5F5F5;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+.detailItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.button {
+    padding: 12px 24px;
+    background-color: #2E7D32;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #1B5E20;
+}

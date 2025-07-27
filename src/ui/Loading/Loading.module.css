@@ -1,0 +1,172 @@
+/* src/components/Loading/Loading.module.css */
+.loadingContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(3px);
+}
+
+.loadingContent {
+    text-align: center;
+    max-width: 300px;
+    width: 100%;
+}
+
+.loadingText {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin: 20px 0;
+}
+
+.progressBar {
+    width: 100%;
+    height: 6px;
+    background-color: #ecf0f1;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 0;
+    background-color: #e74c3c;
+    animation: progressAnimation 2s ease-in-out infinite;
+}
+
+/* انیمیشن لباس‌ها */
+.fashionLoader {
+    position: relative;
+    height: 120px;
+    margin: 0 auto;
+}
+
+.hanger {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border: 6px solid #2c3e50;
+    border-radius: 50% 50% 0 0;
+    border-bottom: none;
+}
+
+.clothes {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+}
+
+.shirt {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: #3498db;
+    border-radius: 5px;
+    animation: shirtAnimation 2s ease-in-out infinite;
+}
+
+.pants {
+    position: absolute;
+    top: 50%;
+    left: 40%;
+    width: 60px;
+    height: 40px;
+    background-color: #2ecc71;
+    border-radius: 5px;
+    animation: pantsAnimation 2.2s ease-in-out infinite;
+}
+
+.dress {
+    position: absolute;
+    top: 30%;
+    left: 60%;
+    width: 40px;
+    height: 60px;
+    background-color: #9b59b6;
+    border-radius: 5px;
+    animation: dressAnimation 2.1s ease-in-out infinite;
+}
+
+/* انیمیشن‌ها */
+@keyframes shirtAnimation {
+
+    0%,
+    100% {
+        transform: translate(-50%, 0) rotate(5deg);
+    }
+
+    50% {
+        transform: translate(-50%, -10px) rotate(-5deg);
+    }
+}
+
+@keyframes pantsAnimation {
+
+    0%,
+    100% {
+        transform: translate(-50%, 0) rotate(-3deg);
+    }
+
+    50% {
+        transform: translate(-50%, -8px) rotate(3deg);
+    }
+}
+
+@keyframes dressAnimation {
+
+    0%,
+    100% {
+        transform: translate(-50%, 0) rotate(2deg);
+    }
+
+    50% {
+        transform: translate(-50%, -12px) rotate(-2deg);
+    }
+}
+
+@keyframes progressAnimation {
+    0% {
+        width: 0;
+        left: 0;
+    }
+
+    50% {
+        width: 100%;
+        left: 0;
+    }
+
+    100% {
+        width: 0;
+        left: 100%;
+    }
+}
+
+/* تم تاریک */
+.dark .loadingContainer {
+    background-color: rgba(30, 30, 30, 0.9);
+}
+
+.dark .loadingText {
+    color: #f0f0f0;
+}
+
+.dark .progressBar {
+    background-color: #444;
+}
+
+.dark .hanger {
+    border-color: #f0f0f0; }

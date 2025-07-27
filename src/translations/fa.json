@@ -1,0 +1,302 @@
+{
+    "header": {
+      "logo1": "مد",
+      "logo2": "ینا",
+      "home": "خانه",
+      "products": "محصولات",
+      "about": "درباره ما",
+      "contact": "تماس با ما",
+      "login": "ورود",
+      "register": "ثبت نام",
+      "logout": "خروج",
+      "search": "جستجوی محصولات...",
+      "searchPlaceholder": "جستجوی محصولات...",
+      "viewAllResults": "مشاهده همه نتایج",
+      "searchError": "خطا در جستجو"
+    },
+    "common": {
+      "currency": "تومان",
+      "close": "بستن",
+      "cancel": "انصراف"
+    },
+    "search": {
+    "resultsFor": "نتایج جستجو برای",
+    "noResults": "نتیجه‌ای برای عبارت",
+    "error": "خطا در انجام جستجو",
+    "viewAllResults": "مشاهده همه نتایج"
+    },
+    "footer": {
+      "subscribing": "در حال ثبت...",
+      "subscriptionSuccess": "عضویت در خبرنامه با موفقیت انجام شد",
+      "subscriptionError": "خطا در عضویت خبرنامه",
+      "emailRequired": "لطفا ایمیل خود را وارد کنید",
+      "invalidEmail": "ایمیل وارد شده معتبر نیست",
+      "about": "درباره ما",
+      "aboutText": "فروشگاه آنلاین لباس با بهترین کیفیت و مناسب ترین قیمت",
+      "links": "لینک‌های مفید",
+      "home": "خانه",
+      "products": "محصولات",
+      "contact": "تماس با ما",
+      "address": "تهران، خیابان آزادی، پلاک ۱۲۳",
+      "phone": "تلفن: ۰۲۱-۱۲۳۴۵۶۷۸",
+      "email": "ایمیل: info@example.com",
+      "newsletter": "خبرنامه",
+      "newsletterText": "برای دریافت آخرین تخفیف‌ها و محصولات جدید عضو شوید",
+      "emailPlaceholder": "آدرس ایمیل شما",
+      "subscribe": "عضویت",
+      "copyright": "تمامی حقوق محفوظ است.",
+      "paymentMethods": "روش‌های پرداخت"
+    },
+  "notFound": {
+    "title": "صفحه مورد نظر یافت نشد!",
+    "message": "متأسفیم، به نظر می‌رسد صفحه‌ای که به دنبال آن هستید وجود ندارد یا حذف شده است.",
+    "backToHome": "بازگشت به صفحه اصلی"
+   },
+   "loading": {
+    "message": "در حال بارگذاری ..."
+   },
+   "hero": {
+    "prevSlide": "اسلاید قبلی",
+    "nextSlide": "اسلاید بعدی",
+    "goToSlide": "برو به اسلاید {number}",
+    "newCollection": {
+      "title": "مجموعه جدید بهار",
+      "subtitle": "طراحی‌های تازه و شیک برای فصل بهار",
+      "cta": "مشاهده مجموعه"
+    },
+    "sale": {
+      "title": "حراج ویژه",
+      "subtitle": "تا 50% تخفیف روی محصولات منتخب",
+      "cta": "خرید الآن"
+    },
+    "trending": {
+      "title": "ترندهای سال",
+      "subtitle": "محبوب‌ترین طرح‌های سال 2023",
+      "cta": "مشاهده ترندها"
+    }
+   },
+   "featuredProducts": {
+    "title": "محصولات ویژه",
+    "subtitle": "از برترین و پرفروش‌ترین محصولات ما خرید کنید",
+    "viewAll": "مشاهده همه محصولات"
+   },
+   "home": {
+    "featuredProducts": "محصولات ویژه",
+    "categoryProducts": "دسته بندی محصولات "
+  },
+  "products": {
+    "allProducts": "همه محصولات",
+    "description": "از محصولات ما بازدید کنید",
+    "category": "دسته‌بندی",
+    "noProducts": "هیچ محصولی یافت نشد",
+    "noCategoryProducts": "هیچ محصولی در دسته‌بندی",
+    "noSearchResults": "نتیجه‌ای برای جستجوی"
+  },
+  "product": {
+    "questions":"پرسش و پاسخ",
+    "loading": "در حال بارگذاری محصول...",
+    "featured": "ویژه",
+    "fetchError": "خطا در دریافت اطلاعات محصول",
+    "notFound": "محصول یافت نشد",
+    "inStock": "موجود در انبار",
+    "outOfStock": "ناموجود",
+    "addToCart": "افزودن به سبد خرید",
+    "outOfStockAlert": "متاسفانه این محصول در حال حاضر موجود نمی‌باشد",
+    "selectSizeAlert": "لطفاً سایز مورد نظر خود را انتخاب کنید",
+    "selectColorAlert": "لطفاً رنگ مورد نظر خود را انتخاب کنید",
+    "selectOptions": "لطفاً سایز و رنگ را انتخاب کنید",
+    "description": "توضیحات",
+    "specifications": "مشخصات فنی",
+    "reviews": "نظرات کاربران",
+    "noReviews": "هنوز نظری ثبت نشده است",
+    "relatedProducts": "محصولات مرتبط",
+    "currency": "تومان",
+    "discount": "تخفیف",
+    "sizes": "سایزها",
+    "colors": "رنگ‌ها",
+    "quantity": "تعداد",
+    "categories": {
+      "men": "مردانه",
+      "women": "زنانه",
+      "kids": "بچگانه",
+      "unisex": "یونیسکس",
+      "sports": "ورزشی",
+      "accessories": "اکسسوری",
+      "shoes": "کفش"
+    },
+    "addedToCart": "{{product}} به سبد خرید اضافه شد",
+    "addedToWishlist": "{{product}} به لیست علاقه‌مندی‌ها اضافه شد"
+  },
+  "cart": {
+    "title": "سبد خرید شما",
+    "total": "جمع کل",
+    "checkout": "تسویه حساب",
+    "empty": "سبد خرید شما خالی است",
+    "continueShopping": "ادامه خرید",
+    "clearCart": "خالی کردن سبد",
+    "remove": "حذف",
+    "loginToCheckout": "برای تکمیل خرید لطفاً وارد حساب کاربری خود شوید"
+  },
+  "checkout": {
+    "title": "تکمیل سفارش",
+    "authRequired": "نیاز به ورود به سیستم",
+    "loginToContinue": "برای ادامه فرآیند خرید باید وارد حساب کاربری خود شوید",
+    "goToLogin": "ورود به سیستم",
+    "shippingAddress": "آدرس",
+    "deliveryMethod": "روش ارسال",
+    "reviewOrder": "بررسی نهایی سفارش",
+    "orderItems": "محصولات سفارش",
+    "firstName": "نام",
+    "lastName": "نام خانوادگی",
+    "streetAddress": "آدرس",
+    "city": "شهر",
+    "province": "استان",
+    "postalCode": "کد پستی",
+    "phone": "تلفن همراه",
+    "saveAddress": "ذخیره آدرس",
+    "expressDelivery": "پیک فوری (تحویل 24 ساعته)",
+    "standardDelivery": "پیک معمولی (تحویل 3-2 روزه)",
+    "storePickup": "تحویل در فروشگاه",
+    "free": "رایگان",
+    "continueToPayment": "ادامه به پرداخت",
+    "payWithZarinpal": "پرداخت با زرین پال",
+    "paymentDescription": "پرداخت سفارش شامل {{count}} محصول",
+    "paymentFailed": "پرداخت ناموفق بود",
+    "paymentError": "خطا در پرداخت",
+    "authStep": "احراز هویت",
+    "addressStep": "آدرس",
+    "deliveryStep": "روش ارسال",
+    "paymentStep": "پرداخت"
+  },
+  "profile": {
+    "title": "پروفایل کاربری",
+    "fullName": "نام کامل",
+    "email": "ایمیل",
+    "phone": "شماره تماس",
+    "address": "آدرس",
+    "saveChanges": "ذخیره تغییرات"
+  },
+  "validation": {
+    "required": "پر کردن این فیلد الزامی است",
+    "phoneInvalid": "لطفا شماره تلفن معتبر وارد کنید"
+  },
+  "about": {
+    "title": "درباره بوتیک ما",
+    "subtitle": "جایی که مد با elegance ملاقات می‌کند",
+    "mission": "فلسفه ما",
+    "missionText": "ما معتقدیم مد باید پایدار، شخصی‌سازی شده و به شما اعتماد به نفس بدهد. بوتیک ما هر قطعه را با دقت انتخاب می‌کند تا داستانی را روایت کند.",
+    "vision": "قول ما",
+    "visionText": "ارائه خدمات استثنایی و یافته‌های منحصر به فرد مد که در همه جا نمی‌بینید.",
+    "history": "داستان ما",
+    "historyTitle1": "شروع فروتنانه",
+    "historyText1": "تأسیس در سال 1394 به عنوان یک بوتیک محلی کوچک با تنها 50 آیتم انتخاب شده.",
+    "historyDate1": "1394",
+    "historyTitle2": "اولین گسترش",
+    "historyText2": "افتتاح فروشگاه پرچمدار در مرکز شهر و راه‌اندازی بوتیک آنلاین.",
+    "historyDate2": "1397",
+    "historyTitle3": "برنده جایزه",
+    "historyText3": "به عنوان \"بهترین بوتیک محلی\" توسط مجله Fashion Times شناخته شد.",
+    "historyDate3": "1401",
+    "contact": "به ما سر بزنید",
+    "stats": {
+      "designers": "برندهای طراح",
+      "collections": "کلکسیون‌های فصلی",
+      "customers": "مشتریان وفادار",
+      "awards": "جوایز مد"
+    }
+  },
+  "contact": {
+    "title": "با بوتیک ما در تماس باشید",
+    "subtitle": "دوست داریم از شما بشنویم",
+    "form": {
+      "title": "تماس با مدینا بوتیک",
+      "name": "نام شما",
+      "email": "ایمیل",
+      "phone": "تلفن",
+      "message": "پیام شما",
+      "submit": "ارسال پیام",
+      "success": "متشکرم! به زودی با شما تماس خواهیم گرفت."
+    },
+    "info": {
+      "title": "آدرس ما",
+      "address": "خیابان مد، محله ترند، تهران",
+      "hours": "شنبه تا پنجشنبه: 10 صبح تا 8 شب\nجمعه: 12 ظهر تا 6 عصر",
+      "phone": "021 1234 5678",
+      "email": "hello@boutique.com"
+    }
+  },
+  "auth": {
+    "loginTitle": "ورود به حساب",
+    "invalidCredentials": "ایمیل یا رمز عبور اشتباه است",
+    "invalidEmail": "لطفا یک ایمیل معتبر وارد کنید",
+    "passwordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد",
+    "registerTitle": "ثبت نام",
+    "email": "ایمیل",
+    "emailInvalid": "ایمیل نامعتبر است",
+    "nameMinLength": "حداقل  نام 3 کاراکتر می باشد",
+    "registering": "درحال ثبت نام",
+    "registerSuccess": "ثبت نام شما با موفقیت انجام شد",
+    "registerError": "مشکل در ثبت نام شما",
+    "phone": "شماره تلفن",
+    "optional": "اختیاری",
+    "address": "آدرس",
+    "name": "نام و نام خانوادگی",
+    "password": "پسورد",
+    "passwordRequired": "پسورد الزامی است",
+    "emailRequired": "ایمیل الزامی است",
+    "nameRequired": "نام الزامی است",
+    "login": "ورود",
+    "loginRequired": "نیاز به ورود",
+    "dontHaveAccount": "حساب کاربری ندارید؟",
+    "registerHere": "اینجا ثبت‌نام کنید",
+    "register": "ثبت نام"
+  },
+  "categories": {
+    "men": "آقایان",
+    "women": "بانوان",
+    "kids": "کودکان",
+    "sport": "ورزشی",
+    "shoes": "کفش",
+    "accessories": "اکسسوری"
+  },
+  "questions":{
+    "title": "پرسش و پاسخ",
+    "loginPrompt": "لطفا ابتدا وارد حساب کاربری خود شوید",
+    "emptyQuestionError": "لطفا متن سوال را وارد کنید",
+    "questionSubmitted": "سوال شما با موفقیت ثبت شد و پس از تایید نمایش داده می‌شود",
+    "emptyAnswerError": "لطفا متن پاسخ را وارد کنید",
+    "answerSubmitted": "پاسخ شما با موفقیت ثبت شد",
+    "questionPlaceholder": "سوال خود را بپرسید...",
+    "answerPlaceholder": "پاسخ خود را بنویسید...",
+    "submitQuestion": "ثبت سوال",
+    "submitAnswer": "ثبت پاسخ",
+    "cancel": "انصراف",
+    "reply": "پاسخ دادن",
+    "adminAnswer": "پاسخ مدیر",
+    "userAnswer": "پاسخ کاربر"
+  },
+  "reviews":{
+    "productRating": "امتیاز محصول",
+    "userReviews": "نظرات کاربران",
+    "reviewsCount": "نظر",
+    "yourRating": "امتیاز شما",
+    "commentPlaceholder": "نظر خود را بنویسید...",
+    "submitReview": "ثبت نظر",
+    "replyPlaceholder": "پاسخ خود را بنویسید...",
+    "submitReply": "ثبت پاسخ",
+    "cancel": "انصراف",
+    "reply": "پاسخ دادن",
+    "loginPrompt": "لطفا ابتدا وارد حساب کاربری خود شوید",
+    "ratingError": "لطفا امتیاز دهید",
+    "commentError": "لطفا متن نظر را وارد کنید",
+    "submitSuccess": "نظر شما با موفقیت ثبت شد",
+    "submitError": "خطا در ثبت نظر",
+    "replyError": "لطفا متن پاسخ را وارد کنید",
+    "replySuccess": "پاسخ شما با موفقیت ثبت شد",
+    "replySubmitError": "خطا در ثبت پاسخ"
+  },
+  "replies": {
+    "admin": "پاسخ مدیر",
+    "user": "پاسخ کاربر"
+  }
+  }

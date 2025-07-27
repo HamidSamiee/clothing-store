@@ -1,0 +1,205 @@
+/* src/pages/Checkout/Checkout.module.css */
+.checkoutContainer {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    background-color: var(--bg-primary);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px var(--shadow-color);
+}
+
+.checkoutTitle {
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+}
+
+.checkoutStepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.stepperStep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.stepperNumber {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+}
+
+.stepperNumber.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.stepperNumber.completed {
+    background-color: var(--success-color) !important;
+    color: white;
+    border-color: var(--success-color);
+}
+
+.stepperLabel {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.stepperLabel.active {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.stepperLabel.completed {
+    color: var(--success-color);
+}
+
+.stepperLine {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 0;
+}
+
+.stepperLineProgress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--border-color);
+    transition: width 0.3s ease;
+}
+
+.paymentSummary {
+    background-color: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.summaryRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 1.1rem;
+}
+
+.summaryRow:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.paymentButton {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.paymentButton:hover {
+    background-color: var(--primary-dark);
+}
+
+.paymentButton:disabled {
+    background-color: var(--text-tertiary);
+    cursor: not-allowed;
+}
+
+.errorMessage {
+    color: var(--error-color);
+    text-align: center;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.emptyCart {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.emptyCart h1 {
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+}
+
+.backButton {
+    padding: 12px 30px;
+    background-color: var(--bg-tertiary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.backButton:hover {
+    background-color: var(--bg-secondary);
+}
+
+/* استایل‌های اضافی برای حالت‌های مختلف */
+.authMessage {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+.authButton {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.authButton:hover {
+    background-color: var(--primary-dark);
+}
+
+.continueButton {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.continueButton:hover {
+    background-color: var(--primary-dark);
+}
+
+.continueButton:disabled {
+    background-color: var(--text-tertiary);
+    cursor: not-allowed; }

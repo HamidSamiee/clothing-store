@@ -1,0 +1,46 @@
+/* src/components/AddressForm/AddressForm.module.css */
+.addressForm {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /* فاصله بین آیتم‌ها */
+}
+
+.formRow {
+    display: flex;
+    gap: 3rem;
+}
+
+.formRow>* {
+    flex: 1;
+}
+
+.submitButton {
+    width: 100%;
+    max-width: 300px;
+    margin: 1rem auto 0;
+    padding: 0.75rem 1rem;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-family: 'VazirMatn';
+    display: block;
+}
+
+.submitButton:hover {
+    background-color: #1d4ed8;
+}
+
+.submitButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #3b82f6;
+}

@@ -1,0 +1,299 @@
+{
+    "header": {
+      "logo1": "ION",
+      "logo2": "FASH",
+      "home": "Home",
+      "products": "Products",
+      "about": "About",
+      "contact": "Contact",
+      "login": "Login",
+      "register": "Register",
+      "logout": "Logout",
+      "search": "Search products...",
+      "searchPlaceholder": "Search products...",
+    "viewAllResults": "View all results",
+    "searchError": "Search error"
+    },
+    "common": {
+    "currency": "IRR",
+    "close": "Close",
+    "cancel": "Cancel"
+    },
+    "search": {
+      "resultsFor": "Results for",
+      "noResults": "No results found for",
+      "error": "An error occurred during search",
+      "viewAllResults": "View all results"
+    },
+    "footer": {
+      "subscribing": "Subscribing...",
+      "subscriptionSuccess": "Successfully subscribed to newsletter",
+      "subscriptionError": "Subscription failed",
+      "emailRequired": "Please enter your email",
+      "invalidEmail": "Please enter a valid email address",
+      "about": "About Us",
+      "aboutText": "Online clothing store with the best quality and most affordable prices",
+      "links": "Useful Links",
+      "home": "Home",
+      "products": "Products",
+      "contact": "Contact",
+      "address": "Tehran, Azadi St, No. 123",
+      "phone": "Phone: +98 21 12345678",
+      "email": "Email: info@example.com",
+      "newsletter": "Newsletter",
+      "newsletterText": "Subscribe to get latest updates and offers",
+      "emailPlaceholder": "Your email address",
+      "subscribe": "Subscribe",
+      "copyright": "All rights reserved.",
+      "paymentMethods": "Payment Methods"
+    },
+    "notFound": {
+    "title": "Page Not Found!",
+    "message": "Sorry, the page you are looking for doesn't exist or has been removed.",
+    "backToHome": "Back to Homepage"
+    },
+    "loading": {
+    "message": "Loading ..."
+    },
+    "hero": {
+    "prevSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "goToSlide": "Go to slide {number}",
+    "newCollection": {
+      "title": "New Spring Collection",
+      "subtitle": "Fresh and stylish designs for spring season",
+      "cta": "View Collection"
+    },
+    "sale": {
+      "title": "Special Sale",
+      "subtitle": "Up to 50% off on selected items",
+      "cta": "Shop Now"
+    },
+    "trending": {
+      "title": "Trending Now",
+      "subtitle": "Most popular designs of 2023",
+      "cta": "View Trends"
+    }
+   },
+   "featuredProducts": {
+    "title": "Featured Products",
+    "subtitle": "Discover our top-rated and best-selling products",
+    "viewAll": "View All Products"
+   },
+   "home": {
+    "featuredProducts": "Featured Products",
+    "categoryProducts": "Product categories"
+  },
+  "products": {
+    "allProducts": "All Products",
+    "description": "Discover our collection",
+    "category": "Category",
+    "noProducts": "No products found",
+    "noCategoryProducts": "No products in category",
+    "noSearchResults": "No results for"
+  },
+  "product": {
+    "questions":"Q&A",
+    "featured": "Special",
+    "loading": "Loading product...",
+    "fetchError": "Error loading product data",
+    "notFound": "Product not found",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "addToCart": "Add to Cart",
+    "selectOptions": "Please select size and color",
+    "description": "Description",
+    "specifications": "Specifications",
+    "reviews": "Reviews",
+    "noReviews": "No reviews yet",
+    "relatedProducts": "Related Products",
+    "currency": "$",
+    "discount": "off",
+    "sizes": "Sizes",
+    "colors": "Colors",
+    "quantity": "Quantity",
+    "categories": {
+      "men": "Men",
+      "women": "Women",
+      "kids": "Kids",
+      "unisex": "Unisex",
+      "sports": "Sports",
+      "accessories": "Accessories",
+      "shoes": "Shoes"
+    },
+    "addedToCart": "{{product}} added to cart",
+    "addedToWishlist": "{{product}} added to wishlist"
+  },
+  "cart": {
+    "title": "Your Shopping Cart",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "empty": "Your cart is empty",
+    "continueShopping": "Continue Shopping",
+    "clearCart": "Clear Cart",
+    "remove": "Remove",
+    "loginToCheckout": "Please login to complete your purchase"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "authRequired": "Authentication Required",
+    "loginToContinue": "You need to login to continue the checkout process",
+    "goToLogin": "Go to Login",
+    "shippingAddress": "Shipping Address",
+    "deliveryMethod": "Delivery Method",
+    "reviewOrder": "Review Order",
+    "orderItems": "Order Items",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "streetAddress": "Street Address",
+    "city": "City",
+    "province": "Province",
+    "postalCode": "Postal Code",
+    "phone": "Phone Number",
+    "saveAddress": "Save Address",
+    "expressDelivery": "Express Delivery (24 hours)",
+    "standardDelivery": "Standard Delivery (2-3 days)",
+    "storePickup": "Store Pickup",
+    "free": "Free",
+    "continueToPayment": "Continue to Payment",
+    "payWithZarinpal": "Pay with Zarinpal",
+    "paymentDescription": "Payment for order with {{count}} items",
+    "paymentFailed": "Payment failed",
+    "paymentError": "Payment error",
+    "authStep": "Authentication",
+    "addressStep": "Delivery Address",
+    "deliveryStep": "Shipping Method",
+    "paymentStep": "Payment"
+  },
+  "profile": {
+    "title": "User Profile",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "address": "Address",
+    "saveChanges": "Save Changes"
+  },
+  "validation": {
+    "required": "This field is required",
+    "phoneInvalid": "Please enter a valid phone number"
+  },
+  "about": {
+    "title": "About Our Boutique",
+    "subtitle": "Where fashion meets elegance",
+    "mission": "Our Philosophy",
+    "missionText": "We believe fashion should be sustainable, personalized and make you feel confident. Our boutique carefully curates each piece to tell a story.",
+    "vision": "Our Promise",
+    "visionText": "To provide exceptional service and unique fashion finds that you won't see everywhere.",
+    "history": "Our Story",
+    "historyTitle1": "Humble Beginnings",
+    "historyText1": "Founded in 2015 as a small local boutique with just 50 carefully selected items.",
+    "historyDate1": "2015",
+    "historyTitle2": "First Expansion",
+    "historyText2": "Opened our flagship store in downtown and launched our online boutique.",
+    "historyDate2": "2018",
+    "historyTitle3": "Award Winning",
+    "historyText3": "Recognized as 'Best Local Boutique' by Fashion Times magazine.",
+    "historyDate3": "2022",
+    "contact": "Visit Us",
+    "stats": {
+      "designers": "Designer Brands",
+      "collections": "Seasonal Collections",
+      "customers": "Loyal Customers",
+      "awards": "Fashion Awards"
+    }
+  },
+  "questions":{
+    "title": "Q&A",
+    "loginPrompt": "Please log in first",
+    "emptyQuestionError": "Please enter your question",
+    "questionSubmitted": "Your question has been submitted and will be displayed after approval",
+    "emptyAnswerError": "Please enter your answer",
+    "answerSubmitted": "Your answer has been submitted",
+    "questionPlaceholder": "Ask your question...",
+    "answerPlaceholder": "Write your answer...",
+    "submitQuestion": "Submit Question",
+    "submitAnswer": "Submit Answer",
+    "cancel": "Cancel",
+    "reply": "Reply",
+    "adminAnswer": "Admin Answer",
+    "userAnswer": "User Answer"
+  },
+  "contact": {
+    "title": "Contact Our Boutique",
+    "subtitle": "We'd love to hear from you",
+    "form": {
+      "title": "Contact Our Modina Boutique",
+      "name": "Your Name",
+      "email": "Email",
+      "phone": "Phone",
+      "message": "Your Message",
+      "submit": "Send Message",
+      "success": "Thank you! We'll contact you soon."
+    },
+    "info": {
+      "title": "Our Address",
+      "address": "123 Fashion Ave, Trend District, Tehran",
+      "hours": "Mon-Sat: 10AM - 8PM\nSun: 12PM - 6PM",
+      "phone": "+98 21 1234 5678",
+      "email": "hello@boutique.com"
+    }
+  },
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Register",
+    "email": "Email",
+    "emailInvalid": "Email is invalid",
+    "invalidCredentials": "Invalid email or password",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "nameMinLength": "The Minimum name is 3 characters.",
+    "registering": "registering",
+    "registerSuccess": "registerSuccess",
+    "registerError": "registerError",
+    "phone": "phone",
+    "optional": "optional",
+    "address": "address",
+    "name": "Full Name",
+    "password": "password",
+    "passwordRequired": "password is required",
+    "emailRequired": "Email is required",
+    "nameRequired": "Name is required",
+    "login": "Login",
+    "register": "Register",
+    "loginRequired": "Login Required",
+    "dontHaveAccount": "Don't have an account?",
+    "registerHere": "Register here"
+  },
+  "categories": {
+    "men": "Men",
+    "women": "Women",
+    "kids": "Kids",
+    "sport": "Sports",
+    "shoes": "Shoes",
+    "accessories": "Accessories"
+  },
+  "reviews":{
+    "productRating": "Product Rating",
+    "userReviews": "User Reviews",
+    "reviewsCount": "reviews",
+    "yourRating": "Your Rating",
+    "commentPlaceholder": "Write your review...",
+    "submitReview": "Submit Review",
+    "replyPlaceholder": "Write your reply...",
+    "submitReply": "Submit Reply",
+    "cancel": "Cancel",
+    "reply": "Reply",
+    "loginPrompt": "Please log in first",
+    "ratingError": "Please rate the product",
+    "commentError": "Please enter your review",
+    "submitSuccess": "Review submitted successfully",
+    "submitError": "Error submitting review",
+    "replyError": "Please enter your reply",
+    "replySuccess": "Reply submitted successfully",
+    "replySubmitError": "Error submitting reply"
+  },
+  "replies": {
+    "admin": "Admin reply",
+    "user": "User reply"
+  }
+  }

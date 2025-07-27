@@ -1,0 +1,266 @@
+/* src/pages/ProductPage/ProductPage.module.css */
+.productPage {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dark .productContainer {
+    background-color: #333;
+    color: #fff;
+}
+
+.productContainer {
+    display: flex;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.imageSection {
+    flex: 1;
+}
+
+.mainImage {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.infoSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.productTitle {
+    font-size: 2rem;
+    margin: 0;
+    color: #333;
+}
+
+.dark .productTitle {
+    color: #fff;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stars {
+    color: #FFD700;
+    font-size: 1.2rem;
+}
+
+.ratingNumber {
+    color: #666;
+}
+
+.dark .ratingNumber {
+    color: #ccc;
+}
+
+.category {
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.dark .category {
+    color: #aaa;
+}
+
+.priceContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.discountSection {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.originalPrice {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.discountBadge {
+    background-color: #FF5252;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.finalPrice {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #3f51b5;
+}
+
+.dark .finalPrice {
+    color: #7986CB;
+}
+
+.stock {
+    font-size: 0.9rem;
+}
+
+.inStock {
+    color: #4CAF50;
+}
+
+.outOfStock {
+    color: #F44336;
+}
+
+.sizeSection,
+.colorSection,
+.quantitySection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.sizeOptions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.sizeButton {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    background: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sizeButton:hover {
+    border-color: #3f51b5;
+}
+
+.sizeButton.selected {
+    background-color: #3f51b5;
+    color: white;
+    border-color: #3f51b5;
+}
+
+.colorOptions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.colorButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.colorButton:hover {
+    border-color: #3f51b5;
+}
+
+.colorButton.selected {
+    border-color: #3f51b5;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #3f51b5;
+}
+
+.quantityControl {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.quantityButton {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    background: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantityButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantityNumber {
+    font-size: 1.2rem;
+    min-width: 30px;
+    text-align: center;
+}
+
+.addToCartButton {
+    padding: 1rem;
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 1rem;
+}
+
+.addToCartButton:hover {
+    background-color: #303F9F;
+}
+
+.addToCartButton:disabled {
+    background-color: #9E9E9E;
+    cursor: not-allowed;
+}
+
+.descriptionSection {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.dark .descriptionSection {
+    background-color: #444;
+}
+
+.descriptionSection h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.dark .descriptionSection h2 {
+    color: #fff;
+}
+
+.loading {
+    padding: 2rem;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .productContainer {
+        flex-direction: column;
+    }
+
+    .imageSection,
+    .infoSection {
+        flex: none;
+    } }

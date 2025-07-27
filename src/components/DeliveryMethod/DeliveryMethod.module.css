@@ -1,0 +1,62 @@
+/* src/components/DeliveryMethod/DeliveryMethod.module.css */
+.deliveryMethods {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.method {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--bg-secondary);
+}
+
+.method:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.method.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.method input[type="radio"] {
+    margin-left: 0.5rem;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+.method label {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 1rem;
+    cursor: pointer;
+}
+
+.methodName {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.methodPrice {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* حالت تاریک (dark mode) */
+[data-theme="dark"] .method {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color-dark);
+}
+
+[data-theme="dark"] .method.selected {
+    background-color: rgba(255, 107, 107, 0.1); }

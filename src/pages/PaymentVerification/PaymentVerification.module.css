@@ -1,0 +1,42 @@
+/* src/pages/PaymentVerification/PaymentVerification.module.css */
+.verificationContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+    min-height: 60vh;
+}
+
+.loadingMessage {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.errorMessage {
+    color: #e74c3c;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.successMessage {
+    color: #2ecc71;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.paymentDetails {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+}
+
+/* تم تاریک */
+.dark .loadingMessage,
+.dark .paymentDetails {
+    color: #f0f0f0;
+}
+
+.dark .paymentDetails {
+    background-color: #333; }
