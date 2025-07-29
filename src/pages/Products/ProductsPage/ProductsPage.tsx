@@ -15,9 +15,11 @@ import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks/useAuth';
 import { addToWishlist, getWishlist, removeFromWishlist } from '@/services/wishlist';
 import { Product } from '@/types/Product';
-import { Review, Reply } from '@/types/Review';
+import { Question, Review } from '@/types/Review';
+import { useTranslation } from 'react-i18next';
 
 const ProductPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { darkMode } = useTheme();
   const { addToCart } = useCart();
@@ -28,13 +30,12 @@ const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews'>('description');
+  const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews' | 'questions'>('description');
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
 
   const { user } = useAuth();
-  const [wishlist, setWishlist] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,11 +44,9 @@ const ProductPage = () => {
         const productResponse = await http.get(`/products/${id}`);
         setProduct(productResponse.data);
         
-        // دریافت سوالات محصول
         const questionsResponse = await http.get(`/questions?productId=${id}`);
         setQuestions(questionsResponse.data);
         
-        // دریافت نظرات محصول
         const reviewsResponse = await http.get(`/reviews?productId=${id}`);
         setReviews(reviewsResponse.data);
         
@@ -67,8 +66,7 @@ const ProductPage = () => {
     const fetchWishlist = async () => {
       if (user?.id) {
         try {
-          const data = await getWishlist(user.id);
-          setWishlist(data);
+          const data = await getWishlist(String(user.id));
           setIsWishlisted(data.includes(id || ''));
         } catch (error) {
           console.error('Failed to fetch wishlist:', error);
@@ -91,95 +89,41 @@ const ProductPage = () => {
     const newReview: Review = {
       id: `rev${Date.now()}`,
       productId: product.id,
-      userId: user.id,
+      userId: user.id.toString(),
+      userName: user.name,
       rating: reviewData.rating,
       comment: reviewData.comment,
-      replyIds: [],
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
     };
 
     try {
-      // ارسال نظر جدید به سرور
       await http.post('/reviews', newReview);
-      
-      // به‌روزرسانی لیست نظرات محصول
-      await http.patch(`/products/${product.id}`, {
-        reviewIds: [...product.reviewIds, newReview.id]
-      });
-      
-      // به‌روزرسانی state
       setReviews([...reviews, newReview]);
-      setProduct({
-        ...product,
-        reviewIds: [...product.reviewIds, newReview.id]
-      });
-      
-      // toast.success('نظر شما با موفقیت ثبت شد');
+      toast.success(t('reviews.submitSuccess'));
     } catch (error) {
-      toast.error('خطا در ثبت نظر');
+      toast.error(t('reviews.submitError'));
       console.error('Error adding review:', error);
-    }
-  };
-
-  const handleAddReply = async (reviewId: string, comment: string) => {
-    if (!user || !product) return;
-    
-    const newReply = {
-      id: `rep${Date.now()}`,
-      reviewId,
-      userId: user.id,
-      comment,
-      isAdmin: user.role === 'admin',
-      createdAt: new Date().toISOString()
-    };
-
-    try {
-      // ارسال پاسخ جدید به سرور
-      await http.post('/replies', newReply);
-      
-      // به‌روزرسانی لیست پاسخ‌های نظر
-      const reviewToUpdate = reviews.find(r => r.id === reviewId);
-      if (reviewToUpdate) {
-        await http.patch(`/reviews/${reviewId}`, {
-          replyIds: [...reviewToUpdate.replyIds, newReply.id]
-        });
-        
-        // به‌روزرسانی state
-        setReviews(reviews.map(review => 
-          review.id === reviewId
-            ? { ...review, replyIds: [...review.replyIds, newReply.id] }
-            : review
-        ));
-      }
-      
-      toast.success('پاسخ شما با موفقیت ثبت شد');
-    } catch (error) {
-      toast.error('خطا در ثبت پاسخ');
-      console.error('Error adding reply:', error);
     }
   };
 
   const handleWishlist = async () => {
     if (!user) {
-      toast.info("لطفا وارد حساب کاربری خود شوید");
+      toast.info(t('wishlist.loginPrompt'));
       return;
     }
 
     try {
       if (isWishlisted) {
-        await removeFromWishlist(user.id, id || '');
-        setWishlist(prev => prev.filter(itemId => itemId !== id));
+        await removeFromWishlist(String(user.id), id || '');
         setIsWishlisted(false);
-        toast.success("محصول از لیست علاقه‌مندی‌ها حذف شد");
+        toast.success(t('wishlist.removeSuccess'));
       } else {
-        await addToWishlist(user.id, id || '');
-        setWishlist(prev => [...prev, id || '']);
+        await addToWishlist(String(user.id), id || '');
         setIsWishlisted(true);
-        toast.success("محصول به لیست علاقه‌مندی‌ها افزوده شد");
+        toast.success(t('wishlist.addSuccess'));
       }
-    } catch (error) {
-      toast.error('خطا در بروزرسانی لیست علاقه‌مندی‌ها');
+    } catch  {
+      toast.error(t('wishlist.updateError'));
     }
   };
 
@@ -187,42 +131,42 @@ const ProductPage = () => {
     if (!product) return;
 
     if (!selectedSize || !selectedColor) {
-      toast.error('لطفا سایز و رنگ محصول را انتخاب کنید');
+      toast.error(t('cart.selectOptions'));
       return;
     }
 
     addToCart({
-      ...product,
-      quantity,
+      id: product.id,
+      name: product.name,
+      price: product.discount ? product.price * (1 - product.discount / 100) : product.price,
+      image: product.image,
       size: selectedSize,
-      color: selectedColor
+      color: selectedColor,
+      quantity,
     });
 
-    toast.success('محصول به سبد خرید اضافه شد');
+    toast.success(t('cart.addSuccess'));
   };
-
 
   const handleAddQuestion = async (question: string) => {
     if (!user || !product) return;
   
     try {
-      const newQuestion = {
+      const newQuestion: Question = {
         id: `q${Date.now()}`,
         productId: product.id,
-        userId: user.id,
+        userId: user.id.toString(),
         userName: user.name,
         question,
         answers: [],
         createdAt: new Date().toISOString()
       };
   
-      // ارسال به سرور
       await http.post('/questions', newQuestion);
-      
-      // به‌روزرسانی state
       setQuestions([...questions, newQuestion]);
+      toast.success(t('questions.questionSubmitted'));
     } catch (error) {
-      toast.error('خطا در ثبت سوال');
+      toast.error(t('questions.submitError'));
       console.error('Error adding question:', error);
     }
   };
@@ -234,40 +178,61 @@ const ProductPage = () => {
       const newAnswer = {
         id: `ans${Date.now()}`,
         questionId,
-        userId: user.id,
+        userId: user.id.toString(),
         userName: user.name,
         answer,
         isAdmin: user.role === 'admin',
         createdAt: new Date().toISOString()
       };
   
-      // ارسال به سرور
       await http.post('/answers', newAnswer);
       
-      // به‌روزرسانی state
       setQuestions(questions.map(q => 
         q.id === questionId
-          ? { ...q, answers: [...(q.answers || []), newAnswer] }
+          ? { ...q, answers: [...q.answers, newAnswer] }
           : q
       ));
+      
+      toast.success(t('questions.answerSubmitted'));
     } catch (error) {
-      toast.error('خطا در ثبت پاسخ');
+      toast.error(t('questions.answerSubmitError'));
       console.error('Error adding answer:', error);
+    }
+  };
+
+  const handleShare = () => {
+    if (!product) return;
+  
+    const shareData = {
+      title: product.name,
+      text: `محصول "${product.name}" رو ببین! 👇`,
+      url: window.location.href,
+    };
+  
+    if (navigator.share) {
+      navigator.share(shareData).catch(err => {
+        console.error('خطا در اشتراک‌گذاری:', err);
+      });
+    } else {
+      // در مرورگرهایی که Web Share پشتیبانی نمی‌کنند:
+      navigator.clipboard.writeText(shareData.url)
+        .then(() => toast.success('لینک محصول کپی شد!'))
+        .catch(() => toast.error('کپی لینک با خطا مواجه شد.'));
     }
   };
   
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} retry={() => window.location.reload()} />;
-  if (!product) return <ErrorMessage message="محصول یافت نشد" />;
+  if (!product) return <ErrorMessage message={t('product.notFound')} />;
 
-  const ratingStars = '★'.repeat(Math.round(product.rating)) + '☆'.repeat(5 - Math.round(product.rating));
+  const ratingStars = '★'.repeat(Math.round(calculateAverageRating())) + '☆'.repeat(5 - Math.round(calculateAverageRating()));
 
   return (
     <div className={`${styles.productPage} ${darkMode ? styles.dark : ''}`}>
       <div className={styles.productContainer}>
         <ProductGallery 
-          image={product.image}
+          image={String(product.image)}
           selectedImage={selectedImage}
           onSelectImage={setSelectedImage}
         />
@@ -277,7 +242,7 @@ const ProductPage = () => {
           finalPrice={product.discount 
             ? product.price * (1 - product.discount / 100)
             : product.price}
-          rating={product.rating}
+          rating={calculateAverageRating()}
           stars={ratingStars}
           selectedSize={selectedSize}
           onSelectSize={setSelectedSize}
@@ -288,6 +253,7 @@ const ProductPage = () => {
           onAddToCart={handleAddToCart}
           onAddToWishlist={handleWishlist}
           isWishlisted={isWishlisted}
+          onShare={handleShare}
         />
       </div>
 
@@ -299,10 +265,9 @@ const ProductPage = () => {
         averageRating={calculateAverageRating()}
         user={user}
         onAddReview={handleAddReview}
-        onAddReply={handleAddReply}
         questions={questions}
-        onAddQuestion={handleAddQuestion} // ارسال تابع به ProductTabs
-        onAddAnswer={handleAddAnswer} // ارسال تابع به ProductTabs
+        onAddQuestion={handleAddQuestion}
+        onAddAnswer={handleAddAnswer}
       />
 
       <RelatedProducts 

@@ -13,7 +13,7 @@ interface ProductGalleryProps {
   const ProductGallery = ({ 
     image, 
     selectedImage = 0, 
-    onSelectImage = () => {} // مقدار پیش‌فرض تابع خالی
+    // onSelectImage = () => {} // مقدار پیش‌فرض تابع خالی
   }: ProductGalleryProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 

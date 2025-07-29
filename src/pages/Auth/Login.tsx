@@ -9,7 +9,7 @@ const Login = () => {
   return (
     <div className={styles.authContainer}>
       <LoginForm 
-        redirectAfterLogin="/profile" // پس از ورود به پروفایل هدایت شود
+        redirectAfterLogin="/user" // پس از ورود به پروفایل هدایت شود
         showCloseButton={false}
       />
     </div>

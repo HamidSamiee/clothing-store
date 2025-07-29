@@ -22,6 +22,9 @@ const ProductsManagement = lazy(() => import('@/pages/Dashboard/ProductsManageme
 const OrdersManagement = lazy(() => import('@/pages/Dashboard/OrdersManagement'));
 const UsersManagement = lazy(() => import('@/pages/Dashboard/UsersManagement'));
 const StatsDashboard = lazy(() => import('@/pages/Dashboard/StatsDashboard'));
+const OrderHistory = lazy(() => import('@/pages/Profile/OrderHistory'));
+const ProfileLayout = lazy(() => import('@/pages/Profile/ProfileLayout'));
+
 
 export const routes: RouteObject[] = [
   {
@@ -45,7 +48,15 @@ export const routes: RouteObject[] = [
         element: <PrivateRoute allowedRoles={['user', 'admin']} />,
         children: [
           { path: "/checkout", element: <Checkout /> },
-          { path: "/profile", element: <Profile /> },
+          {
+            path: "/user",
+              element: <ProfileLayout />,
+              children: [
+                { path: "/user/profile", element: <Profile /> },
+                { path: "/user/orders", element: <OrderHistory /> },
+                { index: true, element: <Profile  /> },
+              ]
+          }
         ]
       },
       

@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { FiX } from 'react-icons/fi';
-import { Order, OrderItem } from '@/types/Order';
+import { Order } from '@/types/Order';
 import { Product } from '@/types/Product';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import styles from '../../AdminComponents.module.css';

@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import AddressForm from '@/components/AddressForm/AddressForm';
 import DeliveryMethod from '@/components/DeliveryMethod/DeliveryMethod';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
+import { toast } from 'react-toastify';
 
 interface Address {
   street: string;
@@ -116,8 +117,8 @@ const Checkout = () => {
   const handlePayment = async () => {
     try {
       await initiatePayment(10000, 'پرداخت سفارش');
-    } catch (error) {
-      alert('خطا در اتصال به درگاه پرداخت');
+    } catch  {
+      toast.error('خطا در اتصال به درگاه پرداخت');
     }
   };
 

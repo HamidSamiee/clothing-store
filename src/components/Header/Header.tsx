@@ -47,7 +47,7 @@ const Header = () => {
           <div className={styles.topLinks}>
             {user ? (
               <>
-                <Link to="/profile" className={styles.topLink}>
+                <Link to="/user" className={styles.topLink}>
                   <FaUser /> {user.name}
                 </Link>
                 <button onClick={logout} className={styles.topLink}>

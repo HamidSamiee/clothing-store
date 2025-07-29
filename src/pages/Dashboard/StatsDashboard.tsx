@@ -12,7 +12,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  Scale,
 } from 'chart.js';
+import { Order } from '@/types/Order';
+import { User } from '@/types/User';
 
 ChartJS.register(
   CategoryScale,
@@ -42,7 +45,7 @@ const StatsDashboard = () => {
     try {
       // محاسبه فروش ماه
       const ordersResponse = await http.get('/orders');
-      const monthlySales = ordersResponse.data.reduce((sum: number, order: any) => {
+      const monthlySales = ordersResponse.data.reduce((sum: number, order: Order) => {
         const orderDate = new Date(order.date);
         const currentDate = new Date();
         if (orderDate.getMonth() === currentDate.getMonth() && 
@@ -53,7 +56,7 @@ const StatsDashboard = () => {
       }, 0);
 
       // تعداد سفارشات جدید
-      const newOrders = ordersResponse.data.filter((order: any) => {
+      const newOrders = ordersResponse.data.filter((order: Order) => {
         const orderDate = new Date(order.date);
         const currentDate = new Date();
         return orderDate.getMonth() === currentDate.getMonth() && 
@@ -62,7 +65,7 @@ const StatsDashboard = () => {
 
       // تعداد کاربران جدید
       const usersResponse = await http.get('/users');
-      const newUsers = usersResponse.data.filter((user: any) => {
+      const newUsers = usersResponse.data.filter((user: User) => {
         const userDate = new Date(typeof user.id === 'number' ? user.id : parseInt(user.id));
         const currentDate = new Date();
         return userDate.getMonth() === currentDate.getMonth() && 
@@ -99,7 +102,7 @@ const StatsDashboard = () => {
         };
       }).reverse();
 
-      ordersResponse.data.forEach((order: any) => {
+      ordersResponse.data.forEach((order: Order) => {
         const orderDate = new Date(order.date);
         const monthData = lastThreeMonths.find(m => 
           m.month === orderDate.getMonth() && 
@@ -161,8 +164,11 @@ const StatsDashboard = () => {
           display: true,
         },
         ticks: {
-          callback: function(value: number) {
-            return toPersianNumbers(value.toLocaleString());
+          callback: function (this: Scale, value: string | number) {
+            if (typeof value === 'number') {
+              return toPersianNumbers(value.toLocaleString());
+            }
+            return value;
           },
         },
       },

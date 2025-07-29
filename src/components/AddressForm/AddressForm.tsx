@@ -6,7 +6,7 @@ import TextField from '@/ui/TextField/TextField';
 
 
 interface AddressFormProps {
-  onSubmit: (data: any) => void;
+  onSubmit: (data: FormData) => void;
 }
 
 interface FormData {

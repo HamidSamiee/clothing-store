@@ -73,6 +73,18 @@
       "title": "Trending Now",
       "subtitle": "Most popular designs of 2023",
       "cta": "View Trends"
+    },
+    "slide1": {
+      "title": "Start Strong",
+      "subtitle": "Build the best version of yourself with our products"
+    },
+    "slide2": {
+      "title": "Seasonal Trends",
+      "subtitle": "Special products with high demand"
+    },
+    "slide3": {
+      "title": "Most Viewed Products",
+      "subtitle": "Top choices from our customers"
     }
    },
    "featuredProducts": {
@@ -90,6 +102,7 @@
     "category": "Category",
     "noProducts": "No products found",
     "noCategoryProducts": "No products in category",
+    "error": "Error loading products",
     "noSearchResults": "No results for"
   },
   "product": {
@@ -126,6 +139,8 @@
   },
   "cart": {
     "title": "Your Shopping Cart",
+    "addSuccess": "Item successfully added to the cart.",
+    "selectOptions": "Please select product options first.",
     "total": "Total",
     "checkout": "Proceed to Checkout",
     "empty": "Your cart is empty",
@@ -216,7 +231,9 @@
     "cancel": "Cancel",
     "reply": "Reply",
     "adminAnswer": "Admin Answer",
-    "userAnswer": "User Answer"
+    "userAnswer": "User Answer",
+    "answerSubmitError": "There was an error submitting the answer.",
+    "submitError": "There was an error submitting your question."
   },
   "contact": {
     "title": "Contact Our Boutique",
@@ -270,7 +287,12 @@
     "kids": "Kids",
     "sport": "Sports",
     "shoes": "Shoes",
-    "accessories": "Accessories"
+    "accessories": "Accessories",
+    "ورزشی": "Sports",
+    "زنانه": "Women",
+    "مردانه": "Men",
+    "بچه گانه": "Kids",
+    "اکسسوری": "Accessories"
   },
   "reviews":{
     "productRating": "Product Rating",
@@ -295,5 +317,39 @@
   "replies": {
     "admin": "Admin reply",
     "user": "User reply"
-  }
-  }
+  },
+  "order": {
+    "history": "Order History",
+    "noOrders": "No orders found",
+    "fetchError": "Error fetching orders",
+    "orderNumber": "Order Number",
+    "date": "Date",
+    "total": "Total Amount",
+    "items": "Order Items",
+    "product": "Product",
+    "quantity": "Quantity",
+    "status": {
+      "processing": "Processing",
+      "shipped": "Shipped ",
+      "delivered": " Delivered",
+      "cancelled": "Cancelled",
+      "درحال پردازش": "Processing",
+      "ارسال شده": "Shipped",
+      "تحویل داده شد": "Delivered",
+      "لغو شد": "Cancelled"
+    },
+    "label":"Order status",
+    "paymentMethod": "Payment Method"
+  },
+  "currency": "IRR",
+  "wishlist": {
+    "loginPrompt": "Please log in to add items to your wishlist.",
+    "addSuccess": "Item successfully added to wishlist.",
+    "removeSuccess": "Item removed from wishlist.",
+    "updateError": "Failed to update wishlist."
+  },
+  "sidebar": {
+  "profile": "My Profile",
+  "orders": "My Orders"
+}
+}

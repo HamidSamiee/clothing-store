@@ -1,7 +1,7 @@
 // pages/Dashboard/ProductsManagement.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FiPlus, FiEdit2, FiTrash2, FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { 
+import {
   getProducts,
   deleteProduct,
   searchProducts
@@ -13,13 +13,12 @@ import { toast } from 'react-toastify';
 import { toPersianNumbers, toPersianNumbersWithComma } from '@/utils/toPersianNumbers';
 import { PersianTooltip } from '@/ui/Tooltip/Tooltip';
 
-
 const ProductsManagement = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentProductId, setCurrentProductId] = useState<number | null>(null);
+  const [currentProductId, setCurrentProductId] = useState<string | undefined>(undefined);
   const [pagination, setPagination] = useState({
     page: 1,
     perPage: 10,
@@ -27,19 +26,7 @@ const ProductsManagement = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [pagination.page]);
-
-  useEffect(() => {
-    if (searchTerm) {
-      handleSearch();
-    } else {
-      setFilteredProducts(products);
-    }
-  }, [searchTerm, products]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     try {
       const { data, total } = await getProducts({
@@ -54,9 +41,9 @@ const ProductsManagement = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [pagination.page, pagination.perPage]);
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!searchTerm.trim()) {
       setFilteredProducts(products);
       return;
@@ -71,23 +58,31 @@ const ProductsManagement = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [products, searchTerm]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm, products, handleSearch]);
 
   const handleAddProduct = () => {
-    setCurrentProductId(null);
+    setCurrentProductId(undefined);
     setIsModalOpen(true);
   };
 
-  const handleEditProduct = (id: number) => {
+  const handleEditProduct = (id: string) => {
     setCurrentProductId(id);
     setIsModalOpen(true);
   };
 
-  const handleDeleteProduct = async (id: number) => {
+  const handleDeleteProduct = async (id: string) => {
     if (window.confirm('آیا از حذف این محصول اطمینان دارید؟')) {
       try {
         await deleteProduct(id);
-        toast.info('محصول با موفقیت حذف شد')
+        toast.info('محصول با موفقیت حذف شد');
         fetchProducts();
       } catch (error) {
         console.error('Error deleting product:', error);
@@ -102,7 +97,7 @@ const ProductsManagement = () => {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>مدیریت محصولات</h2>
-      
+
       <div className={styles.actionBar}>
         <div className={styles.searchBox}>
           <FiSearch className={styles.searchIcon} />
@@ -111,11 +106,11 @@ const ProductsManagement = () => {
             placeholder="جستجوی محصول..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
         </div>
-        <button 
-          className={styles.addButton} 
+        <button
+          className={styles.addButton}
           onClick={handleAddProduct}
           disabled={isLoading}
         >
@@ -147,23 +142,22 @@ const ProductsManagement = () => {
                   <td>{toPersianNumbers(product.stock)}</td>
                   <td>{product.featured ? '✓' : '✗'}</td>
                   <td>
-                  
-                  <PersianTooltip title="ویرایش" arrow>
-                        <button 
-                          className={styles.editBtn}
-                          onClick={() => handleEditProduct(product.id)}
-                        >
-                          <FiEdit2 />
-                        </button>              
-                  </PersianTooltip>
-                  <PersianTooltip title="حذف" arrow>
-                        <button 
-                          className={styles.deleteBtn}
-                          onClick={() => handleDeleteProduct(product.id)}
-                        >
-                          <FiTrash2 />
-                        </button>
-                  </PersianTooltip>
+                    <PersianTooltip title="ویرایش" arrow>
+                      <button
+                        className={styles.editBtn}
+                        onClick={() => handleEditProduct(product.id)}
+                      >
+                        <FiEdit2 />
+                      </button>
+                    </PersianTooltip>
+                    <PersianTooltip title="حذف" arrow>
+                      <button
+                        className={styles.deleteBtn}
+                        onClick={() => handleDeleteProduct(product.id)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </PersianTooltip>
                   </td>
                 </tr>
               ))}
@@ -172,42 +166,39 @@ const ProductsManagement = () => {
 
           {pagination.total > pagination.perPage && (
             <div className={styles.paginationWrapper}>
-              {/* دکمه قبلی */}
               <button
                 className={`${styles.pageButton} ${styles.navButton}`}
                 onClick={() => handlePageChange(pagination.page - 1)}
                 disabled={pagination.page === 1}
               >
-                <FiChevronRight className={styles.navIcon} /> {/* برای RTL */}
+                <FiChevronRight className={styles.navIcon} />
               </button>
 
-              {/* دکمه‌های شماره صفحه */}
               {Array.from(
                 { length: Math.ceil(pagination.total / pagination.perPage) },
                 (_, i) => i + 1
-              ).map(page => (
+              ).map((pageNum) => (
                 <button
-                  key={page}
+                  key={pageNum}
                   className={`${styles.pageButton} ${
-                    page === pagination.page ? styles.active : ''
+                    pageNum === pagination.page ? styles.active : ''
                   }`}
-                  onClick={() => handlePageChange(page)}
+                  onClick={() => handlePageChange(pageNum)}
                 >
-                  {toPersianNumbers(page)}
+                  {toPersianNumbers(pageNum)}
                 </button>
               ))}
 
-              {/* دکمه بعدی */}
               <button
                 className={`${styles.pageButton} ${styles.navButton}`}
                 onClick={() => handlePageChange(pagination.page + 1)}
                 disabled={pagination.page === Math.ceil(pagination.total / pagination.perPage)}
               >
-                <FiChevronLeft className={styles.navIcon} /> {/* برای RTL */}
+                <FiChevronLeft className={styles.navIcon} />
               </button>
             </div>
           )}
-                  </>
+        </>
       )}
 
       <ProductModal

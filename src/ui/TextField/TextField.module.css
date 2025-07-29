@@ -16,7 +16,7 @@
     /* قرمز */
 }
 
-.input {
+.input , textarea{
     width: 100%;
     padding: 0.5rem 1rem;
     border: 1px solid #d1d5db;
@@ -37,7 +37,12 @@
     /* آبی */
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
 }
-
+.textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    /* آبی */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
 .input:disabled {
     background-color: #f3f4f6;
     /* خاکستری روشن */

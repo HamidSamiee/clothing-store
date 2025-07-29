@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './About.module.css';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/hooks/useTheme';
-import Stats from './Stats';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 
 interface HistoryItem {

@@ -1,4 +1,3 @@
-// src/pages/PaymentVerification/PaymentVerification.tsx
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePayment } from '@/hooks/usePayment';
@@ -14,13 +13,20 @@ const PaymentVerification = () => {
     const authority = params.get('Authority');
     const status = params.get('Status');
 
-    if (authority && status) {
-      verifyPayment(authority, status).catch(() => {
-        navigate('/payment-failed');
-      });
-    } else {
-      navigate('/');
-    }
+    const verify = async () => {
+      if (authority && status) {
+        const result = verifyPayment(authority, status);
+        if (result.success) {
+          navigate('/payment-success');
+        } else {
+          navigate('/payment-failed');
+        }
+      } else {
+        navigate('/');
+      }
+    };
+
+    verify();
   }, [location, navigate, verifyPayment]);
 
   return (

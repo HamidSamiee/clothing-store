@@ -7,6 +7,7 @@ import { useCart } from '@/hooks/useCart';
 import { ProductCardProps } from '@/types/Product';
 import { toPersianNumbersWithComma } from '@/utils/toPersianNumbers';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 
@@ -25,8 +26,9 @@ const ProductCard = ({ product, showBadge = false }: ProductCardProps) => {
       name: product.name,
       price: finalPrice,
       image: product.image,
-      quantity: 1
+      // quantity: 1
     });
+    toast.success("محصول به سبد خرید اضافه شد")
   };
 
   return (
@@ -53,7 +55,7 @@ const ProductCard = ({ product, showBadge = false }: ProductCardProps) => {
       </Link>
       
       <div className={styles.productInfo}>
-        <span className={styles.category}>{t(`categories.${product.category}`)}</span>
+        <span className={styles.category}>{t(`categories.${product.category}`, { defaultValue: product.category })}</span>
         <h3 className={styles.productName}>
           <Link to={`/products/${product.id}`}>{product.name}</Link>
         </h3>

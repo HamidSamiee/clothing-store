@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
-import { User } from "@/types/User";
+import { SafeUser, User } from "@/types/User";
 import {
   login as loginService,
   register as registerService,
@@ -9,7 +9,7 @@ import {
 } from "@/services/authService";
 import { toast } from "react-toastify";
 
-type SafeUser = Omit<User, "password">;
+
 
 interface AuthProviderProps {
   children: ReactNode;

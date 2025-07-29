@@ -1,22 +1,24 @@
-
 import styles from './ProductTabs.module.css';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import { useTranslation } from 'react-i18next';
 import ReviewSection from '../ReviewSection/ReviewSection';
 import QuestionsSection from '../QuestionsSection/QuestionsSection';
 
+import { Review } from '@/types/Review';
+import { Question } from '@/types/Review'; // Answer داخل Review تعریف شده
+import { SafeUser } from '@/types/User';
+
 interface ProductTabsProps {
   activeTab: 'description' | 'specs' | 'reviews' | 'questions';
   onTabChange: (tab: 'description' | 'specs' | 'reviews' | 'questions') => void;
   description: string;
-  reviews: any[];
+  reviews: Review[];
   averageRating?: number;
-  user: any;
+  user: SafeUser | null;
   onAddReview: (review: { rating: number; comment: string }) => Promise<void>;
-  onAddReply: (reviewId: string, comment: string) => Promise<void>;
-  questions: any[];
-  onAddQuestion: (question: string) => Promise<void>; // اضافه کردن prop جدید
-  onAddAnswer: (questionId: string, answer: string) => Promise<void>; // اضافه کردن prop جدید
+  questions: Question[];
+  onAddQuestion: (question: string) => Promise<void>;
+  onAddAnswer: (questionId: string, answer: string) => Promise<void>;
 }
 
 const ProductTabs = ({
@@ -27,12 +29,10 @@ const ProductTabs = ({
   averageRating,
   user,
   onAddReview,
-  onAddReply,
   questions,
-  onAddQuestion, // دریافت prop جدید
-  onAddAnswer // دریافت prop جدید
+  onAddQuestion,
+  onAddAnswer
 }: ProductTabsProps) => {
-  
   const { t } = useTranslation();
 
   return (
@@ -72,21 +72,20 @@ const ProductTabs = ({
               averageRating={averageRating}
               user={user}
               onAddReview={onAddReview}
-              onAddReply={onAddReply}
             />
           </div>
         )}
 
-      {activeTab === 'questions' && (
-        <div className={styles.questions}>
-          <QuestionsSection
-            questions={questions}
-            user={user}
-            onAddQuestion={onAddQuestion} // ارسال به کامپوننت QuestionsSection
-            onAddAnswer={onAddAnswer} // ارسال به کامپوننت QuestionsSection
-          />
-        </div>
-      )}
+        {activeTab === 'questions' && (
+          <div className={styles.questions}>
+            <QuestionsSection
+              questions={questions}
+              user={user}
+              onAddQuestion={onAddQuestion}
+              onAddAnswer={onAddAnswer}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

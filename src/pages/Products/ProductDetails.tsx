@@ -10,7 +10,7 @@ const ProductDetails = () => {
 
   const { data: product } = useQuery({
     queryKey: ['product', id],
-    queryFn: () => getProductById(id!)
+    queryFn: () => getProductById(Number(id!)) // Convert id to number
   });
 
   return (

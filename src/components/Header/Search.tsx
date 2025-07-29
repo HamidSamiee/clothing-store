@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDebounce } from '@/hooks/useDebounce';
 import { getProducts } from '@/services/productService';
@@ -20,13 +20,29 @@ const Search = ({ isMobile = false }: SearchProps) => {
   const navigate = useNavigate();
   const debouncedQuery = useDebounce(searchQuery, 500);
 
+
+  const handleSearch = useCallback(async (query: string) => {
+    try {
+      const { data } = await getProducts({
+        search: query,
+        perPage: 5
+      });
+      setSearchResults(data);
+      setShowResults(true);
+    } catch (error) {
+      console.error(t('header.searchError'), error);
+      setSearchResults([]);
+    }
+  }, [t]);
+  
+  
   useEffect(() => {
     if (debouncedQuery.trim()) {
       handleSearch(debouncedQuery);
     } else {
       setSearchResults([]);
     }
-  }, [debouncedQuery]);
+  }, [debouncedQuery , handleSearch]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -39,19 +55,7 @@ const Search = ({ isMobile = false }: SearchProps) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSearch = async (query: string) => {
-    try {
-      const { data } = await getProducts({
-        search: query,
-        perPage: 5
-      });
-      setSearchResults(data);
-      setShowResults(true);
-    } catch (error) {
-      console.error(t('header.searchError'), error);
-      setSearchResults([]);
-    }
-  };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

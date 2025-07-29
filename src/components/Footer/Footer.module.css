@@ -4,6 +4,7 @@
     color: white;
     padding-top: 40px;
     margin-top: 50px;
+    z-index: 10;
 }
 
 .container {

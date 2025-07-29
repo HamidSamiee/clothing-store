@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { FiX } from 'react-icons/fi';
 import { useForm } from 'react-hook-form';
 import TextField from '@/ui/TextField/TextField';
@@ -15,16 +15,15 @@ import { toast } from 'react-toastify';
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  productId?: number ;
+  productId?: string | number |undefined ;
   onSuccess: () => void;
 }
+type ProductFormData = Omit<Product, 'id'>;
 
 const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalProps) => {
 
-    const modalRef = useRef<HTMLDivElement>(null);
-    
-    // استفاده از هوک سفارشی برای تشخیص کلیک خارج از مودال
-    useClickOutside(modalRef, onClose);
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside<HTMLDivElement>(modalRef, onClose);
 
   const { 
     register, 
@@ -33,7 +32,7 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
     watch,
     formState: { errors },
     setValue,
-  } = useForm<Product | Omit<Product, 'id'>>({
+  } = useForm<ProductFormData>({
     defaultValues: {
       sizes: [] as string[], // تعیین صریح نوع آرایه
       colors: [] as string[],
@@ -42,6 +41,31 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
 
   const [isLoading, setIsLoading] = useState(false);
 
+
+
+  const fetchProduct = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await getProductById(productId!);
+      // صراحتاً تایپ هر پراپرتی بررسی می‌شود
+      setValue('name', data.name);
+      setValue('price', data.price);
+      setValue('description', data.description);
+      setValue('category', data.category);
+      setValue('image', data.image);
+      setValue('sizes', data.sizes);
+      setValue('colors', data.colors);
+      setValue('stock', data.stock);
+      setValue('featured', data.featured);
+      setValue('discount', data.discount);
+      setValue('rating', data.rating);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  },[productId,setValue])
+  
   useEffect(() => {
     if (productId) {
       fetchProduct();
@@ -60,22 +84,7 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
         rating: 0
       });
     }
-  }, [productId, reset]);
-
-  const fetchProduct = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getProductById(productId!);
-      // تنظیم مقادیر فرم با داده‌های محصول
-      Object.entries(data).forEach(([key, value]) => {
-        setValue(key as keyof Product, value);
-      });
-    } catch (error) {
-      console.error('Error fetching product:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [productId, reset, fetchProduct]);
 
   const onSubmit = async (data: Product | Omit<Product, 'id'>) => {
     setIsLoading(true);
@@ -97,11 +106,12 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
     }
   };
 
-  const getSafeArray = (value: any): string[] => {
-    if (Array.isArray(value)) return value;
+  const getSafeArray = (value: unknown): string[] => {
+    if (Array.isArray(value)) return value.map(String);
     if (typeof value === 'string') return value.split(',').map(i => i.trim());
     return [];
   };
+  
   const sizesValue = getSafeArray(watch('sizes'));
   const colorsValue = getSafeArray(watch('colors'));
 
@@ -207,7 +217,7 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
                 name="sizes"
                 register={register}
                 errors={errors}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange={(e) => {
                   const arrayValue = e.target.value.split(',').map(i => i.trim());
                   setValue('sizes', arrayValue);
                 }}
@@ -215,16 +225,17 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
               />
 
               <TextField
-                label="رنگ‌ها (با کاما جدا کنید)"
+                label="رنگ‌ها(با کاما جدا کنید)"
                 name="colors"
                 register={register}
                 errors={errors}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange={(e) => {
                   const arrayValue = e.target.value.split(',').map(i => i.trim());
                   setValue('colors', arrayValue);
                 }}
-                value={colorsValue.join(', ')}
+                value={colorsValue.join(', ')} 
               />
+
 
               <TextField
                 label="توضیحات"

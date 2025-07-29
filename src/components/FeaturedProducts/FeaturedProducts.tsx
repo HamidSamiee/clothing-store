@@ -26,7 +26,13 @@ const FeaturedProducts = () => {
         {products?.map((product: Product) => (
           <ProductCard 
             key={product.id} 
-            product={{ ...product, id: product.id.toString() }} 
+            product={
+               { 
+                ...product, 
+                image: product.image,
+                id: product.id.toString() 
+                }
+              } 
             showBadge={true}
           />
         ))}

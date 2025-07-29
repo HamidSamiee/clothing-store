@@ -4,19 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Cart.module.css';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
-import { CartItem as CartItemType } from '@/types/Cart';
 import CartItem from '@/components/CartItem/CartItem';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import Modal from '@/ui/Modal/Modal';
 import LoginForm from '@/components/LoginForm/LoginForm';
-import { toPersianNumbers, toPersianNumbersWithComma } from '@/utils/toPersianNumbers';
-
+import { toPersianNumbersWithComma } from '@/utils/toPersianNumbers';
 
 const Cart = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { items, total, removeFromCart, updateQuantity, clearCart } = useCart();
+  const { items, total, removeFromCart, updateQuantity, clearCart, getUniqueKey } = useCart();
   const { isAuthenticated } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -39,7 +37,7 @@ const Cart = () => {
       
       {items.length === 0 ? (
         <div className={styles.emptyCart}>
-          {t('cart.empty')}
+          {t('cart.empty') + ' '}
           <Link to="/products" className={styles.continueShopping}>
             {t('cart.continueShopping')}
           </Link>
@@ -47,14 +45,17 @@ const Cart = () => {
       ) : (
         <>
           <div className={styles.cartItems}>
-            {items.map((item: CartItemType) => (
-              <CartItem
-                key={item.id}
-                item={item}
-                onRemove={() => removeFromCart(item.id)}
-                onQuantityChange={(quantity: number) => updateQuantity(item.id, quantity)}
-              />
-            ))}
+            {items.map((item) => {
+              const uniqueKey = getUniqueKey(item);
+              return (
+                <CartItem
+                  key={uniqueKey}
+                  item={item}
+                  onRemove={() => removeFromCart(uniqueKey)}
+                  onQuantityChange={(quantity) => updateQuantity(uniqueKey, quantity)}
+                />
+              );
+            })}
           </div>
           
           <div className={styles.cartSummary}>
@@ -64,14 +65,14 @@ const Cart = () => {
             </div>
             
             <div className={styles.actions}>
-              <button 
+              <button
                 className={styles.clearCart}
                 onClick={clearCart}
               >
                 {t('cart.clearCart')}
               </button>
               
-              <button 
+              <button
                 className={styles.checkoutButton}
                 onClick={handleCheckout}
               >
@@ -90,8 +91,8 @@ const Cart = () => {
       >
         <div className={styles.loginModalContent}>
           <p>{t('cart.loginToCheckout')}</p>
-          <LoginForm 
-            onSuccess={handleLoginSuccess} // فقط در این حالت onSuccess را پاس می‌دهیم
+          <LoginForm
+            onSuccess={handleLoginSuccess}
             showCloseButton={true}
             onClose={() => setShowLoginModal(false)}
           />

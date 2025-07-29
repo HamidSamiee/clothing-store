@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 const Marquee = () => {
 
-  const { t } = useTranslation();
+  const { t } = useTranslation()  as { t: (key: string) => string };
   const navigate = useNavigate();
   
   const items = [

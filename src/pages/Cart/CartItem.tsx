@@ -1,35 +1,29 @@
-// src/components/CartItem/CartItem.tsx
-import { useTranslation } from 'react-i18next';
+import React from 'react';
 import styles from './CartItem.module.css';
-import { CartItem as CartItemType } from '@/types/Cart';
+import { CartItemProps } from '@/types/Cart';
 
-interface CartItemProps {
-  item: CartItemType;
-  onRemove: () => void;
-  onQuantityChange: (quantity: number) => void;
-}
 
-const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
-  const { t } = useTranslation();
-
+const CartItem: React.FC<CartItemProps> = ({
+  item,
+  onRemove,
+  onQuantityChange,
+  className = ''
+}) => {
   return (
-    <div className={styles.cartItem}>
+    <div className={`${styles.cartItem} ${className}`}>
       <div className={styles.itemImage}>
         <img src={item.image} alt={item.name} />
       </div>
       
       <div className={styles.itemDetails}>
-        <h3 className={styles.itemName}>{item.name}</h3>
-        <span className={styles.itemPrice}>
-          {item.price.toLocaleString()} {t('product.currency')}
-        </span>
+        <h3>{item.name}</h3>
+        <p>قیمت: {item.price.toLocaleString()} تومان</p>
+        {item.size && <p>سایز: {item.size}</p>}
+        {item.color && <p>رنگ: {item.color}</p>}
       </div>
-      
-      <div className={styles.quantityControl}>
-        <button 
-          onClick={() => onQuantityChange(item.quantity - 1)}
-          disabled={item.quantity <= 1}
-        >
+
+      <div className={styles.quantityControls}>
+        <button onClick={() => onQuantityChange(item.quantity - 1)} disabled={item.quantity <= 1}>
           -
         </button>
         <span>{item.quantity}</span>
@@ -37,12 +31,9 @@ const CartItem = ({ item, onRemove, onQuantityChange }: CartItemProps) => {
           +
         </button>
       </div>
-      
-      <button 
-        className={styles.removeItem}
-        onClick={onRemove}
-      >
-        {t('cart.remove')}
+
+      <button onClick={onRemove} className={styles.removeButton}>
+        حذف
       </button>
     </div>
   );

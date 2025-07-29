@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   FiSearch, 
   FiEdit, 
@@ -32,18 +32,14 @@ const UsersManagement = () => {
 
   const USERS_PER_PAGE = 8;
 
-  useEffect(() => {
-    fetchUsers();
-  }, [currentPage, debouncedSearchTerm]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const response = await http.get('/users', {
         params: {
           _page: currentPage,
           _limit: USERS_PER_PAGE,
-          q: searchTerm
+          q: debouncedSearchTerm
         }
       });
       setUsers(response.data);
@@ -53,7 +49,11 @@ const UsersManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  },[currentPage,debouncedSearchTerm])
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -153,7 +153,7 @@ const UsersManagement = () => {
               <tr key={user.id}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td>{toPersianNumbers(user.phone)}</td>
+                <td>{toPersianNumbers(user.phone ?? '-')}</td>
                 <td>
                   <span className={`${styles.badge} ${
                     user.role === 'admin' ? styles.adminBadge : styles.userBadge
@@ -169,7 +169,7 @@ const UsersManagement = () => {
                     )}
                   </span>
                 </td>
-                <td>{toPersianNumbers(user.orders.length.toString())}</td>
+                <td>{toPersianNumbers((user.orders?.length ?? 0).toString())}</td>
                 <td>
                   <div className={styles.actions}>
                     <PersianTooltip title="مشاهده" arrow>

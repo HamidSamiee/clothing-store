@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -12,34 +11,31 @@ const slides = [
   {
     id: 1,
     image: '/images/hero/slide1.png',
-    title: 'با قدرت شروع کن',
-    subtitle: 'با محصولات ما، بهترین نسخه‌ی خودت رو بساز',
-    ctaText: 'خرید محصولات',
+    title: 'hero.slide1.title',
+    subtitle: 'hero.slide1.subtitle',
     ctaLink: '/products?sort=most-popular',
     bgColor: '#f9f3f0'
   },
   {
     id: 2,
     image: '/images/hero/slide2.png',
-    title: 'ترندهای فصل',
-    subtitle: 'محصولات ویژه با استقبال بالا',
-    ctaText: 'مشاهده ترندها',
+    title: 'hero.slide2.title',
+    subtitle: 'hero.slide2.subtitle',
     ctaLink: '/collections/trending',
     bgColor: '#f0f9f3'
   },
   {
     id: 3,
     image: '/images/hero/slide3.png',
-    title: 'محصولات پربازدید',
-    subtitle: 'برترین انتخاب‌های مشتریان ما',
-    ctaText: 'خرید محصولات پرطرفدار',
+    title: 'hero.slide3.title',
+    subtitle: 'hero.slide3.subtitle',
     ctaLink: '/bestsellers',
     bgColor: '#f3f0f9'
   }
 ];
 
 const HeroSection = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation() as { t: (key: string) => string };
 
   return (
     <section className={styles.hero}>
@@ -69,12 +65,6 @@ const HeroSection = () => {
               <div className={styles.textContent}>
                 <h2 className={styles.title}>{t(slide.title)}</h2>
                 <p className={styles.subtitle}>{t(slide.subtitle)}</p>
-                {/* <Link
-                  to={slide.ctaLink}
-                  className={styles.ctaButton}
-                >
-                  {t(slide.ctaText)}
-                </Link> */}
               </div>
               <div className={styles.imageContainer}>
                 <img

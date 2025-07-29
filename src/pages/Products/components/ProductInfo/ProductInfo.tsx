@@ -1,10 +1,23 @@
 // src/components/ProductInfo/ProductInfo.tsx
-import { useEffect, useState } from 'react';
 import styles from './ProductInfo.module.css';
 import { FiHeart, FiShare2 } from 'react-icons/fi';
 import { toPersianNumbers, toPersianNumbersWithComma } from '@/utils/toPersianNumbers';
 import { useTranslation } from 'react-i18next';
 import { PersianTooltip } from '@/ui/Tooltip/Tooltip';
+
+type CategoryKey = 
+  | "men"
+  | "women"
+  | "kids"
+  | "sport"
+  | "shoes"
+  | "accessories"
+  | "ورزشی"
+  | "زنانه"
+  | "مردانه"
+  | "بچه گانه"
+  | "اکسسوری";
+
 
 interface ProductInfoProps {
   product: {
@@ -12,7 +25,7 @@ interface ProductInfoProps {
     name: string;
     price: number;
     discount?: number;
-    category: string;
+    category: CategoryKey | string ;
     rating: number;
     stock: number;
     sizes: string[];
@@ -30,7 +43,6 @@ interface ProductInfoProps {
   onQuantityChange: (qty: number) => void;
   onAddToCart: () => void;
   onAddToWishlist: () => void;
-  t: (key: string) => string;
   onShare: () => void;
 }
 
@@ -63,7 +75,7 @@ const ProductInfo = ({
           <span className={styles.stars}>{stars}</span>
           <span className={styles.ratingNumber}>({rating.toFixed(1)})</span>
         </div>
-        <span className={styles.category}>{t(`categories.${product.category}`)}</span>
+        <span className={styles.category}> {t('categories.' + product.category as string, { defaultValue: product.category })}</span>
       </div>
 
       {/* قیمت */}

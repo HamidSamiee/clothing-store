@@ -1,5 +1,5 @@
 import React from 'react';
-import { UseFormRegister } from 'react-hook-form';
+import { UseFormRegister, FieldValues, Path } from 'react-hook-form';
 import styles from './RHFSelect.module.css';
 
 interface SelectOption {
@@ -7,17 +7,17 @@ interface SelectOption {
   label: string;
 }
 
-interface RHFSelectProps {
+interface RHFSelectProps<T extends FieldValues = FieldValues> {
   label: string;
-  name: string;
+  name: Path<T>;
   options: SelectOption[];
-  register: UseFormRegister<any>;
+  register: UseFormRegister<T>;
   required?: boolean;
   disabled?: boolean;
   className?: string;
 }
 
-const RHFSelect: React.FC<RHFSelectProps> = ({
+const RHFSelect = <T extends FieldValues>({
   label,
   name,
   options,
@@ -25,7 +25,7 @@ const RHFSelect: React.FC<RHFSelectProps> = ({
   required = false,
   disabled = false,
   className = ''
-}) => {
+}: RHFSelectProps<T>) => {
   return (
     <div className={`${styles.selectContainer} ${className}`}>
       <label htmlFor={name} className={styles.label}>

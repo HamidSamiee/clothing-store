@@ -67,7 +67,7 @@ export const cancelOrder = async (orderId: number): Promise<void> => {
   });
 
   // به‌روزرسانی وضعیت سفارش
-  orders[orderIndex].status = "لغو شد";
+  orders[orderIndex].status = "cancelled";
 
   localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
   localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
@@ -122,4 +122,13 @@ export const getProductsForOrder = async (orderId: number): Promise<Product[]> =
 //  console.log(productsResponse)
   
   return productsResponse.data;
+};
+
+// services/orderService.ts
+export const getProductsByIds = async (ids: number[]): Promise<Product[]> => {
+  const uniqueIds = Array.from(new Set(ids)); // حذف تکراری‌ها
+  const response = await http.get('/products', {
+    params: { id: uniqueIds }
+  });
+  return response.data;
 };

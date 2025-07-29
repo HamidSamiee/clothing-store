@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styles from '@/pages/Auth/Auth.module.css';
-import { User } from '@/types/User';
+import { SafeUser } from '@/types/User';
 import { useAuth } from '@/hooks/useAuth';
 
 interface LoginFormProps {
-  onSuccess?: (user: User) => void; // اختیاری شد
+  onSuccess?: (user: SafeUser) => void; // اختیاری شد
   redirectAfterLogin?: string; // مسیر ریدایرکت پس از ورود
   showCloseButton?: boolean;
   onClose?: () => void;
@@ -20,7 +20,7 @@ type LoginFormInputs = {
 
 const LoginForm = ({ 
   onSuccess, 
-  redirectAfterLogin ='/profile' , 
+  redirectAfterLogin ='/user' , 
   showCloseButton = true, 
   onClose 
 }: LoginFormProps) => {
@@ -45,7 +45,7 @@ const LoginForm = ({
       }else{
         navigate(redirectAfterLogin);
       }
-    } catch (error) {
+    } catch {
       setError('email', { 
         type: 'manual', 
         message: t('auth.invalidCredentials') 

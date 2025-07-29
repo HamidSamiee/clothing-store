@@ -1,46 +1,86 @@
-// src/components/TextField/TextField.tsx
-import React from 'react';
 import styles from './TextField.module.css';
-import { FieldErrors, UseFormRegister } from 'react-hook-form';
+import {
+  FieldError,
+  FieldErrors,
+  UseFormRegister,
+  FieldValues,
+  Path,
+  RegisterOptions
+} from 'react-hook-form';
+import { ReactNode } from 'react';
 
-interface TextFieldProps {
+interface TextFieldProps<T extends FieldValues = FieldValues> {
   label: string;
-  name: string;
+  name: Path<T>;
   type?: string;
-  register: UseFormRegister<any>; // در صورت داشتن فرم خاص، جای any را با نوع فرم خود جایگزین کنید
-  errors: FieldErrors<any>;
+  register: UseFormRegister<T>;
+  errors: FieldErrors<T>;
   required?: boolean;
-  validationSchema?: object;
+  validationSchema?: RegisterOptions<T>;
+  disabled?: boolean;
+  multiline?: boolean;
+  rows?: number;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-const TextField: React.FC<TextFieldProps> = ({
+const TextField = <T extends FieldValues>({
   label,
   name,
   type = 'text',
   register,
-  errors ,
+  errors,
   required = false,
   validationSchema = {},
   disabled = false,
-}) => {
+  multiline = false,
+  rows = 3,
+  value,
+  onChange,
+}: TextFieldProps<T>) => {
+  const error = errors[name] as FieldError | undefined;
+  const errorMessage = error?.message as ReactNode;
+
+  const registered = register(name, validationSchema);
+
   return (
     <div className={styles.textFieldContainer}>
       <label htmlFor={name} className={styles.label}>
         {label}
         {required && <span className={styles.requiredIndicator}>*</span>}
       </label>
-      <input
-        {...register(name, validationSchema)}
-        type={type}
-        id={name}
-        disabled={disabled}
-        autoComplete="off"
-        className={styles.input}
-      />
-      {errors && errors[name] && (
-        <span className={styles.errorMessage}>
-          {errors[name]?.message}
-        </span>
+
+      {multiline ? (
+        <textarea
+          {...registered}
+          id={name}
+          disabled={disabled}
+          autoComplete="off"
+          className={styles.textarea}
+          rows={rows}
+          onChange={(e) => {
+            registered.onChange(e); // for RHF
+            onChange?.(e);           // custom
+          }}
+        />
+      ) : (
+        <input
+          {...registered}
+          type={type}
+          id={name}
+          disabled={disabled}
+          autoComplete="off"
+          className={styles.input}
+          onChange={(e) => {
+            registered.onChange(e); // for RHF
+            onChange?.(e);           // custom
+          }}
+          value={value} 
+        />
+      )}
+
+      {errorMessage && (
+        <span className={styles.errorMessage}>{errorMessage}</span>
       )}
     </div>
   );

@@ -8,7 +8,6 @@ import {
   FiList,
   FiUsers,
   FiPieChart,
-  FiSettings,
   FiLogOut
 } from 'react-icons/fi';
 import styles from './AdminDashboard.module.css';

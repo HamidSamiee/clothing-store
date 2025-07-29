@@ -1,6 +1,8 @@
 import { CartItem } from "./Cart";
 import { Review } from "./Review";
 
+export type ProductSortOption = 'price_asc' | 'price_desc' | 'rating' | 'newest';
+
 export interface Product {
   id: string;
   name: string;
@@ -9,7 +11,7 @@ export interface Product {
   description: string;
   specifications?: Record<string, string>;
   category: string;
-  images: string[];
+  image: string;
   rating: number;
   sizes: string[];
   colors: string[];
@@ -26,7 +28,7 @@ export interface ProductFilterOptions {
   minPrice?: number;
   maxPrice?: number;
   featured?: boolean;
-  sort?: 'price_asc' | 'price_desc' | 'rating' | 'newest';
+  sort?: ProductSortOption; // استفاده از نوع تعریف شده
   page?: number;
   perPage?: number;
 }
@@ -50,6 +52,17 @@ export interface ProductCardProps {
     rating: number;
   };
   showBadge?: boolean;
-  onAddToCart: (product: Omit<CartItem, 'quantity'>) => void;
+  onAddToCart?: (product: Omit<CartItem, 'quantity'>) => void;
+  onClick?: () => void
+}
 
+export interface RawProduct extends Omit<Product, 'id' | 'price' | 'rating' | 'stock' | 'sizes' | 'colors' | 'reviews'> {
+  id?: string | number;
+  price: string | number;
+  rating: string | number;
+  stock: string | number;
+  sizes: string | string[];
+  colors: string | string[];
+  reviews?: string; // برای حالت سریالیزه شده
+  [key: string]: string | number | boolean | string[] | number[] | Record<string, string> | undefined;
 }

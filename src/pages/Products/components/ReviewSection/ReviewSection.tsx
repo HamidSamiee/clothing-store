@@ -4,12 +4,8 @@ import styles from './ReviewSection.module.css';
 import { toast } from 'react-toastify';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import { useTranslation } from 'react-i18next';
+import { SafeUser } from '@/types/User';
 
-interface User {
-  id: string;
-  name: string;
-  avatar?: string;
-}
 
 interface Review {
   id: string;
@@ -23,7 +19,7 @@ interface Review {
 interface ReviewSectionProps {
   reviews: Review[];
   averageRating?: number;
-  user: User | null;
+  user: SafeUser | null;
   onAddReview: (review: { rating: number; comment: string }) => Promise<void>;
 }
 
@@ -58,7 +54,6 @@ const ReviewSection = ({
     try {
       await onAddReview(newReview);
       setNewReview({ rating: 0, comment: '' });
-      toast.success(t('reviews.submitSuccess'));
     } catch (error) {
       toast.error(t('reviews.submitError'));
       console.error('Error submitting review:', error);

@@ -2,35 +2,13 @@ import { useState } from 'react';
 import styles from './QuestionsSection.module.css';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { Question } from '@/types/Review';
+import { SafeUser } from '@/types/User';
 
-interface User {
-  id: string | number;
-  name: string;
-  role: string;
-}
-
-interface Answer {
-  id: string;
-  userId: string | number;
-  userName: string;
-  answer: string;
-  isAdmin: boolean;
-  createdAt: string;
-}
-
-interface Question {
-  id: string;
-  productId: string;
-  userId: string | number;
-  userName: string;
-  question: string;
-  answers: Answer[];
-  createdAt: string;
-}
 
 interface QuestionsSectionProps {
   questions: Question[];
-  user: User | null;
+  user: SafeUser | null;
   onAddQuestion: (question: string) => Promise<void>;
   onAddAnswer: (questionId: string, answer: string) => Promise<void>;
 }
@@ -60,9 +38,8 @@ const QuestionsSection = ({
     try {
       await onAddQuestion(newQuestion);
       setNewQuestion('');
-      toast.success(t('questions.questionSubmitted'));
     } catch (error) {
-      toast.error(t('questions.submitError'));
+      toast.error('اشکال در افزودن سوال');
       console.error('Error submitting question:', error);
     }
   };
@@ -79,9 +56,8 @@ const QuestionsSection = ({
       await onAddAnswer(replyingTo, replyText);
       setReplyingTo(null);
       setReplyText('');
-      toast.success(t('questions.answerSubmitted'));
     } catch (error) {
-      toast.error(t('questions.answerSubmitError'));
+      toast.error('اشکال در افزودن پاسخ');
       console.error('Error submitting answer:', error);
     }
   };

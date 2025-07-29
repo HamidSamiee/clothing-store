@@ -1,5 +1,6 @@
-import { Product, ProductFilterOptions, PaginatedResponse } from "@/types/Product";
+import { Product, ProductFilterOptions, PaginatedResponse ,RawProduct} from "@/types/Product";
 import http from "./httpService";
+
 
 
 export const getProducts = async (
@@ -54,7 +55,7 @@ export const getProducts = async (
         products.sort((a: Product, b: Product) => b.rating - a.rating);
         break;
       case 'newest':
-        products.sort((a: Product, b: Product) => b.id - a.id);
+        products.sort((a: Product, b: Product) => Number(b.id) - Number(a.id));
         break;
     }
   }
@@ -75,7 +76,7 @@ export const getProducts = async (
 };
 
 
-export const getProductById = async (id: number) => {
+export const getProductById = async (id: number | string) => {
  
     const response = await http.get(`/products/${id}`);
     return response.data;
@@ -97,23 +98,49 @@ export const searchProducts = async (query: string) => {
 
 // سرویس‌های مدیریت محصولات (برای ادمین)
 
-const normalizeProduct = (product: any): Product => ({
-  ...product,
-  price: Number(product.price),
-  rating: Number(product.rating),
-  stock: Number(product.stock),
-  sizes: Array.isArray(product.sizes) ? product.sizes : product.sizes.split(',').map(s => s.trim()),
-  colors: Array.isArray(product.colors) ? product.colors : product.colors.split(',').map(c => c.trim())
-});
+const normalizeProduct = (product: RawProduct): Product => {
+  const normalized: Product = {
+    ...product,
+    id: product.id?.toString() || '', // تبدیل به string با مقدار پیش‌فرض
+    price: Number(product.price),
+    rating: Number(product.rating),
+    stock: Number(product.stock),
+    sizes: Array.isArray(product.sizes) 
+      ? product.sizes 
+      : product.sizes.split(',').map((s: string) => s.trim()),
+    colors: Array.isArray(product.colors) 
+      ? product.colors 
+      : product.colors.split(',').map((c: string) => c.trim()),
+    specifications: product.specifications || {},
+    reviews: product.reviews ? JSON.parse(product.reviews) : []
+  };
+  
+  // محاسبه averageRating اگر وجود نداشت
+  if (normalized.reviews && normalized.reviews.length > 0 && !normalized.averageRating) {
+    normalized.averageRating = normalized.reviews.reduce((sum, review) => sum + review.rating, 0) / normalized.reviews.length;
+  }
+  
+  return normalized;
+};
 
-export const addProduct = async (productData: Omit<Product, 'id'>) => {
-  const normalizedData = normalizeProduct(productData);
+// تابع addProduct اصلاح شده
+export const addProduct = async (productData: Omit<Product, 'id'>): Promise<Product> => {
+  const normalizedData: RawProduct = {
+    ...productData,
+    price: productData.price.toString(),
+    rating: productData.rating.toString(),
+    stock: productData.stock.toString(),
+    sizes: productData.sizes,
+    colors: productData.colors,
+    reviews: productData.reviews ? JSON.stringify(productData.reviews) : undefined
+  };
+  
   const response = await http.post('/products', normalizedData);
-  return response.data;
+  return normalizeProduct(response.data);
 };
 
 
-export const updateProduct = async (id: number, productData: Partial<Product>) => {
+export const updateProduct = async (id: number | string, productData: Partial<Product>) => {
 
     const response = await http.patch(`/products/${id}`, productData);
     return response.data;
@@ -121,7 +148,7 @@ export const updateProduct = async (id: number, productData: Partial<Product>) =
 };
 
 
-export const deleteProduct = async (id: number) => {
+export const deleteProduct = async (id: number | string) => {
 
     const response = await http.delete(`/products/${id}`);
     return response.data;

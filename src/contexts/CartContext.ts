@@ -7,11 +7,13 @@ import { createContext} from 'react';
 interface CartContextType {
   items: CartItem[];
   total: number;
-  addToCart: (item: Omit<CartItem, 'quantity'>) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  addToCart: (item: CartItem) => void;
+  removeFromCart: (uniqueKey: string) => void;
+  updateQuantity: (uniqueKey: string, quantity: number) => void;
   clearCart: () => void;
+  getUniqueKey: (item: CartItem) => string;
 }
+
 
 export const CartContext = createContext<CartContextType | null>(null);
 

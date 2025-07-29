@@ -47,6 +47,9 @@
       "wishList": [
         "1",
         "3"
+      ],
+      "wishlist": [
+        "4"
       ]
     },
     {
@@ -103,12 +106,7 @@
       "userId": "1",
       "rating": 5,
       "comment": "کیفیت عالی داشت، بسیار راحت است",
-      "replyIds": [
-        "rep1",
-        "rep1753300680065"
-      ],
-      "createdAt": "2023-05-15T10:30:00Z",
-      "updatedAt": "2023-05-15T10:30:00Z"
+      "createdAt": "2023-05-15T10:30:00Z"
     },
     {
       "id": "rev1753300634497",
@@ -116,9 +114,7 @@
       "userId": 1752324962200,
       "rating": 3,
       "comment": "کفش راحت ومناسبی هست ",
-      "replyIds": [],
-      "createdAt": "2025-07-23T19:57:14.497Z",
-      "updatedAt": "2025-07-23T19:57:14.497Z"
+      "createdAt": "2025-07-23T19:57:14.497Z"
     },
     {
       "id": "rev1753304401524",
@@ -126,9 +122,7 @@
       "userId": 1752324962200,
       "rating": 3,
       "comment": "کفش خوبیه",
-      "replyIds": [],
-      "createdAt": "2025-07-23T21:00:01.524Z",
-      "updatedAt": "2025-07-23T21:00:01.524Z"
+      "createdAt": "2025-07-23T21:00:01.524Z"
     },
     {
       "id": "rev1753544819962",
@@ -136,9 +130,25 @@
       "userId": 1752324962200,
       "rating": 4,
       "comment": "شلوار خوبی هست",
-      "replyIds": [],
-      "createdAt": "2025-07-26T15:46:59.962Z",
-      "updatedAt": "2025-07-26T15:46:59.962Z"
+      "createdAt": "2025-07-26T15:46:59.962Z"
+    },
+    {
+      "id": "rev1753802846865",
+      "productId": "1",
+      "userId": "1",
+      "userName": "محمد رضایی",
+      "rating": 5,
+      "comment": "پیراهن خوبیه",
+      "createdAt": "2025-07-29T15:27:26.865Z"
+    },
+    {
+      "id": "rev1753803539854",
+      "productId": "4",
+      "userId": "1",
+      "userName": "محمد رضایی",
+      "rating": 4,
+      "comment": "کت خوبیه",
+      "createdAt": "2025-07-29T15:38:59.854Z"
     }
   ],
   "questions": [
@@ -185,6 +195,24 @@
         }
       ],
       "createdAt": "2025-07-26T15:47:56.881Z"
+    },
+    {
+      "id": "q1753802886763",
+      "productId": "1",
+      "userId": "1",
+      "userName": "محمد رضایی",
+      "question": "سفارش بدم کی به دستم میرسه",
+      "answers": [],
+      "createdAt": "2025-07-29T15:28:06.764Z"
+    },
+    {
+      "id": "q1753803574124",
+      "productId": "4",
+      "userId": "1",
+      "userName": "محمد رضایی",
+      "question": "کی به دستم میرسه",
+      "answers": [],
+      "createdAt": "2025-07-29T15:39:34.124Z"
     }
   ],
   "products": [
@@ -286,7 +314,7 @@
       "category": "men",
       "image": "/images/products/jacket1.webp",
       "rating": 4.9,
-      "wishlistCount": 5,
+      "wishlistCount": 6,
       "reviewIds": [
         "rev1",
         "rev2"

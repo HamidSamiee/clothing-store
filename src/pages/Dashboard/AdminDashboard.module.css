@@ -17,6 +17,7 @@
 
 .sidebar.closed {
     width: 70px;
+    align-items: center;
 }
 
 .sidebarHeader {

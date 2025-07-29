@@ -4,13 +4,18 @@ export interface OrderItem {
     price: number;
   }
   
+
+  type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled';
+
+
 export interface Order {
     id: number;
     userId: number;
     date: string;
     items: OrderItem[];
     total: number;
-    status: "درحال پردازش" | "ارسال شده" | "تحویل داده شد" | "لغو شد";
+    status: OrderStatus;
     paymentMethod: string;
+    shippingAddress?: string;
   }
   

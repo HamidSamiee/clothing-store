@@ -1,11 +1,12 @@
 // components/admin/OrdersManagement.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FiSearch, FiEye, FiTruck, FiCheck, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { getOrders, updateOrderStatus } from '@/services/orderService';
 import OrdersModal from './components/OrdersModal/OrdersModal';
 import styles from './AdminComponents.module.css';
 import { Order } from '@/types/Order';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
+import { getOrders, getProductsByIds, updateOrderStatus } from '@/services/orderService';
+import { Product } from '@/types/Product';
 
 const ORDERS_PER_PAGE = 2;
 
@@ -16,12 +17,10 @@ const OrdersManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalOrders, setTotalOrders] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [productsMap, setProductsMap] = useState<Record<number, Product>>({});
 
-  useEffect(() => {
-    fetchOrders();
-  }, [currentPage]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await getOrders({
@@ -30,18 +29,36 @@ const OrdersManagement = () => {
         search: searchTerm
       });
       setOrders(response.data);
+      const allProductIds = response.data.flatMap(order => 
+        order.items.map(item => item.productId)
+      );
+      
+      const fetchedProducts = await getProductsByIds(allProductIds);
+      
+      // ساخت map: { 1: {id:1,name:'x'}, 2: {...} }
+      const productsRecord: Record<number, Product> = {};
+      fetchedProducts.forEach(p => {
+        productsRecord[Number(p.id)] = p;
+      });
+      
+      setProductsMap(productsRecord);
+      
       setTotalOrders(response.total);
     } catch (error) {
       console.error('Error fetching orders:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, searchTerm]);
 
   const handleSearch = () => {
     setCurrentPage(1);
     fetchOrders();
   };
+
+  useEffect(() => {
+    fetchOrders();
+  }, [currentPage,fetchOrders]);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -51,7 +68,7 @@ const OrdersManagement = () => {
     try {
       await updateOrderStatus(orderId, newStatus);
       setOrders(orders.map(order => 
-        order.id === orderId ? { ...order, status: newStatus } : order
+        order.id === orderId ? { ...order, status: order.status as 'processing' | 'shipped' | 'delivered' | 'cancelled' } : order
       ));
     } catch (error) {
       console.error('Error updating order status:', error);
@@ -130,7 +147,7 @@ const OrdersManagement = () => {
                   <h4>محصولات:</h4>
                   {order.items.map(item => (
                     <div key={item.productId} className={styles.orderItem}>
-                      <span>محصول #{toPersianNumbers(item.productId)}</span>
+                      <span>{productsMap[item.productId]?.name || `محصول #${toPersianNumbers(item.productId)}`}</span>
                       <span>{toPersianNumbers(item.quantity)} عدد</span>
                       <span>{toPersianNumbers(item.price.toLocaleString())} تومان</span>
                     </div>

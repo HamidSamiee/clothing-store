@@ -1,5 +1,5 @@
 export interface User {
-  id?: number;
+  id: string | number;
   name: string;
   email: string;
   password: string;
@@ -13,3 +13,5 @@ export interface LoginData {
   email: string;
   password: string;
 }
+
+export type SafeUser = Omit<User, "password">;
