@@ -16,6 +16,7 @@ const PaymentVerification = () => {
     const verify = async () => {
       if (authority && status) {
         const result = verifyPayment(authority, status);
+        console.log('Payment result:', result); 
         if (result.success) {
           navigate('/payment-success');
         } else {
@@ -35,9 +36,11 @@ const PaymentVerification = () => {
         <div className={styles.loadingMessage}>در حال تایید پرداخت...</div>
       ) : error ? (
         <div className={styles.errorMessage}>{error}</div>
-      ) : null}
+      ) : (
+        <div className={styles.successMessage}>در حال انتقال به صفحه‌ی وضعیت پرداخت...</div>
+      )}
     </div>
   );
-};
+} 
 
 export default PaymentVerification;
