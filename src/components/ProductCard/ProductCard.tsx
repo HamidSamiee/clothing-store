@@ -26,7 +26,7 @@ const ProductCard = ({ product, showBadge = false }: ProductCardProps) => {
       name: product.name,
       price: finalPrice,
       image: product.image,
-      // quantity: 1
+      quantity: 1
     });
     toast.success("محصول به سبد خرید اضافه شد")
   };

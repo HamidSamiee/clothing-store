@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (!user?.id) return;
 
     try {
-      const updatedUser = await updateUserProfile(user.id, updatedData);
+      const updatedUser = await updateUserProfile(Number(user.id), updatedData);
       const { password: _unused, ...userWithoutPassword } = updatedUser;
       toast.success('اطلاعات شما با موفقیت آپدیت شد')
       persistUser(userWithoutPassword);
