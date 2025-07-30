@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+
 
 export const usePayment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,8 +34,27 @@ export const usePayment = () => {
     }
   };
 
-  const verifyPayment = () => {
-    // همان کد قبلی برای تأیید پرداخت
+  const verifyPayment = (authority?: string, status?: string) => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentAuthority = authority || urlParams.get('Authority');
+      const paymentStatus = status || urlParams.get('Status');
+
+      if (paymentStatus === 'OK') {
+        const paymentData = JSON.parse(localStorage.getItem('zarinpalPayment') || '{}');
+        toast.success("پرداخت تایید شد");
+        return {
+          success: true,
+          amount: paymentData.amount,
+          authority: paymentAuthority
+        };
+      }
+      return { success: false };
+    } catch (error) {
+      console.error('Verification error:', error);
+      setError('خطا در تأیید پرداخت');
+      return { success: false };
+    }
   };
 
   return { initiatePayment, verifyPayment, isLoading, error };
