@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import ZarinPal from 'zarinpal-checkout';
 
-const zarinpal = ZarinPal.create('00000000-0000-0000-0000-000000000000', true); // sandbox mode فعال است
+const isSandbox = true;
+
+const zarinpal = ZarinPal.create(
+  isSandbox ? '00000000-0000-0000-0000-000000000000' : 'MERCHANT_ID_REAL',
+  isSandbox
+);
+
 
 export const usePayment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,23 +18,20 @@ export const usePayment = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await zarinpal.PaymentRequest({
-        Amount: amount,
-        CallbackURL: 'https://modina.netlify.app/verify', // حتما این مسیر باید در سایتت باشه
-        Description: description,
+      const response = await zarinpal.request({
+        amount: amount * 10, // به ریال
+        callback_url: 'https://modina.netlify.app/verify',
+        description,
       });
 
-      if (response.status === 100) {
-        // ذخیره اطلاعات پرداخت برای صفحه موفقیت‌آمیز
+      if (response.code === 100) {
         localStorage.setItem(
           'zarinpalPayment',
           JSON.stringify({ amount, authority: response.authority })
         );
-
-        // هدایت به درگاه پرداخت
         window.location.href = response.url;
       } else {
-        throw new Error('خطا در ایجاد پرداخت. کد وضعیت: ' + response.status);
+        throw new Error('خطا در ایجاد پرداخت. کد وضعیت: ' + response.code);
       }
     } catch (err) {
       console.error('Payment error:', err);
@@ -47,7 +50,7 @@ export const usePayment = () => {
 
       if (paymentStatus === 'OK') {
         const paymentData = JSON.parse(localStorage.getItem('zarinpalPayment') || '{}');
-        toast.success("پرداخت تایید شد")
+        toast.success("پرداخت تایید شد");
         return {
           success: true,
           amount: paymentData.amount,

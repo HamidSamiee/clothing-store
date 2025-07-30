@@ -1,21 +1,25 @@
 import ZarinPal from 'zarinpal-checkout';
+const isSandbox = true;
 
 export async function handler(event) {
   try {
     const { amount, description } = JSON.parse(event.body);
 
-    const zarinpalClient = ZarinPal.create('eaa1ef97-2c45-11e8-b7f0-005056a205be', true);
+    const zarinpalClient = ZarinPal.create(
+      isSandbox ? '00000000-0000-0000-0000-000000000000' : 'MERCHANT_ID_REAL',
+      isSandbox
+    );
 
-    const response = await zarinpalClient.PaymentRequest({
-      Amount: amount * 10,
-      CallbackURL: `${process.env.BASE_URL}/payment-verification`, // مثلا https://yourdomain.netlify.app
-      Description: description,
+    const response = await zarinpalClient.request({
+      amount: amount * 10,
+      callback_url: `${process.env.BASE_URL || 'https://modina.netlify.app'}/payment-verification`,
+      description,
     });
 
-    if (response.status === 100) {
+    if (response.code === 100) {
       return {
         statusCode: 200,
-        body: JSON.stringify({ url: `https://sandbox.zarinpal.com/pg/StartPay/${response.authority}` })
+        body: JSON.stringify({ url: response.url })
       };
     }
 
@@ -23,7 +27,8 @@ export async function handler(event) {
       statusCode: 400,
       body: JSON.stringify({ error: response.message || 'خطا در پرداخت' })
     };
-  } catch  {
+  } catch (err) {
+    console.error('Server error:', err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'خطا در سرور پرداخت' })
