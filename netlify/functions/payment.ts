@@ -23,7 +23,7 @@ export async function handler(event) {
       statusCode: 400,
       body: JSON.stringify({ error: response.message || 'خطا در پرداخت' })
     };
-  } catch (error) {
+  } catch  {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'خطا در سرور پرداخت' })

@@ -24,6 +24,7 @@ const UsersManagement = lazy(() => import('@/pages/Dashboard/UsersManagement'));
 const StatsDashboard = lazy(() => import('@/pages/Dashboard/StatsDashboard'));
 const OrderHistory = lazy(() => import('@/pages/Profile/OrderHistory'));
 const ProfileLayout = lazy(() => import('@/pages/Profile/ProfileLayout'));
+const PaymentVerify = lazy(() => import('@pages/PaymentVerification/PaymentVerification'));
 
 
 export const routes: RouteObject[] = [
@@ -42,6 +43,7 @@ export const routes: RouteObject[] = [
       { path: "/register", element: <Register /> },
       { path: "/payment-success", element: <PaymentSuccess /> },
       { path: "/payment-failed", element: <PaymentFailed /> },
+      { path: "/verify", element: <PaymentVerify /> },
       
       // مسیرهای نیازمند احراز هویت (کاربران عادی و ادمین)
       {

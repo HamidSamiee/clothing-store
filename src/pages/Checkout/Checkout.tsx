@@ -154,13 +154,15 @@ const Checkout = () => {
           onSelect={handleDeliverySelect} 
           selectedMethod={deliveryMethod}
         />
-        <button 
-          onClick={() => setStep('payment')} 
-          className={styles.continueButton}
-          disabled={!deliveryMethod}
-        >
-          {t('checkout.continueToPayment')}
-        </button>
+        <div className={styles.containerContinueBtn}>
+            <button 
+              onClick={() => setStep('payment')} 
+              className={styles.continueButton}
+              disabled={!deliveryMethod}
+            >
+              {t('checkout.continueToPayment')}
+            </button>
+        </div>
       </div>
     );
   }
@@ -168,38 +170,40 @@ const Checkout = () => {
   return (
     <div className={styles.checkoutContainer}>
       {renderStepper()}
+
       <h1 className={styles.checkoutTitle}>{t('checkout.reviewOrder')}</h1>
-      
-      <div className={styles.orderSummary}>
-        <h3>{t('checkout.orderItems')} ({items.length})</h3>
-        <ul className={styles.itemsList}>
-          {items.map(item => (
-            <li key={item.id} className={styles.item}>
-              <span>{item.name}</span>
-              <span>{item.quantity} × {item.price.toLocaleString()} {t('product.currency')}</span>
-            </li>
-          ))}
-        </ul>
-        
-        <div className={styles.shippingInfo}>
-          <h3>{t('checkout.shippingAddress')}</h3>
-          <p>{address?.street}, {address?.city}, {address?.postalCode}</p>
-        </div>
-        
-        <div className={styles.deliveryInfo}>
-          <h3>{t('checkout.deliveryMethod')}</h3>
-          <p>{deliveryMethod}</p>
-        </div>
-        
-        <div className={styles.totalAmount}>
-          <h3>{t('cart.total')}:</h3>
-          <span>{total.toLocaleString()} {t('product.currency')}</span>
-        </div>
+      <div className={styles.containerContinueBtn}>
+          <div className={styles.orderSummary}>
+            <h3>{t('checkout.orderItems')} ({items.length})</h3>
+            <ul className={styles.itemsList}>
+              {items.map(item => (
+                <li key={item.id} className={styles.item}>
+                  <span>{item.name}</span>
+                  <span>{item.quantity} × {item.price.toLocaleString()} {t('product.currency')}</span>
+                </li>
+              ))}
+            </ul>
+            
+            <div className={styles.shippingInfo}>
+              <h3>{t('checkout.shippingAddress')}</h3>
+              <p>{address?.street}, {address?.city}, {address?.postalCode}</p>
+            </div>
+            
+            <div className={styles.deliveryInfo}>
+              <h3>{t('checkout.deliveryMethod')}</h3>
+              <p>{deliveryMethod}</p>
+            </div>
+            
+            <div className={styles.totalAmount}>
+              <h3>{t('cart.total')}:</h3>
+              <span>{total.toLocaleString()} {t('product.currency')}</span>
+            </div>
+          </div>
+          
+          <button onClick={handlePayment} className={styles.paymentButton}>
+            {t('checkout.payWithZarinpal')}
+          </button>
       </div>
-      
-      <button onClick={handlePayment} className={styles.paymentButton}>
-        {t('checkout.payWithZarinpal')}
-      </button>
     </div>
   );
 };

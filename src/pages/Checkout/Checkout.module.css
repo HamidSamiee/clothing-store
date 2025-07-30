@@ -1,11 +1,14 @@
 /* src/pages/Checkout/Checkout.module.css */
 .checkoutContainer {
     max-width: 600px;
+    width:100%;
     margin: 0 auto;
     padding: 30px 20px;
     background-color: var(--bg-primary);
     border-radius: 10px;
     box-shadow: 0 2px 10px var(--shadow-color);
+   
+    
 }
 
 .checkoutTitle {
@@ -51,7 +54,7 @@
 }
 
 .stepperNumber.completed {
-    background-color: var(--success-color) !important;
+    background-color: #2ecc71 !important;
     color: white;
     border-color: var(--success-color);
 }
@@ -111,13 +114,17 @@
 .paymentButton {
     width: 100%;
     padding: 15px;
-    background-color: var(--primary-color);
+    background-color: var(--primary-color) !important;
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 1.1rem;
     cursor: pointer;
+    margin: 1rem auto 0;
+     margin-top: 20px;
     transition: background-color 0.3s;
+    max-width: 28rem;
+    font-family: 'VazirMatn';
 }
 
 .paymentButton:hover {
@@ -183,15 +190,24 @@
     background-color: var(--primary-dark);
 }
 
+
+.containerContinueBtn{
+    display: flex;
+        flex-direction: column;
+        align-items: center;
+}
 .continueButton {
     width: 100%;
-    padding: 12px;
+    max-width: 28rem;
+    padding: 0.75rem 1rem;
     background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 0.375rem;
     font-size: 1rem;
     cursor: pointer;
+    font-family: 'VazirMatn';
+    margin: 1rem auto 0;
     margin-top: 20px;
     transition: background-color 0.3s;
 }
@@ -202,4 +218,16 @@
 
 .continueButton:disabled {
     background-color: var(--text-tertiary);
-    cursor: not-allowed; }
+    cursor: not-allowed; 
+}
+
+  .orderSummary{
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: 0.5rem;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    }
