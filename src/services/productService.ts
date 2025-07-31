@@ -79,6 +79,7 @@ export const getProducts = async (
 export const getProductById = async (id: number | string) => {
  
     const response = await http.get(`/products/${id}`);
+    console.log('data:', response);
     return response.data;
   
 };

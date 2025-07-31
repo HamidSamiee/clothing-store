@@ -1,26 +1,14 @@
 import axios from "axios";
 
+const baseURL = import.meta.env.VITE_BASE_URL || '/api';
 
 const app = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
+    baseURL,
     withCredentials: false,
     headers: { 'Content-Type': 'application/json' },
   });
   
   
-
-// accessToken => jwt => national-id => unique !  => user id => jwt => localStorage , cookie
-// http only => no access on browser (js) => safe =>
-// =>  id = 1234566 => jwt => AFDSFSLKAQTEWRLDAKSJFEQRERQWLRKJ3434DFSDF => COOKIES =>
-
-// accessToken => 24 hrs =>
-// refreshToken => 30 days =>
-
-// 1. => access : OK => continue ...
-// 2. => access : EXPIRE => 1. log out =>  ...  2. login => HOW ?? =>
-//  based on refreshToken => create new accessToken => 24 hrs , 30 days => ...continue ...
-// 3. refresh : EXPIRES => new login =>
-
 app.interceptors.request.use(
   (res) => res,
   (err) => Promise.reject(err)
@@ -34,7 +22,7 @@ app.interceptors.response.use(
       originalConfig._retry = true;
       try {
         const { data } = await axios.get(
-          `${process.env.BASE_URL}/user/refresh-token`,
+          `${baseURL}/user/refresh-token`,
           {
             withCredentials: true,
           }

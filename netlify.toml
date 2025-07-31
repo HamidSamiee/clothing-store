@@ -13,7 +13,14 @@
 [functions]
   directory = "netlify/functions"
 
+# هندل کردن ریدایرکت درخواست‌های API به سرورلس
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
+  status = 200
+
+# هندل کردن مسیرهای React Router (SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200
