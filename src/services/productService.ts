@@ -8,7 +8,8 @@ export const getProducts = async (
 ): Promise<PaginatedResponse<Product>> => {
   // ابتدا همه محصولات را دریافت می‌کنیم
   const response = await http.get('/products');
-  
+  console.log('data:', response);
+
   let products = response.data;
 
   // اعمال فیلترها
@@ -79,7 +80,6 @@ export const getProducts = async (
 export const getProductById = async (id: number | string) => {
  
     const response = await http.get(`/products/${id}`);
-    console.log('data:', response);
     return response.data;
   
 };
@@ -161,6 +161,8 @@ export const getFeaturedProducts = async () => {
   const response = await http.get('/products', {
     params: { featured: true },
   });
+  console.log('data:', response);
+
   return response.data;
 };
 
