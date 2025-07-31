@@ -158,10 +158,10 @@ export const deleteProduct = async (id: number | string) => {
 
 
 export const getFeaturedProducts = async () => {
-  const response = await http.get('/products', {
+  const response = await http.get('/api/products', {
     params: { featured: true },
   });
-  console.log('data:', response);
+  console.log('getFeaturedProducts:', response);
 
   return response.data;
 };
