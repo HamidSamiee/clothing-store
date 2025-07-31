@@ -1,0 +1,1439 @@
+{
+  "categories": [
+    {
+      "id": "1",
+      "name": "مردانه",
+      "slug": "men",
+      "image": "/images/categories/men.jpg"
+    },
+    {
+      "id": "2",
+      "name": "زنانه",
+      "slug": "women",
+      "image": "/images/categories/women.jpg"
+    },
+    {
+      "id": "3",
+      "name": "بچه گانه",
+      "slug": "kids",
+      "image": "/images/categories/kids.jpg"
+    },
+    {
+      "id": "4",
+      "name": "ورزشی",
+      "slug": "sports",
+      "image": "/images/categories/sports.jpg"
+    },
+    {
+      "id": "5",
+      "name": "اکسسوری",
+      "slug": "accessories",
+      "image": "/images/categories/accessories.jpg"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "name": "محمد رضایی",
+      "email": "mohammad@example.com",
+      "password": "password123",
+      "address": "تهران، خیابان آزادی، پلاک ۱۲۳",
+      "phone": "09123456789",
+      "orders": [
+        1,
+        3
+      ],
+      "role": "user",
+      "wishList": [
+        "1",
+        "3"
+      ],
+      "wishlist": [
+        "4"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "فاطمه محمدی",
+      "email": "fatemeh@example.com",
+      "password": "password123",
+      "address": "اصفهان، خیابان چهارباغ، پلاک ۴۵",
+      "phone": "09187654321",
+      "orders": [
+        2
+      ],
+      "role": "user",
+      "wishList": [
+        "1",
+        "3",
+        "10"
+      ]
+    },
+    {
+      "id": "3",
+      "name": "علی حسینی",
+      "email": "ali@example.com",
+      "password": "password123",
+      "address": "مشهد، بلوار وکیل آباد، پلاک ۶۷",
+      "phone": "09351234567",
+      "orders": [],
+      "role": "user",
+      "wishList": [
+        "14",
+        "35"
+      ]
+    },
+    {
+      "id": 1752324962200,
+      "name": "حمید",
+      "email": "hamidsmoaser@gmail.com",
+      "password": "nasr12345",
+      "phone": "09139734679",
+      "address": "اصفهان",
+      "orders": [],
+      "role": "admin",
+      "wishlist": [
+        "6",
+        "20",
+        "2"
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev1",
+      "productId": "1",
+      "userId": "1",
+      "rating": 5,
+      "comment": "کیفیت عالی داشت، بسیار راحت است",
+      "createdAt": "2023-05-15T10:30:00Z"
+    },
+    {
+      "id": "rev1753300634497",
+      "productId": "20",
+      "userId": 1752324962200,
+      "rating": 3,
+      "comment": "کفش راحت ومناسبی هست ",
+      "createdAt": "2025-07-23T19:57:14.497Z"
+    },
+    {
+      "id": "rev1753304401524",
+      "productId": "20",
+      "userId": 1752324962200,
+      "rating": 3,
+      "comment": "کفش خوبیه",
+      "createdAt": "2025-07-23T21:00:01.524Z"
+    },
+    {
+      "id": "rev1753544819962",
+      "productId": "2",
+      "userId": 1752324962200,
+      "rating": 4,
+      "comment": "شلوار خوبی هست",
+      "createdAt": "2025-07-26T15:46:59.962Z"
+    },
+    {
+      "id": "rev1753802846865",
+      "productId": "1",
+      "userId": "1",
+      "userName": "محمد رضایی",
+      "rating": 5,
+      "comment": "پیراهن خوبیه",
+      "createdAt": "2025-07-29T15:27:26.865Z"
+    },
+    {
+      "id": "rev1753803539854",
+      "productId": "4",
+      "userId": "1",
+      "userName": "محمد رضایی",
+      "rating": 4,
+      "comment": "کت خوبیه",
+      "createdAt": "2025-07-29T15:38:59.854Z"
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "productId": "1",
+      "userId": "2",
+      "userName": "فاطمه محمدی",
+      "question": "آیا این محصول گارانتی دارد؟",
+      "answers": [
+        {
+          "id": "ans1",
+          "userId": "admin1",
+          "userName": "مدیر سیستم",
+          "answer": "بله، گارانتی 12 ماهه دارد",
+          "isAdmin": true,
+          "createdAt": "2023-07-10T13:45:00Z"
+        }
+      ],
+      "createdAt": "2023-07-10T11:20:00Z"
+    },
+    {
+      "id": "q1753544876881",
+      "productId": "2",
+      "userId": 1752324962200,
+      "userName": "حمید",
+      "question": "آیا این محصول گارانتی دارد؟",
+      "answers": [
+        {
+          "id": "ans1753544963432",
+          "userId": 1752324962200,
+          "userName": "حمید",
+          "answer": "بله گارانتی 6 ماه",
+          "isAdmin": true,
+          "createdAt": "2025-07-26T15:49:23.433Z"
+        },
+        {
+          "id": "ans1753545060255",
+          "userId": 1752324962200,
+          "userName": "حمید",
+          "answer": "گارانتی تعویض رنگ داره",
+          "isAdmin": true,
+          "createdAt": "2025-07-26T15:51:00.255Z"
+        }
+      ],
+      "createdAt": "2025-07-26T15:47:56.881Z"
+    },
+    {
+      "id": "q1753802886763",
+      "productId": "1",
+      "userId": "1",
+      "userName": "محمد رضایی",
+      "question": "سفارش بدم کی به دستم میرسه",
+      "answers": [],
+      "createdAt": "2025-07-29T15:28:06.764Z"
+    },
+    {
+      "id": "q1753803574124",
+      "productId": "4",
+      "userId": "1",
+      "userName": "محمد رضایی",
+      "question": "کی به دستم میرسه",
+      "answers": [],
+      "createdAt": "2025-07-29T15:39:34.124Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "name": "پیراهن مردانه کلاسیک",
+      "price": 249000,
+      "discount": 15,
+      "description": "پیراهن مردانه با جنس کتان مرغوب و دوخت با کیفیت",
+      "category": "men",
+      "image": "/images/products/shirt1.webp",
+      "rating": 4.5,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "آبی",
+        "سفید",
+        "مشکی"
+      ],
+      "stock": 42,
+      "featured": true
+    },
+    {
+      "id": "2",
+      "name": "شلوار جین زنانه",
+      "price": 189000,
+      "description": "شلوار جین اسلیم فیت با کیفیت عالی",
+      "category": "women",
+      "image": "/images/products/jeans1.webp",
+      "rating": 4.2,
+      "wishlistCount": 6,
+      "reviewIds": [
+        "rev1",
+        "rev2",
+        "rev1753544819962"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "36",
+        "38",
+        "40",
+        "42"
+      ],
+      "colors": [
+        "آبی",
+        "مشکی"
+      ],
+      "stock": 25,
+      "featured": true
+    },
+    {
+      "id": "3",
+      "name": "هودی استریت",
+      "price": 175000,
+      "discount": 20,
+      "description": "هودی نخی با طرح ماموت",
+      "category": "unisex",
+      "image": "/images/products/hoodie1.webp",
+      "rating": 4.7,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "مشکی",
+        "خاکستری"
+      ],
+      "stock": 18,
+      "featured": true
+    },
+    {
+      "id": "4",
+      "name": "کت چرم مردانه",
+      "price": 890000,
+      "description": "کت چرم طبیعی با دوخت حرفه‌ای",
+      "category": "men",
+      "image": "/images/products/jacket1.webp",
+      "rating": 4.9,
+      "wishlistCount": 6,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "قهوه‌ای",
+        "مشکی"
+      ],
+      "stock": 8
+    },
+    {
+      "id": "5",
+      "name": "دامن پلیسه زنانه",
+      "price": 135000,
+      "discount": 10,
+      "description": "دامن پلیسه با جنس ساتن و الیاف طبیعی",
+      "category": "women",
+      "image": "/images/products/skirt1.webp",
+      "rating": 4.3,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M"
+      ],
+      "colors": [
+        "مشکی",
+        "خردلی",
+        "صورتی"
+      ],
+      "stock": 31
+    },
+    {
+      "id": "6",
+      "name": "کاپشن اسپرت",
+      "price": 653388,
+      "description": "مقاوم در برابر تعریق",
+      "category": "sports",
+      "image": "/images/products/sports6.webp",
+      "rating": 4.9,
+      "wishlistCount": 3,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 32,
+      "discount": 20,
+      "featured": true
+    },
+    {
+      "id": "7",
+      "name": "عینک آفتابی",
+      "price": 408124,
+      "description": "قابل ست با انواع پوشاک",
+      "category": "accessories",
+      "image": "/images/products/accessories7.webp",
+      "rating": "4",
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "25",
+        "30",
+        "35"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 37,
+      "featured": true,
+      "discount": 25
+    },
+    {
+      "id": "8",
+      "name": "کفش اسپرت",
+      "price": 201306,
+      "description": "طراحی مدرن",
+      "category": "shoes",
+      "image": "/images/products/shoes8.webp",
+      "rating": 4.6,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "نارنجی",
+        "صورتی"
+      ],
+      "stock": 12
+    },
+    {
+      "id": "9",
+      "name": "شلوار بچگانه",
+      "price": 413970,
+      "description": "نرم و مناسب پوست حساس",
+      "category": "kids",
+      "image": "/images/products/kids9.webp",
+      "rating": 4.4,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "Free Size"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 34,
+      "discount": 25
+    },
+    {
+      "id": "10",
+      "name": "تیشرت ورزشی",
+      "price": 166866,
+      "description": "مقاوم در برابر تعریق",
+      "category": "sports",
+      "image": "/images/products/sports10.webp",
+      "rating": 5,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "36",
+        "38",
+        "40"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 25,
+      "discount": 25,
+      "featured": true
+    },
+    {
+      "id": "11",
+      "name": "کیف دستی",
+      "price": 620179,
+      "description": "جنس باکیفیت و ماندگاری بالا",
+      "category": "accessories",
+      "image": "/images/products/accessories11.webp",
+      "rating": 4.1,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "نارنجی",
+        "صورتی"
+      ],
+      "stock": 14,
+      "discount": 25
+    },
+    {
+      "id": "12",
+      "name": "کفش روزمره",
+      "price": 2946000,
+      "description": "ضد لغزش و مقاوم",
+      "category": "shoes",
+      "image": "/images/products/shoes12.webp",
+      "rating": 4.2,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 31,
+      "discount": 10
+    },
+    {
+      "id": "13",
+      "name": "تیشرت کودک",
+      "price": 205850,
+      "description": "قابل شستشو با ماشین",
+      "category": "kids",
+      "image": "/images/products/kids13.webp",
+      "rating": 4.8,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "25",
+        "30",
+        "35"
+      ],
+      "colors": [
+        "مشکی",
+        "سفید"
+      ],
+      "stock": 21
+    },
+    {
+      "id": "14",
+      "name": "کفش دویدن",
+      "price": 7250000,
+      "description": "با پارچه تنفس‌پذیر",
+      "category": "sports",
+      "image": "/images/products/sports14.webp",
+      "rating": 3.6,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "36",
+        "38",
+        "40"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 7
+    },
+    {
+      "id": "15",
+      "name": "کلاه بافت",
+      "price": 259000,
+      "description": "مناسب هدیه",
+      "category": "accessories",
+      "image": "/images/products/accessories15.webp",
+      "rating": 4.4,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 34,
+      "featured": true
+    },
+    {
+      "id": "16",
+      "name": "کفش روزمره",
+      "price": 452588,
+      "description": "با کفی نرم و طبی",
+      "category": "shoes",
+      "image": "/images/products/shoes16.webp",
+      "rating": 3.8,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 48,
+      "featured": true
+    },
+    {
+      "id": "17",
+      "name": "پیراهن دخترانه",
+      "price": 647441,
+      "description": "مناسب مدرسه و بازی",
+      "category": "kids",
+      "image": "/images/products/kids17.webp",
+      "rating": 4.5,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "نارنجی",
+        "صورتی"
+      ],
+      "stock": 23
+    },
+    {
+      "id": "18",
+      "name": "کفش دویدن",
+      "price": 297058,
+      "description": "مقاوم در برابر تعریق",
+      "category": "sports",
+      "image": "/images/products/sports18.webp",
+      "rating": 4.7,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "Free Size"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 6
+    },
+    {
+      "id": "19",
+      "name": "عینک آفتابی",
+      "price": 245097,
+      "description": "جنس باکیفیت و ماندگاری بالا",
+      "category": "accessories",
+      "image": "/images/products/accessories19.webp",
+      "rating": 4.6,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "36",
+        "38",
+        "40"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 37
+    },
+    {
+      "id": "20",
+      "name": "کفش رسمی",
+      "price": 171999,
+      "description": "راحت برای استفاده روزانه",
+      "category": "shoes",
+      "image": "/images/products/shoes20.webp",
+      "rating": 4.1,
+      "wishlistCount": 6,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 18,
+      "featured": true,
+      "averageRating": 3
+    },
+    {
+      "id": "21",
+      "name": "تیشرت کودک",
+      "price": 164848,
+      "description": "طراحی رنگارنگ و کودک‌پسند",
+      "category": "kids",
+      "image": "/images/products/kids21.webp",
+      "rating": 3.8,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "25",
+        "30",
+        "35"
+      ],
+      "colors": [
+        "مشکی",
+        "سفید"
+      ],
+      "stock": 22,
+      "discount": 20,
+      "featured": true
+    },
+    {
+      "id": "22",
+      "name": "شلوار ورزشی",
+      "price": 375927,
+      "description": "ویژه دویدن و پیاده‌روی",
+      "category": "sports",
+      "image": "/images/products/sports22.webp",
+      "rating": 4.4,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "نارنجی",
+        "صورتی"
+      ],
+      "stock": 10,
+      "discount": 25
+    },
+    {
+      "id": "23",
+      "name": "کلاه بافت",
+      "price": 295996,
+      "description": "قابل ست با انواع پوشاک",
+      "category": "accessories",
+      "image": "/images/products/accessories23.webp",
+      "rating": 4.7,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 31,
+      "discount": 20,
+      "featured": true
+    },
+    {
+      "id": "24",
+      "name": "نیم بوت",
+      "price": 438561,
+      "description": "راحت برای استفاده روزانه",
+      "category": "shoes",
+      "image": "/images/products/shoes24.webp",
+      "rating": 3.8,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "25",
+        "30",
+        "35"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 34,
+      "discount": 15,
+      "featured": true
+    },
+    {
+      "id": "25",
+      "name": "شلوار بچگانه",
+      "price": 626170,
+      "description": "با طرح‌های کارتونی",
+      "category": "kids",
+      "image": "/images/products/kids25.webp",
+      "rating": 4.7,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 21
+    },
+    {
+      "id": "26",
+      "name": "لباس ورزشی",
+      "price": 592802,
+      "description": "با پارچه تنفس‌پذیر",
+      "category": "sports",
+      "image": "/images/products/sports26.webp",
+      "rating": 4,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 18,
+      "discount": 10
+    },
+    {
+      "id": "27",
+      "name": "کمربند چرمی",
+      "price": 345738,
+      "description": "قابل ست با انواع پوشاک",
+      "category": "accessories",
+      "image": "/images/products/accessories27.webp",
+      "rating": 4.5,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "36",
+        "38",
+        "40"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 30
+    },
+    {
+      "id": "28",
+      "name": "کفش رسمی",
+      "price": 189283,
+      "description": "با کفی نرم و طبی",
+      "category": "shoes",
+      "image": "/images/products/shoes28.webp",
+      "rating": 3.8,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "Free Size"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 48,
+      "featured": true
+    },
+    {
+      "id": "29",
+      "name": "کفش کودکانه",
+      "price": 676838,
+      "description": "نرم و مناسب پوست حساس",
+      "category": "kids",
+      "image": "/images/products/kids29.webp",
+      "rating": 4.5,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "25",
+        "30",
+        "35"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 18,
+      "discount": 10,
+      "featured": true
+    },
+    {
+      "id": "30",
+      "name": "کفش دویدن",
+      "price": 335676,
+      "description": "ویژه دویدن و پیاده‌روی",
+      "category": "sports",
+      "image": "/images/products/sports30.webp",
+      "rating": 4.5,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 40,
+      "discount": 15
+    },
+    {
+      "id": "31",
+      "name": "کمربند چرمی",
+      "price": 551465,
+      "description": "قابل ست با انواع پوشاک",
+      "category": "accessories",
+      "image": "/images/products/accessories31.webp",
+      "rating": 3.5,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "Free Size"
+      ],
+      "colors": [
+        "مشکی",
+        "سفید"
+      ],
+      "stock": 19,
+      "discount": 15
+    },
+    {
+      "id": "32",
+      "name": "کفش اسپرت",
+      "price": 466853,
+      "description": "با کفی نرم و طبی",
+      "category": "shoes",
+      "image": "/images/products/shoes32.webp",
+      "rating": 4,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "36",
+        "38",
+        "40"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 38,
+      "discount": 20,
+      "featured": true
+    },
+    {
+      "id": "33",
+      "name": "تیشرت کودک",
+      "price": 130274,
+      "description": "قابل شستشو با ماشین",
+      "category": "kids",
+      "image": "/images/products/kids33.webp",
+      "rating": 4.4,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 49
+    },
+    {
+      "id": "34",
+      "name": "تیشرت ورزشی",
+      "price": 691006,
+      "description": "با پارچه تنفس‌پذیر",
+      "category": "sports",
+      "image": "/images/products/sports34.webp",
+      "rating": 4.1,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "36",
+        "38",
+        "40"
+      ],
+      "colors": [
+        "نارنجی",
+        "صورتی"
+      ],
+      "stock": 8,
+      "discount": 10,
+      "featured": true
+    },
+    {
+      "id": "35",
+      "name": "کیف دستی",
+      "price": 429882,
+      "description": "با طراحی لوکس و خاص",
+      "category": "accessories",
+      "image": "/images/products/accessories35.webp",
+      "rating": 5,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "colors": [
+        "مشکی",
+        "سفید"
+      ],
+      "stock": 38,
+      "featured": true
+    },
+    {
+      "id": "36",
+      "name": "کفش روزمره",
+      "price": 391922,
+      "description": "راحت برای استفاده روزانه",
+      "category": "shoes",
+      "image": "/images/products/shoes36.webp",
+      "rating": 4.2,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "Free Size"
+      ],
+      "colors": [
+        "خاکستری",
+        "قهوه‌ای"
+      ],
+      "stock": 45
+    },
+    {
+      "id": "37",
+      "name": "شلوار بچگانه",
+      "price": 588406,
+      "description": "با طرح‌های کارتونی",
+      "category": "kids",
+      "image": "/images/products/kids37.webp",
+      "rating": 3.9,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "25",
+        "30",
+        "35"
+      ],
+      "colors": [
+        "مشکی",
+        "سفید"
+      ],
+      "stock": 33,
+      "featured": true
+    },
+    {
+      "id": "38",
+      "name": "کاپشن اسپرت",
+      "price": 189403,
+      "description": "ویژه دویدن و پیاده‌روی",
+      "category": "sports",
+      "image": "/images/products/sports38.webp",
+      "rating": 4.4,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "مشکی",
+        "سفید"
+      ],
+      "stock": 36,
+      "discount": 25
+    },
+    {
+      "id": "39",
+      "name": "کمربند چرمی",
+      "price": 674807,
+      "description": "سبک و کاربردی",
+      "category": "accessories",
+      "image": "/images/products/accessories39.webp",
+      "rating": 3.8,
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L"
+      ],
+      "colors": [
+        "نارنجی",
+        "صورتی"
+      ],
+      "stock": 47
+    },
+    {
+      "name": "کفش روزمره",
+      "price": 1826400,
+      "description": "راحت برای استفاده روزانه",
+      "category": "shoes",
+      "image": "/images/products/shoes40.webp",
+      "wishlistCount": 5,
+      "reviewIds": [
+        "rev1",
+        "rev2"
+      ],
+      "questionIds": [
+        "q1"
+      ],
+      "sizes": [
+        "36",
+        "38",
+        "40"
+      ],
+      "colors": [
+        "قرمز",
+        "آبی",
+        "سبز"
+      ],
+      "stock": 40,
+      "featured": false,
+      "discount": 0,
+      "rating": 4,
+      "id": "_jUsx4J"
+    }
+  ],
+  "orders": [
+    {
+      "id": "1",
+      "userId": 1,
+      "date": "2023-05-15",
+      "items": [
+        {
+          "productId": 1,
+          "quantity": 2,
+          "price": 249000
+        },
+        {
+          "productId": 3,
+          "quantity": 1,
+          "price": 175000
+        }
+      ],
+      "total": 673000,
+      "status": "delivered",
+      "paymentMethod": "زرین‌پال"
+    },
+    {
+      "id": "2",
+      "userId": 2,
+      "date": "2023-05-18",
+      "items": [
+        {
+          "productId": 2,
+          "quantity": 1,
+          "price": 189000
+        },
+        {
+          "productId": 5,
+          "quantity": 1,
+          "price": 135000
+        }
+      ],
+      "total": 324000,
+      "status": "delivered",
+      "paymentMethod": "زرین‌پال"
+    },
+    {
+      "id": "3",
+      "userId": 1,
+      "date": "2023-05-20",
+      "items": [
+        {
+          "productId": 4,
+          "quantity": 1,
+          "price": 890000
+        }
+      ],
+      "total": 890000,
+      "status": "processing",
+      "paymentMethod": "کارت به کارت"
+    }
+  ],
+  "payment": {
+    "amount": 10000,
+    "description": "Test"
+  },
+  "coupons": [
+    {
+      "code": "WELCOME20",
+      "discount": 20,
+      "validUntil": "2023-12-31",
+      "minPurchase": 500000,
+      "maxDiscount": 100000,
+      "id": "61ce"
+    },
+    {
+      "code": "SUMMER15",
+      "discount": 15,
+      "validUntil": "2023-09-01",
+      "minPurchase": 300000,
+      "id": "c3fa"
+    },
+    {
+      "code": "NEWYEAR10",
+      "discount": 10,
+      "validUntil": "2024-01-15",
+      "maxDiscount": 50000,
+      "id": "1869"
+    }
+  ],
+  "newsletterSubscriptions": [
+    {
+      "email": "hamidsmoasers@gmail.com",
+      "subscribedAt": "2025-07-27T13:19:23.127Z",
+      "id": 1
+    }
+  ]
+}
