@@ -161,7 +161,7 @@ export const getFeaturedProducts = async () => {
   const response = await http.get('/api/products', {
     params: { featured: true },
   });
-  console.log('getFeaturedProducts:', response);
+  console.log('getFeaturedProducts:', response.data);
 
   return response.data;
 };
