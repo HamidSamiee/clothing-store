@@ -55,7 +55,7 @@ const Marquee = () => {
     <>
         <h2 className={styles.title}>{t('home.categoryProducts')}</h2>
         <div className={styles.carousel}>
-          {items.map((item, index) => (
+          {Array.isArray(items) && items.map((item, index) => (
             <article 
               key={item.id} 
               className={styles.carouselItem} 

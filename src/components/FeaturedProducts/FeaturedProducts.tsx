@@ -12,6 +12,7 @@ const FeaturedProducts = () => {
     queryKey: ['featured-products'],
     queryFn: getFeaturedProducts,
   });
+  console.log('FeaturedProducts',products)
 
   if (isLoading) return <div className={styles.loading}>{t('loading.message')}...</div>;
 
@@ -23,7 +24,7 @@ const FeaturedProducts = () => {
       </div>
 
       <div className={styles.productsGrid}>
-        {products?.map((product: Product) => (
+        {Array.isArray(products) && products?.map((product: Product) => (
           <ProductCard 
             key={product.id} 
             product={
