@@ -116,7 +116,7 @@ const Checkout = () => {
 
   const handlePayment = async () => {
     try {
-      await initiatePayment(10000, 'پرداخت سفارش');
+      await initiatePayment(total, 'پرداخت سفارش');
     } catch  {
       toast.error('خطا در اتصال به درگاه پرداخت');
     }
