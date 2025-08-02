@@ -168,10 +168,19 @@ export const deleteProduct = async (id: number | string) => {
 
 export const getFeaturedProducts = async (): Promise<Product[]> => {
   // تغییر مسیر به تابع Netlify
-  fetch('/.netlify/functions/products/getFeaturedProducts')
-  .then(res => res.json())
+  fetch('/.netlify/functions/getFeaturedProducts')
+  .then(async (res) => {
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(`Server error: ${res.status} - ${errorText}`);
+    }
+    return res.json();
+  })
   .then(data => console.log('Response:', data))
-  .catch(err => console.error('Error:', err));
+  .catch(err => {
+    console.error('Full error:', err);
+    // نمایش خطا به کاربر
+  });
 
   const response = await http.get('/.netlify/functions/products/getFeaturedProducts');
   
