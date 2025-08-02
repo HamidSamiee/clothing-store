@@ -9,8 +9,10 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions" 
 
 [functions]
+  node_bundler = "esbuild"  
   directory = "netlify/functions"
 
 # هندل کردن ریدایرکت درخواست‌های API به سرورلس
