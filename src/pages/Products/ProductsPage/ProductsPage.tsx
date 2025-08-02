@@ -17,6 +17,7 @@ import { addToWishlist, getWishlist, removeFromWishlist } from '@/services/wishl
 import { Product } from '@/types/Product';
 import { Question, Review } from '@/types/Review';
 import { useTranslation } from 'react-i18next';
+import { getProductById } from '@/services/productService';
 
 const ProductPage = () => {
   const { t } = useTranslation();
@@ -41,8 +42,8 @@ const ProductPage = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const productResponse = await http.get(`/products/${id}`);
-        setProduct(productResponse.data);
+        const productResponse = await getProductById(`${id}`);
+        setProduct(productResponse);
         
         const questionsResponse = await http.get(`/questions?productId=${id}`);
         setQuestions(questionsResponse.data);

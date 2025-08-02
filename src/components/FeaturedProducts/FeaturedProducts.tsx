@@ -12,7 +12,7 @@ const FeaturedProducts = () => {
     queryKey: ['featured-products'],
     queryFn: getFeaturedProducts,
   });
-  console.log('FeaturedProducts',products)
+  // console.log('FeaturedProducts',products)
 
   if (isLoading) return <div className={styles.loading}>{t('loading.message')}...</div>;
 

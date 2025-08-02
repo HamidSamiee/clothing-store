@@ -12,7 +12,7 @@ const ProductDetails = () => {
     queryKey: ['product', id],
     queryFn: () => getProductById(Number(id!)) // Convert id to number
   });
-
+console.log('getProductById:',product)
   return (
     <div className={styles.productDetailContainer}>
       <div className={styles.productInfo}>
