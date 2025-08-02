@@ -24,7 +24,8 @@ const handler: Handler = async () => {
       sizes: Array.isArray(product.sizes) ? product.sizes : [],
       colors: Array.isArray(product.colors) ? product.colors : [],
     }));
-
+   console.log('result ℹ️=',result) 
+  console.log('products 🛒=',products)
     return {
       statusCode: 200,
       body: JSON.stringify(products) // داده را مستقیماً بازگردانید
