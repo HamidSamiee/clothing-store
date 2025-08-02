@@ -1,11 +1,13 @@
 export interface OrderItem {
+    id: number;
+    order_id: number;
     productId: number;
     quantity: number;
     price: number;
   }
   
 
-  type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled';
+export type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
 
 export interface Order {
@@ -17,5 +19,6 @@ export interface Order {
     status: OrderStatus;
     paymentMethod: string;
     shippingAddress?: string;
+    created_at: string;
   }
   
