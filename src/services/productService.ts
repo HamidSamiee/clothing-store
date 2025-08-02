@@ -167,29 +167,11 @@ export const deleteProduct = async (id: number | string) => {
 // };
 
 export const getFeaturedProducts = async (): Promise<Product[]> => {
-  // تغییر مسیر به تابع Netlify
-  fetch('/.netlify/functions/products/getFeaturedProducts')
-  .then(async (res) => {
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`Server error: ${res.status} - ${errorText}`);
-    }
-    return res.json();
-  })
-  .then(data => console.log('Response:', data))
-  .catch(err => {
+  try {
+    const response = await http.get('/.netlify/functions/products/getFeaturedProducts');
+    return response.data.body || response.data;
+  } catch (err) {
     console.error('Full error:', err);
-    // نمایش خطا به کاربر
-  });
-
-  const response = await http.get('/.netlify/functions/products/getFeaturedProducts');
-  
-  // ساختار پاسخ Netlify با JSON Server متفاوت است
-  // در Netlify، داده‌ها در response.data.body قرار دارند
-  const data = typeof response.data === 'string' 
-    ? JSON.parse(response.data) 
-    : response.data;
-  
-  console.log('getFeaturedProducts:', response , data?.body || data);
-  return data;
+    throw err;
+  }
 };
