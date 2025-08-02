@@ -7,7 +7,7 @@ export const getProducts = async (
   options: ProductFilterOptions = {}
 ): Promise<PaginatedResponse<Product>> => {
   // ابتدا همه محصولات را دریافت می‌کنیم
-  const response = await http.get('/products');
+  const response = await http.get('/.netlify/functions/getProducts');
   console.log('data:', response);
 
   let products = response.data;
@@ -79,7 +79,7 @@ export const getProducts = async (
 
 export const getProductById = async (id: number | string) => {
  
-    const response = await http.get(`/products/${id}`);
+    const response = await http.get(`/.netlify/functions/getProductById/${id}`);
     return response.data;
   
 };
