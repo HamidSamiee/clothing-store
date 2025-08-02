@@ -168,7 +168,7 @@ export const deleteProduct = async (id: number | string) => {
 
 export const getFeaturedProducts = async (): Promise<Product[]> => {
   // تغییر مسیر به تابع Netlify
-  fetch('/.netlify/functions/getFeaturedProducts')
+  fetch('/.netlify/functions/products/getFeaturedProducts')
   .then(async (res) => {
     if (!res.ok) {
       const errorText = await res.text();
