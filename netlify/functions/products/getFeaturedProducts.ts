@@ -1,3 +1,4 @@
+// netlify/functions/getFeaturedProducts.ts
 import { query } from '../utils/db';
 import { Handler } from '@netlify/functions';
 import { Product } from '@/types/Product';
@@ -16,11 +17,20 @@ const handler: Handler = async () => {
        LIMIT 8`
     );
 
+    // تبدیل داده‌ها به ساختار مورد انتظار فرانت‌اند
+    const products = result.rows.map(product => ({
+      ...product,
+      id: product.id.toString(),
+      sizes: Array.isArray(product.sizes) ? product.sizes : [],
+      colors: Array.isArray(product.colors) ? product.colors : [],
+    }));
+
     return {
       statusCode: 200,
-      body: JSON.stringify(result.rows)
+      body: JSON.stringify(products) // داده را مستقیماً بازگردانید
     };
-  } catch  {
+  } catch (error) {
+    console.error('Error:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: 'خطا در دریافت محصولات ویژه' })
