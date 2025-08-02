@@ -19,6 +19,5 @@ export interface Order {
     status: OrderStatus;
     paymentMethod: string;
     shippingAddress?: string;
-    created_at: string;
   }
   

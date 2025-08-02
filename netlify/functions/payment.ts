@@ -1,15 +1,35 @@
-// netlify/functions/payment.ts
-
 import ZarinPal from 'zarinpal-checkout';
+import { Handler } from '@netlify/functions';
 
 const zarinpal = ZarinPal.create('eaa1ef97-2c45-11e8-b7f0-005056a205be', true);
 
-export async function handler(event) {
+interface PaymentRequest {
+  amount: number;
+  description: string;
+}
+
+export const handler: Handler = async (event) => {
   try {
-    const { amount, description } = JSON.parse(event.body);
+    // بررسی وجود body در event
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'بدون داده' })
+      };
+    }
+
+    const { amount, description }: PaymentRequest = JSON.parse(event.body);
+
+    // اعتبارسنجی مقادیر ورودی
+    if (!amount || !description) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'مقادیر amount و description الزامی هستند' })
+      };
+    }
 
     const response = await zarinpal.PaymentRequest({
-      Amount: amount * 10,
+      Amount: amount * 10, // تبدیل به ریال
       CallbackURL: `${process.env.BASE_URL}/verify`,
       Description: description,
     });
@@ -28,10 +48,10 @@ export async function handler(event) {
       body: JSON.stringify({ error: 'خطا در پرداخت' }),
     };
   } catch (err) {
-    console.error(err);
+    console.error('Payment error:', err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'خطا در سرور پرداخت' }),
     };
   }
-}
+};
