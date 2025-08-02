@@ -168,7 +168,12 @@ export const deleteProduct = async (id: number | string) => {
 
 export const getFeaturedProducts = async (): Promise<Product[]> => {
   // تغییر مسیر به تابع Netlify
-  const response = await http.get('/.netlify/functions/getFeaturedProducts');
+  fetch('/.netlify/functions/products/getFeaturedProducts')
+  .then(res => res.json())
+  .then(data => console.log('Response:', data))
+  .catch(err => console.error('Error:', err));
+
+  const response = await http.get('/.netlify/functions/products/getFeaturedProducts');
   
   // ساختار پاسخ Netlify با JSON Server متفاوت است
   // در Netlify، داده‌ها در response.data.body قرار دارند
@@ -176,6 +181,6 @@ export const getFeaturedProducts = async (): Promise<Product[]> => {
     ? JSON.parse(response.data) 
     : response.data;
   
-  console.log('getFeaturedProducts:', data);
+  console.log('getFeaturedProducts:', response , data?.body || data);
   return data;
 };
