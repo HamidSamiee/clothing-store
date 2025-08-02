@@ -168,7 +168,7 @@ export const deleteProduct = async (id: number | string) => {
 
 export const getFeaturedProducts =  async () => {
   try {
-    const response = await fetch('/.netlify/functions/products/getFeaturedProducts');
+    const response = await fetch('/.netlify/functions/getFeaturedProducts');
     
     if (!response.ok) {
       const errorText = await response.text();
