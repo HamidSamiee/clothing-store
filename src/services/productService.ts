@@ -166,12 +166,24 @@ export const deleteProduct = async (id: number | string) => {
 //   return response.data;
 // };
 
-export const getFeaturedProducts = async (): Promise<Product[]> => {
+export const getFeaturedProducts =  async () => {
   try {
-    const response = await http.get('/.netlify/functions/products/getFeaturedProducts');
-    return response.data.body || response.data;
-  } catch (err) {
-    console.error('Full error:', err);
-    throw err;
+    const response = await fetch('/.netlify/functions/products/getFeaturedProducts');
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`خطای سرور: ${response.status} - ${errorText}`);
+    }
+    
+    const contentType = response.headers.get('content-type');
+    if (!contentType?.includes('application/json')) {
+      const text = await response.text();
+      throw new Error(`پاسخ غیرمنتظره: ${text}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('خطا در دریافت محصولات ویژه:', error);
+    throw error;
   }
 };
