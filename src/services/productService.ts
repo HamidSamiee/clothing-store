@@ -231,7 +231,7 @@ export const addProduct = async (productData: Omit<Product, 'id'>): Promise<Prod
 
 // };
 
-export const updateProduct = async (id: string, productData: Partial<Product>): Promise<Product> => {
+export const updateProduct = async (id: string | number, productData: Partial<Product>): Promise<Product> => {
   try {
     // تبدیل داده‌ها به فرمت مناسب برای دیتابیس
     const updateData = {

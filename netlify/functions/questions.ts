@@ -30,9 +30,9 @@ const handler: Handler = async (event) => {
   const httpMethod = event.httpMethod;
 
   if (httpMethod === 'GET') {
-    const productId = event.queryStringParameters?.productId;
+    const productIdParam = event.queryStringParameters?.productId;
 
-    if (!productId) {
+    if (!productIdParam) {
       return {
         statusCode: 400,
         body: JSON.stringify({ message: 'شناسه محصول الزامی است' } as ErrorResponse)
@@ -40,6 +40,17 @@ const handler: Handler = async (event) => {
     }
 
     try {
+
+      const productId = parseInt(productIdParam, 10);
+    
+      if (isNaN(productId)) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ message: 'شناسه محصول نامعتبر است' })
+        };
+      }
+  
+
       const questionsResult = await query<QuestionQueryResult>(
         `SELECT 
           q.id, 
