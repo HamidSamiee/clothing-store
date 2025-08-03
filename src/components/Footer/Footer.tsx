@@ -5,7 +5,6 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import styles from './Footer.module.css';
 import { useState } from 'react';
 import { subscribeToNewsletter } from '@/services/newsletterService';
-import { toast } from 'react-toastify';
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -13,34 +12,27 @@ const Footer = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    
-    // اعتبارسنجی ساده
-    if (!email) {
-      setError(t('footer.emailRequired'));
-      return;
-    }
+// در بخش handleSubmit:
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+  
+  // اعتبارسنجی پیشرفته
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    setError(t('footer.invalidEmail'));
+    return;
+  }
 
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setError(t('footer.invalidEmail'));
-      return;
-    }
-
-    setLoading(true);
-    
-    try {
-      await subscribeToNewsletter(email);
-      toast.success(t('footer.subscriptionSuccess'));
-      setEmail('');
-    } catch (err) {
-      console.error('Subscription error:', err);
-      toast.error(t('footer.subscriptionError'));
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  
+  try {
+    await subscribeToNewsletter(email.trim());
+    setEmail('');
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   return (

@@ -15,8 +15,8 @@ const handler: Handler = async (event) => {
     
     // Check if already in wishlist
     const existsResult = await client.query(
-      'SELECT * FROM user_wishlist WHERE user_id = $1 AND product_id = $2',
-      [userId, productId]
+      'INSERT INTO user_wishlist (user_id, product_id) VALUES ($1::bigint, $2)',
+      [parseInt(userId, 10), productId]
     );
     
     if (existsResult.rows.length > 0) {

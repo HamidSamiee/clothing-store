@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import styles from './RelatedProducts.module.css';
 import ProductCard from '@/components/ProductCard/ProductCard';
-import http from '@/services/httpService';
 import { useTranslation } from 'react-i18next';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
@@ -12,6 +11,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Product } from '@/types/Product';
+import { getProducts } from '@/services/productService';
 
 interface RelatedProductsProps {
   category: string;
@@ -27,7 +27,9 @@ const RelatedProducts = ({ category, currentProductId }: RelatedProductsProps) =
     const fetchRelatedProducts = async () => {
       try {
         setLoading(true);
-        const response = await http.get(`/products?category=${category}&limit=6`);
+        const response = await getProducts({
+          category: `${category}` || undefined,
+        });
         const filteredProducts = response.data.filter(
           (product: Product) => product.id !== currentProductId
         );
@@ -43,7 +45,6 @@ const RelatedProducts = ({ category, currentProductId }: RelatedProductsProps) =
   }, [category, currentProductId]);
 
   const handleAddToCart = (product: Product) => {
-    // پیاده‌سازی منطق افزودن به سبد خرید
     console.log('Product added to cart:', product);
   };
 

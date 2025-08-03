@@ -9,8 +9,6 @@ import {
 } from "@/services/authService";
 import { toast } from "react-toastify";
 
-
-
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -33,13 +31,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (email: string, password: string): Promise<SafeUser> => {
     try {
-      const user = await loginService({ email, password });
-      const { password: _unused, ...userWithoutPassword } = user;
-      // console.log(_unused)
-      persistUser(userWithoutPassword);
-      // console.log(userWithoutPassword)
-      toast.success(`${userWithoutPassword.name} عزیز خوش آمدی `);
-      return userWithoutPassword;
+      const { user, token } = await loginService({ email, password });
+      localStorage.setItem("token", token);
+      persistUser(user);
+      toast.success(`${user.name} عزیز خوش آمدی`);
+      return user;
     } catch (error) {
       const err = error as Error;
       toast.error(err.message);
@@ -57,11 +53,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         ...userData,
         orders: [],
       });
-      const { password: _unused, ...userWithoutPassword } = newUser;
-      console.log(_unused)
-      persistUser(userWithoutPassword);
+      persistUser(newUser);
       navigate("/");
-      return userWithoutPassword;
+      return newUser;
     } catch (error) {
       const err = error as Error;
       toast.error(err.message);
@@ -82,10 +76,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     try {
       const updatedUser = await updateUserProfile(Number(user.id), updatedData);
-      const { password: _unused, ...userWithoutPassword } = updatedUser;
-      toast.success('اطلاعات شما با موفقیت آپدیت شد')
-      persistUser(userWithoutPassword);
-      return userWithoutPassword;
+      persistUser(updatedUser);
+      toast.success('اطلاعات شما با موفقیت آپدیت شد');
+      return updatedUser;
     } catch (error) {
       const err = error as Error;
       toast.error(err.message);

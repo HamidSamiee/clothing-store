@@ -45,11 +45,11 @@ const ProductPage = () => {
         const productResponse = await getProductById(`${id}`);
         setProduct(productResponse);
         
-        const questionsResponse = await http.get(`/questions?productId=${id}`);
-        setQuestions(questionsResponse.data);
+        const questionsResponse = await http.get(`/.netlify/functions/questions?productId=${id}`);
+        setQuestions(questionsResponse.data.questions);
         
-        const reviewsResponse = await http.get(`/reviews?productId=${id}`);
-        setReviews(reviewsResponse.data);
+        const reviewsResponse = await http.get(`/.netlify/functions/reviews?productId=${id}`);
+        setReviews(reviewsResponse.data.reviews);
         
         setError(null);
       } catch (err) {
@@ -85,45 +85,74 @@ const ProductPage = () => {
   };
 
   const handleAddReview = async (reviewData: { rating: number; comment: string }) => {
-    if (!user || !product) return;
-    
-    const newReview: Review = {
-      id: `rev${Date.now()}`,
-      productId: product.id,
-      userId: user.id.toString(),
-      userName: user.name,
-      rating: reviewData.rating,
-      comment: reviewData.comment,
-      createdAt: new Date().toISOString(),
-    };
-
+    if (!user || !product) {
+      toast.info(t('reviews.loginPrompt'));
+      return;
+    }
+  
     try {
-      await http.post('/reviews', newReview);
-      setReviews([...reviews, newReview]);
+      const newReview: Omit<Review, 'id' | 'createdAt'> = {
+        productId: product.id,
+        userId: user.id.toString(),
+        userName: user.name,
+        rating: reviewData.rating,
+        comment: reviewData.comment,
+      };
+  
+      const response = await http.post<Review>('/.netlify/functions/reviews', newReview);
+      
+      setReviews([...reviews, response.data]);
       toast.success(t('reviews.submitSuccess'));
-    } catch (error) {
-      toast.error(t('reviews.submitError'));
+      setActiveTab('reviews');
+      
+    } catch (error: unknown) {
       console.error('Error adding review:', error);
+      
+      let errorMessage = t('reviews.submitError');
+      
+      // بررسی ساختار خطا برای Axios
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const axiosError = error as {
+          response?: {
+            data?: {
+              message?: string
+            }
+          }
+        };
+        errorMessage = axiosError.response?.data?.message || errorMessage;
+      }
+      // بررسی برای خطاهای معمولی
+      else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
   const handleWishlist = async () => {
-    if (!user) {
+    if (!user || !id) {
       toast.info(t('wishlist.loginPrompt'));
       return;
     }
-
+  
     try {
       if (isWishlisted) {
-        await removeFromWishlist(String(user.id), id || '');
+        await removeFromWishlist(user.id.toString(), id);
         setIsWishlisted(false);
         toast.success(t('wishlist.removeSuccess'));
       } else {
-        await addToWishlist(String(user.id), id || '');
+        await addToWishlist(user.id.toString(), id);
         setIsWishlisted(true);
         toast.success(t('wishlist.addSuccess'));
       }
-    } catch  {
+      
+      // به‌روزرسانی لیست پس از تغییر
+      const updatedWishlist = await getWishlist(user.id.toString());
+      setIsWishlisted(updatedWishlist.includes(id));
+      
+    } catch (error) {
+      console.error('Wishlist error:', error);
       toast.error(t('wishlist.updateError'));
     }
   };
@@ -149,22 +178,18 @@ const ProductPage = () => {
     toast.success(t('cart.addSuccess'));
   };
 
-  const handleAddQuestion = async (question: string) => {
+  const handleAddQuestion = async (questionText: string) => {
     if (!user || !product) return;
   
     try {
-      const newQuestion: Question = {
-        id: `q${Date.now()}`,
+      const response = await http.post('/.netlify/functions/questions', {
         productId: product.id,
-        userId: user.id.toString(),
+        userId: user.id,
         userName: user.name,
-        question,
-        answers: [],
-        createdAt: new Date().toISOString()
-      };
+        question: questionText
+      });
   
-      await http.post('/questions', newQuestion);
-      setQuestions([...questions, newQuestion]);
+      setQuestions([...questions, response.data]);
       toast.success(t('questions.questionSubmitted'));
     } catch (error) {
       toast.error(t('questions.submitError'));
@@ -172,25 +197,21 @@ const ProductPage = () => {
     }
   };
   
-  const handleAddAnswer = async (questionId: string, answer: string) => {
+  const handleAddAnswer = async (questionId: string, answerText: string) => {
     if (!user || !product) return;
   
     try {
-      const newAnswer = {
-        id: `ans${Date.now()}`,
+      const response = await http.post('/.netlify/functions/answers', {
         questionId,
-        userId: user.id.toString(),
+        userId: user.id,
         userName: user.name,
-        answer,
-        isAdmin: user.role === 'admin',
-        createdAt: new Date().toISOString()
-      };
+        answer: answerText,
+        isAdmin: user.role === 'admin'
+      });
   
-      await http.post('/answers', newAnswer);
-      
       setQuestions(questions.map(q => 
         q.id === questionId
-          ? { ...q, answers: [...q.answers, newAnswer] }
+          ? { ...q, answers: [...q.answers, response.data] }
           : q
       ));
       

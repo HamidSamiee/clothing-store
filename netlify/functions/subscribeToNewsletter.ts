@@ -5,74 +5,58 @@ interface NewsletterSubscription {
   email: string;
 }
 
-interface NewsletterResponse {
-  success?: boolean;
-  message?: string;
-}
-
 const handler: Handler = async (event) => {
-  // بررسی وجود بدنه درخواست
   if (!event.body) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'بدون داده' } as NewsletterResponse)
+      body: JSON.stringify({ message: 'لطفا ایمیل خود را وارد کنید' })
     };
   }
 
   try {
     const { email } = JSON.parse(event.body) as NewsletterSubscription;
 
-    // اعتبارسنجی ایمیل
-    if (!email || typeof email !== 'string' || !email.includes('@')) {
+    // اعتبارسنجی پیشرفته ایمیل
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: 'فرمت ایمیل نامعتبر است' } as NewsletterResponse)
+        body: JSON.stringify({ message: 'فرمت ایمیل نامعتبر است' })
       };
     }
 
-    // بررسی وجود ایمیل در دیتابیس
-    const existingSub = await query<{ email: string }>(
-      'SELECT email FROM newsletter_subscriptions WHERE email = $1', 
+    // بررسی وجود ایمیل (با CASE INSENSITIVE)
+    const existingSub = await query(
+      'SELECT id FROM newsletter_subscriptions WHERE LOWER(email) = LOWER($1)', 
       [email]
     );
     
     if (existingSub.rows.length > 0) {
       return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'این ایمیل قبلا ثبت شده است' } as NewsletterResponse)
+        statusCode: 409, // کد وضعیت Conflict
+        body: JSON.stringify({ message: 'این ایمیل قبلا ثبت شده است' })
       };
     }
     
-    // ثبت ایمیل جدید
+    // ثبت جدید با تاریخ جاری
     await query(
       'INSERT INTO newsletter_subscriptions (email) VALUES ($1)',
-      [email]
+      [email.trim()] // حذف فاصله‌های اضافه
     );
     
     return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true } as NewsletterResponse)
+      statusCode: 201,
+      body: JSON.stringify({ success: true, message: 'عضویت شما با موفقیت ثبت شد' })
     };
-  } catch (error: unknown) {
-    // مدیریت خطاها با توجه به انواع داده‌های شما
-    let errorMessage = 'خطای سرور';
     
-    if (error instanceof Error) {
-      console.error('خطا در عضویت خبرنامه:', error.message);
-      
-      // بررسی خطای محدودیت یکتایی
-      if (error.message.includes('unique constraint')) {
-        errorMessage = 'این ایمیل قبلا ثبت شده است';
-      }
-      // بررسی خطای اتصال به دیتابیس
-      else if (error.message.includes('connection')) {
-        errorMessage = 'خطا در ارتباط با سرور';
-      }
-    }
+  } catch (error) {
+    console.error('خطا در ثبت خبرنامه:', error);
     
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: errorMessage } as NewsletterResponse)
+      body: JSON.stringify({ 
+        message: 'خطایی در سرور رخ داده است. لطفا بعدا تلاش کنید' 
+      })
     };
   }
 };

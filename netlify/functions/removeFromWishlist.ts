@@ -17,8 +17,8 @@ const handler: Handler = async (event) => {
     
     // حذف از لیست علاقه‌مندی‌های کاربر
     await query(
-      'DELETE FROM user_wishlist WHERE user_id = $1 AND product_id = $2',
-      [userId, productId]
+      'DELETE FROM user_wishlist WHERE user_id = $1::bigint AND product_id = $2',
+      [parseInt(userId, 10), productId]
     );
     
     // کاهش تعداد علاقه‌مندی‌های محصول

@@ -16,8 +16,8 @@ const handler: Handler = async (event) => {
     const wishlistResult = await query<Product>(
       `SELECT p.* FROM products p
        JOIN user_wishlist uw ON p.id = uw.product_id
-       WHERE uw.user_id = $1`,
-      [userId]
+       WHERE uw.user_id = $1::bigint`,
+      [parseInt(userId, 10)]
     );
     
     return {

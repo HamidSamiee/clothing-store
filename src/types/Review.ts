@@ -1,14 +1,3 @@
-export interface Review {
-  id: string;
-  userId: string;
-  productId: string; 
-  userAvatar?: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  createdAt: string;
-}
-
 export interface Question {
   id: string;
   productId: string;
@@ -26,5 +15,16 @@ export interface Answer {
   userName: string;
   answer: string;
   isAdmin: boolean;
+  createdAt: string;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  rating: number;
+  comment: string;
   createdAt: string;
 }
