@@ -32,6 +32,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string): Promise<SafeUser> => {
     try {
       const { user, token } = await loginService({ email, password });
+     
+      if (!user || !token) {
+        throw new Error('پاسخ سرور نامعتبر است');
+      }
+      
       localStorage.setItem("token", token);
       persistUser(user);
       toast.success(`${user.name} عزیز خوش آمدی`);

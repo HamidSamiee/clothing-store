@@ -103,7 +103,7 @@ export const register = async (userData: Omit<User, "id">): Promise<SafeUser> =>
 export const login = async (loginData: LoginData): Promise<{user: SafeUser, token: string}> => {
   try {
     const response = await http.post('/.netlify/functions/login', loginData);
-    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('token', response.data?.token);
     return response.data;
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'خطای ناشناخته در ورود';

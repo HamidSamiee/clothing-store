@@ -82,7 +82,7 @@ export const getProductById = async (id: number | string) => {
  
     const productId = typeof id === 'number' ? id.toString() : id;
     const response = await http.get(`/.netlify/functions/getProductById?id=${productId}`);
-    console.log(response.data)
+    // console.log(response.data)
     return response.data;
   
 };

@@ -47,10 +47,8 @@ const ProductPage = () => {
 
         const questionsResponse = await http.get(`/.netlify/functions/questions?productId=${id}`);
         setQuestions(questionsResponse.data?.questions || []);
-        console.log('questionsResponse:',questionsResponse)
         const reviewsResponse = await http.get(`/.netlify/functions/getProductReviews?productId=${id}`);
         setReviews(Array.isArray(reviewsResponse.data) ? reviewsResponse.data : reviewsResponse.data?.reviews || []);
-        console.log('reviewsResponse:',reviewsResponse)
 
         setError(null);
       } catch (err) {
