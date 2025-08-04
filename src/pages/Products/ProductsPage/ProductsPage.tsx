@@ -47,10 +47,11 @@ const ProductPage = () => {
 
         const questionsResponse = await http.get(`/.netlify/functions/questions?productId=${id}`);
         setQuestions(questionsResponse.data.questions);
-        
+        console.log('questionsResponse:',questionsResponse)
         const reviewsResponse = await http.get(`/.netlify/functions/getProductReviews?productId=${id}`);
         setReviews(reviewsResponse.data.reviews);
-        
+        console.log('reviewsResponse:',reviewsResponse)
+
         setError(null);
       } catch (err) {
         setError('خطا در دریافت اطلاعات محصول');
