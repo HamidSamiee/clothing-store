@@ -35,7 +35,8 @@ const handler: Handler = async (event) => {
     }
     
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const salt = await bcrypt.genSalt(12); // تولید نمک (salt)
+    const hashedPassword = await bcrypt.hash(password, salt);
     
     // Create new user with explicit parameter types
     const newUser = await query<SafeUser>(
