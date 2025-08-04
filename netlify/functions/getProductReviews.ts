@@ -51,7 +51,7 @@ const handler: Handler = async (event) => {
     
     return {
       statusCode: 200,
-      body: JSON.stringify(result.rows)
+      body: JSON.stringify(Array.isArray(result.rows) ? result.rows : [])
     };
   } catch (error) {
     console.error('Error fetching reviews:', error);

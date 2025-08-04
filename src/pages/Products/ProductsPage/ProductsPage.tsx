@@ -46,10 +46,10 @@ const ProductPage = () => {
         setProduct(productResponse);
 
         const questionsResponse = await http.get(`/.netlify/functions/questions?productId=${id}`);
-        setQuestions(questionsResponse.data.questions);
+        setQuestions(questionsResponse.data?.questions || []);
         console.log('questionsResponse:',questionsResponse)
         const reviewsResponse = await http.get(`/.netlify/functions/getProductReviews?productId=${id}`);
-        setReviews(reviewsResponse.data.reviews);
+        setReviews(Array.isArray(reviewsResponse.data) ? reviewsResponse.data : reviewsResponse.data?.reviews || []);
         console.log('reviewsResponse:',reviewsResponse)
 
         setError(null);
@@ -80,8 +80,8 @@ const ProductPage = () => {
   }, [user?.id, id]);
 
   const calculateAverageRating = () => {
-    if (reviews.length === 0) return 0;
-    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    if (!reviews || reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + (review.rating || 0), 0);
     return parseFloat((sum / reviews.length).toFixed(1));
   };
 
@@ -284,11 +284,11 @@ const ProductPage = () => {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         description={product.description}
-        reviews={reviews}
+        reviews={reviews || []}
         averageRating={calculateAverageRating()}
         user={user}
         onAddReview={handleAddReview}
-        questions={questions}
+        questions={questions || []}
         onAddQuestion={handleAddQuestion}
         onAddAnswer={handleAddAnswer}
       />

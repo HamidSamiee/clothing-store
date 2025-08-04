@@ -147,8 +147,7 @@ const handler: Handler = async (event) => {
       // user_id: int8 (bigint)
       const result = await query<{ id: string, created_at: string }>(
         `INSERT INTO questions (product_id, user_id, user_name, question)
-         VALUES ($1, $2::bigint, $3, $4)
-         RETURNING id, created_at`,
+         VALUES ($1, $2::bigint, $3, $4)`,
         [productId, userId, userName, question]
       );
 
