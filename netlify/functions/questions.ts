@@ -23,7 +23,7 @@ interface QuestionQueryResult {
   answer_created_at?: string;
   answer_user_id?: string;
   answer_user_name?: string;
-  answer_user_role?: string;
+  is_admin?: boolean;
 }
 
 const handler: Handler = async (event) => {
@@ -40,16 +40,8 @@ const handler: Handler = async (event) => {
     }
 
     try {
-
-      const productId = parseInt(productIdParam, 10);
-    
-      if (isNaN(productId)) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ message: 'شناسه محصول نامعتبر است' })
-        };
-      }
-  
+      // با توجه به اینکه product_id در دیتابیس از نوع varchar(20) است، نیازی به تبدیل به عدد نیست
+      const productId = productIdParam;
 
       const questionsResult = await query<QuestionQueryResult>(
         `SELECT 
@@ -58,17 +50,15 @@ const handler: Handler = async (event) => {
           q.created_at,
           q.product_id,
           q.user_id,
-          u.name as user_name,
+          q.username as user_name,
           a.id as answer_id, 
           a.answer, 
           a.created_at as answer_created_at,
           a.user_id as answer_user_id, 
-          u2.name as answer_user_name, 
-          u2.role as answer_user_role
+          a.user_name as answer_user_name, 
+          a.is_admin
          FROM questions q
-         JOIN users u ON q.user_id = u.id
          LEFT JOIN answers a ON q.id = a.question_id
-         LEFT JOIN users u2 ON a.user_id = u2.id
          WHERE q.product_id = $1
          ORDER BY q.created_at DESC, a.created_at ASC`,
         [productId]
@@ -98,7 +88,7 @@ const handler: Handler = async (event) => {
             userId: row.answer_user_id || '',
             userName: row.answer_user_name || '',
             answer: row.answer,
-            isAdmin: row.answer_user_role === 'admin',
+            isAdmin: row.is_admin || false,
             createdAt: row.answer_created_at || new Date().toISOString()
           };
           question.answers.push(answer);
@@ -116,11 +106,22 @@ const handler: Handler = async (event) => {
 
     } catch (error) {
       console.error('خطا در دریافت سوالات:', error);
+      let errorMessage = 'خطا در دریافت سوالات محصول';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+    
       return {
         statusCode: 500,
-        body: JSON.stringify({ message: 'خطا در دریافت سوالات محصول' } as ErrorResponse)
+        body: JSON.stringify({ 
+          message: errorMessage,
+          details: process.env.NODE_ENV === 'development' ? String(error) : undefined
+        } as ErrorResponse)
       };
-    }
+    }    
   }
 
   else if (httpMethod === 'POST') {
@@ -141,11 +142,14 @@ const handler: Handler = async (event) => {
         };
       }
 
+      // با توجه به ساختار دیتابیس:
+      // product_id: varchar(20)
+      // user_id: int8 (bigint)
       const result = await query<{ id: string, created_at: string }>(
-        `INSERT INTO questions (product_id, user_id, question)
-         VALUES ($1, $2, $3)
+        `INSERT INTO questions (product_id, user_id, username, question)
+         VALUES ($1, $2::bigint, $3, $4)
          RETURNING id, created_at`,
-        [productId, userId, question]
+        [productId, userId, userName, question]
       );
 
       const newQuestion: Question = {
@@ -165,9 +169,20 @@ const handler: Handler = async (event) => {
 
     } catch (error) {
       console.error('خطا در ثبت سوال:', error);
+      let errorMessage = 'خطا در ثبت سوال جدید';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+    
       return {
         statusCode: 500,
-        body: JSON.stringify({ message: 'خطا در ثبت سوال جدید' } as ErrorResponse)
+        body: JSON.stringify({ 
+          message: errorMessage,
+          details: process.env.NODE_ENV === 'development' ? String(error) : undefined
+        } as ErrorResponse)
       };
     }
   }
