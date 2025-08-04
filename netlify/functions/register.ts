@@ -43,13 +43,7 @@ const handler: Handler = async (event) => {
       `INSERT INTO users (name, email, password, phone, address, role) 
        VALUES ($1, $2, $3, $4, $5, 'user') 
        RETURNING id, name, email, phone, address, role`,
-      [
-        name, 
-        email, 
-        hashedPassword, 
-        phone || null, // Ensure null instead of undefined
-        address || null // Ensure null instead of undefined
-      ]
+      [name, email, hashedPassword, phone, address]
     );
     
     return {
