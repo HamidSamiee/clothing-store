@@ -50,7 +50,7 @@ const handler: Handler = async (event) => {
           q.created_at,
           q.product_id,
           q.user_id,
-          q.username as user_name,
+          q.user_name,
           a.id as answer_id, 
           a.answer, 
           a.created_at as answer_created_at,
@@ -146,7 +146,7 @@ const handler: Handler = async (event) => {
       // product_id: varchar(20)
       // user_id: int8 (bigint)
       const result = await query<{ id: string, created_at: string }>(
-        `INSERT INTO questions (product_id, user_id, username, question)
+        `INSERT INTO questions (product_id, user_id, user_name, question)
          VALUES ($1, $2::bigint, $3, $4)
          RETURNING id, created_at`,
         [productId, userId, userName, question]
