@@ -44,7 +44,7 @@ const ProductPage = () => {
         setLoading(true);
         const productResponse = await getProductById(`${id}`);
         setProduct(productResponse);
-        
+        console.log(productResponse,id)
         const questionsResponse = await http.get(`/.netlify/functions/questions?productId=${id}`);
         setQuestions(questionsResponse.data.questions);
         
