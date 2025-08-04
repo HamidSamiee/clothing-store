@@ -44,11 +44,11 @@ const ProductPage = () => {
         setLoading(true);
         const productResponse = await getProductById(`${id}`);
         setProduct(productResponse);
-        console.log(productResponse,id)
+
         const questionsResponse = await http.get(`/.netlify/functions/questions?productId=${id}`);
         setQuestions(questionsResponse.data.questions);
         
-        const reviewsResponse = await http.get(`/.netlify/functions/reviews?productId=${id}`);
+        const reviewsResponse = await http.get(`/.netlify/functions/getProductReviews?productId=${id}`);
         setReviews(reviewsResponse.data.reviews);
         
         setError(null);
