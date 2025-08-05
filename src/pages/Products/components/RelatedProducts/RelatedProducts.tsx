@@ -62,7 +62,7 @@ const RelatedProducts = ({ category, currentProductId }: RelatedProductsProps) =
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={20}
-          slidesPerView={4}
+          slidesPerView={'auto'}
           navigation
           breakpoints={{
             320: {
@@ -86,10 +86,13 @@ const RelatedProducts = ({ category, currentProductId }: RelatedProductsProps) =
         >
           {products.map(product => (
             <SwiperSlide key={product.id} className={styles.slide} >
-              <ProductCard 
-                product={product} 
-                onAddToCart={() => handleAddToCart(product)}
-              />
+              <div className={styles.cardWrapper}>
+                    <ProductCard 
+                        product={product} 
+                        onAddToCart={() => handleAddToCart(product)}
+                    />
+              </div>
+              
             </SwiperSlide>
           ))}
         </Swiper>
