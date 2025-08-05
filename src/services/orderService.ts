@@ -125,10 +125,17 @@ export const getProductsForOrder = async (orderId: number): Promise<Product[]> =
 };
 
 // services/orderService.ts
+// export const getProductsByIds = async (ids: number[]): Promise<Product[]> => {
+//   const uniqueIds = Array.from(new Set(ids)); // حذف تکراری‌ها
+//   const response = await http.get('/products', {
+//     params: { id: uniqueIds }
+//   });
+//   return response.data;
+// };
+
+// services/orderService.ts
 export const getProductsByIds = async (ids: number[]): Promise<Product[]> => {
   const uniqueIds = Array.from(new Set(ids)); // حذف تکراری‌ها
-  const response = await http.get('/products', {
-    params: { id: uniqueIds }
-  });
+  const response = await http.get(`/.netlify/functions/getProductsByIds?ids=${uniqueIds}`);
   return response.data;
 };
