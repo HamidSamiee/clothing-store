@@ -12,13 +12,13 @@ interface ErrorResponse {
 }
 
 interface QuestionQueryResult {
-  id: string;
+  id: string; // UUID
   question: string;
   created_at: string;
   user_id: string;
   user_name: string;
   product_id: string;
-  answer_id?: string;
+  answer_id?: string; // UUID
   answer?: string;
   answer_created_at?: string;
   answer_user_id?: string;
@@ -40,7 +40,6 @@ const handler: Handler = async (event) => {
     }
 
     try {
-      // با توجه به اینکه product_id در دیتابیس از نوع varchar(20) است، نیازی به تبدیل به عدد نیست
       const productId = productIdParam;
 
       const questionsResult = await query<QuestionQueryResult>(
@@ -106,18 +105,10 @@ const handler: Handler = async (event) => {
 
     } catch (error) {
       console.error('خطا در دریافت سوالات:', error);
-      let errorMessage = 'خطا در دریافت سوالات محصول';
-      
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      }
-    
       return {
         statusCode: 500,
         body: JSON.stringify({ 
-          message: errorMessage,
+          message: 'خطا در دریافت سوالات محصول',
           details: process.env.NODE_ENV === 'development' ? String(error) : undefined
         } as ErrorResponse)
       };
@@ -142,12 +133,10 @@ const handler: Handler = async (event) => {
         };
       }
 
-      // با توجه به ساختار دیتابیس:
-      // product_id: varchar(20)
-      // user_id: int8 (bigint)
       const result = await query<{ id: string, created_at: string }>(
         `INSERT INTO questions (product_id, user_id, user_name, question)
-         VALUES ($1, $2::bigint, $3, $4)`,
+         VALUES ($1, $2, $3, $4)
+         RETURNING id, created_at`,
         [productId, userId, userName, question]
       );
 
@@ -168,18 +157,10 @@ const handler: Handler = async (event) => {
 
     } catch (error) {
       console.error('خطا در ثبت سوال:', error);
-      let errorMessage = 'خطا در ثبت سوال جدید';
-      
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      }
-    
       return {
         statusCode: 500,
         body: JSON.stringify({ 
-          message: errorMessage,
+          message: 'خطا در ثبت سوال جدید',
           details: process.env.NODE_ENV === 'development' ? String(error) : undefined
         } as ErrorResponse)
       };

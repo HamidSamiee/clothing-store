@@ -201,7 +201,7 @@ const ProductPage = () => {
   
     try {
       const response = await http.post('/.netlify/functions/answers', {
-        questionId,
+        questionId: questionId,
         userId: user.id,
         userName: user.name,
         answer: answerText,
@@ -210,7 +210,7 @@ const ProductPage = () => {
   
       setQuestions(questions.map(q => 
         q.id === questionId
-          ? { ...q, answers: [...q.answers, response.data] }
+          ? { ...q, answers: [...(q.answers || []), response.data] }
           : q
       ));
       

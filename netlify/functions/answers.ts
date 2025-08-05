@@ -3,8 +3,8 @@ import { query } from './db';
 import { Handler } from '@netlify/functions';
 
 interface Answer {
-  id: string;
-  questionId: string;
+  id: string; // UUID
+  questionId: string; // UUID
   userId: string;
   userName: string;
   answer: string;
@@ -44,11 +44,11 @@ const handler: Handler = async (event) => {
 
     // ذخیره پاسخ در دیتابیس
     const result = await query<{ id: string; created_at: string }>(
-        `INSERT INTO answers (question_id, user_id, answer)
-         VALUES ($1, $2, $3)
-         RETURNING id, created_at`,
-        [questionId, userId, answer]
-      );
+      `INSERT INTO answers (question_id, user_id, user_name, answer, is_admin)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, created_at`,
+      [questionId, userId, userName || 'کاربر', answer, isAdmin || false]
+    );
     
     const newAnswer: Answer = {
       id: result.rows[0].id,
@@ -69,7 +69,10 @@ const handler: Handler = async (event) => {
     console.error('خطا در ثبت پاسخ:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'خطا در ثبت پاسخ جدید' } as ErrorResponse)
+      body: JSON.stringify({ 
+        message: 'خطا در ثبت پاسخ جدید',
+        details: process.env.NODE_ENV === 'development' ? String(error) : undefined
+      } as ErrorResponse)
     };
   }
 };
