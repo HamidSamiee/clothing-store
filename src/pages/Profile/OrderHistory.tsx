@@ -19,7 +19,7 @@ const OrderHistory = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['orders', user?.id],
-    queryFn: () => user ? getOrders({ userId: Number(user.id) }) : Promise.resolve({ data: [], total: 0 }),
+    queryFn: () => user ? getOrders({ userId: user.id }) : Promise.resolve({ data: [], total: 0 }),
   });
 
   const orders = useMemo(() => data?.data || [], [data]);

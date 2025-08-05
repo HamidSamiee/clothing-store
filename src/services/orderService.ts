@@ -11,7 +11,7 @@ export interface GetOrdersParams {
   page?: number;
   perPage?: number;
   search?: string;
-  userId?: number; 
+  userId?: number | string; 
 }
 
 interface ApiOrder {
