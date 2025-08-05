@@ -1,20 +1,19 @@
-// netlify/functions/reviews.ts
+// netlify/functions/reviews.ts (نسخه اصلاح شده)
 import { query } from './db';
 import { Handler } from '@netlify/functions';
 
-interface Review {
+interface ReviewResponse {
   id: string;
-  user_id: string;
-  product_id: string;
+  userId: string;
+  productId: string;
   rating: number;
   comment: string | null;
-  created_at: string;
-  user_name?: string;
-  user_email?: string;
+  createdAt: string;
+  userName: string;
+  userEmail?: string;
 }
 
 const handler: Handler = async (event) => {
-  // فقط متد GET را پردازش کنیم
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
@@ -32,16 +31,16 @@ const handler: Handler = async (event) => {
   }
 
   try {
-    const result = await query<Review>(
+    const result = await query<ReviewResponse>(
       `SELECT 
         r.id,
-        r.user_id,
-        r.product_id,
+        r.user_id as "userId",
+        r.product_id as "productId",
         r.rating,
         r.comment,
-        r.created_at,
-        u.name as user_name,
-        u.email as user_email
+        r.created_at as "createdAt",
+        u.name as "userName",
+        u.email as "userEmail"
        FROM reviews r
        JOIN users u ON r.user_id = u.id
        WHERE r.product_id = $1
@@ -51,7 +50,9 @@ const handler: Handler = async (event) => {
     
     return {
       statusCode: 200,
-      body: JSON.stringify(Array.isArray(result.rows) ? result.rows : [])
+      body: JSON.stringify({
+        reviews: Array.isArray(result.rows) ? result.rows : []
+      })
     };
   } catch (error) {
     console.error('Error fetching reviews:', error);

@@ -122,7 +122,7 @@ const ProductInfo = ({
         </div>
       </div>
 
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      <div className={styles.colorQuantityOptions}>
 
         {/* رنگ‌ها */}
         <div className={styles.colorSection}>

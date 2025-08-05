@@ -102,20 +102,26 @@ const ReviewSection = ({
       </div>
 
       <div className={styles.reviewsList}>
-        {reviews.map((review) => (
-          <div key={review.id} className={styles.reviewItem}>
-            <div className={styles.reviewHeader}>
-              <div>
-                <h4>{review.userName}</h4>
-                <div className={styles.reviewRating}>
-                  {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
-                </div>
-                <small>{new Date(review.createdAt).toLocaleDateString('fa-IR')}</small>
+      {reviews.map((review) => (
+        <div key={review.id} className={styles.reviewItem}>
+          <div className={styles.reviewHeader}>
+            <div>
+              <h4>{review.userName}</h4>
+              <div className={styles.reviewRating}>
+                {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
               </div>
+              <small>
+                {new Date(review.createdAt).toLocaleDateString('fa-IR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </small>
             </div>
-            <p>{review.comment}</p>
           </div>
-        ))}
+          <p>{review.comment}</p>
+        </div>
+      ))}
       </div>
     </div>
   );

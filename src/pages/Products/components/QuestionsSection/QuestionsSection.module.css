@@ -18,6 +18,7 @@
 
 .questionForm {
     margin-bottom: 2rem;
+    box-sizing: border-box;
 }
 
 .questionForm textarea {
