@@ -206,23 +206,9 @@ export const normalizeProduct = (product: RawProduct): Product => {
 //   return normalizeProduct(response.data);
 // };
 
-export const addProduct = async (productData: Omit<Product, 'id'>): Promise<Product> => {
-  try {
-    // تبدیل داده‌ها به فرمت مناسب برای دیتابیس
-    const productToSend = {
-      ...productData,
-      sizes: productData.sizes || [],
-      colors: productData.colors || [],
-      reviews: productData.reviews ? JSON.stringify(productData.reviews) : '[]'
-    };
+// در فایل productService.ts
 
-    const response = await http.post('/.netlify/functions/addProduct', productToSend);
-    return normalizeProduct(response.data);
-  } catch (error) {
-    console.error('Add product error:', error);
-    throw error;
-  }
-};
+
 
 // export const updateProduct = async (id: number | string, productData: Partial<Product>) => {
 
@@ -230,6 +216,21 @@ export const addProduct = async (productData: Omit<Product, 'id'>): Promise<Prod
 //     return response.data;
 
 // };
+
+export const addProduct = async (productData: Omit<Product, 'id'>): Promise<Product> => {
+  try {
+    const response = await http.post('/.netlify/functions/addProduct', {
+      ...productData,
+      sizes: productData.sizes || [],
+      colors: productData.colors || [],
+      reviews: productData.reviews ? JSON.stringify(productData.reviews) : '[]'
+    });
+    return normalizeProduct(response.data);
+  } catch (error) {
+    console.error('Add product error:', error);
+    throw error;
+  }
+};
 
 export const updateProduct = async (id: string | number, productData: Partial<Product>): Promise<Product> => {
   try {

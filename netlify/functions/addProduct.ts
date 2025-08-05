@@ -1,5 +1,6 @@
 import { query } from './db';
 import { Handler } from '@netlify/functions';
+import { v4 as uuidv4 } from 'uuid';
 
 const handler: Handler = async (event) => {
   if (!event.body) {
@@ -12,17 +13,21 @@ const handler: Handler = async (event) => {
   try {
     const productData = JSON.parse(event.body);
     
+    // تولید ID منحصر به فرد با UUID
+    const productId = uuidv4();
+    
     // شروع تراکنش
     await query('BEGIN');
     
     // افزودن محصول اصلی
     const productResult = await query(
       `INSERT INTO products (
-        name, price, discount, description, category, 
+        id, name, price, discount, description, category, 
         image, rating, stock, featured, wishlist_count
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *`,
       [
+        productId, // استفاده از UUID تولید شده
         productData.name,
         productData.price,
         productData.discount || null,
@@ -35,8 +40,6 @@ const handler: Handler = async (event) => {
         0 // مقدار اولیه برای wishlist_count
       ]
     );
-    
-    const productId = productResult.rows[0].id;
     
     // افزودن سایزها
     if (productData.sizes && productData.sizes.length > 0) {
@@ -70,7 +73,10 @@ const handler: Handler = async (event) => {
     console.error('Add product error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'خطا در افزودن محصول' })
+      body: JSON.stringify({ 
+        message: 'خطا در افزودن محصول',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      })
     };
   }
 };
