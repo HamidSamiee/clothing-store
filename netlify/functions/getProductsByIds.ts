@@ -4,7 +4,7 @@ import { normalizeProduct } from './normalizeProduct';
 import { RawProduct } from '@/types/Product';
 
 interface ProductQueryResult {
-  id: number;
+  id: string; // تغییر از number به string
   name: string;
   price: number | string;
   discount?: number | string | null;
@@ -17,7 +17,7 @@ interface ProductQueryResult {
   sizes: string[];
   colors: string[];
   specifications?: Record<string, string> | string | null;
-  reviews?: string; // This must match RawProduct (string)
+  reviews?: string;
 }
 
 const handler: Handler = async (event) => {
@@ -31,9 +31,8 @@ const handler: Handler = async (event) => {
   }
 
   try {
-    const idArray = ids.split(',').map(id => parseInt(id.trim(), 10));
+    const idArray = ids.split(',').map(id => id.trim()); // حذف parseInt
     
-    // Query that returns reviews as JSON string
     const result = await query<ProductQueryResult>(
       `SELECT p.*, 
               array_agg(DISTINCT ps.size) as sizes,
@@ -42,14 +41,17 @@ const handler: Handler = async (event) => {
        FROM products p
        LEFT JOIN product_sizes ps ON p.id = ps.product_id
        LEFT JOIN product_colors pc ON p.id = pc.product_id
-       WHERE p.id = ANY($1::int[])
+       WHERE p.id = ANY($1::varchar[]) -- تغییر از int[] به varchar[]
        GROUP BY p.id`,
-      [idArray as unknown as (string | number | boolean | null)]
-    );
+       [idArray as unknown as (string | number | boolean | null)]
+      );
     
     const normalizedProducts = result.rows.map(row => {
+      // تبدیل id به number اگر نیاز باشد
+      const productId = isNaN(Number(row.id)) ? row.id : Number(row.id);
+      
       const productData: RawProduct = {
-        id: row.id,
+        id: productId,
         name: row.name,
         price: typeof row.price === 'string' ? parseFloat(row.price) : row.price,
         discount: row.discount 
@@ -68,7 +70,7 @@ const handler: Handler = async (event) => {
         specifications: typeof row.specifications === 'string' 
           ? JSON.parse(row.specifications) 
           : row.specifications ?? {},
-        reviews: row.reviews || '' // Must be string to match RawProduct
+        reviews: row.reviews || ''
       };
       
       return normalizeProduct(productData);
@@ -82,7 +84,10 @@ const handler: Handler = async (event) => {
     console.error('Error fetching products:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'خطا در دریافت محصولات' })
+      body: JSON.stringify({ 
+        message: 'خطا در دریافت محصولات',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      })
     };
   }
 };

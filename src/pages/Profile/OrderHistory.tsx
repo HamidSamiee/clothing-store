@@ -34,7 +34,7 @@ const OrderHistory = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       const productIds = Array.from(new Set(
-        orders.flatMap(order => order.items.map(item => item.productId))
+        orders.flatMap(order => order.items.map(item => item.productId).map(String))
       ));
   
       if (productIds.length > 0) {

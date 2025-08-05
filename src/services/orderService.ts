@@ -207,8 +207,12 @@ export const getProductsForOrder = async (orderId: number): Promise<Product[]> =
 // };
 
 // services/orderService.ts
-export const getProductsByIds = async (ids: number[]): Promise<Product[]> => {
+export const getProductsByIds = async (ids: (number | string)[]): Promise<Product[]> => {
   const uniqueIds = Array.from(new Set(ids)); // حذف تکراری‌ها
-  const response = await http.get(`/.netlify/functions/getProductsByIds?ids=${uniqueIds}`);
+  const response = await http.get(`/.netlify/functions/getProductsByIds`, {
+    params: {
+      ids: uniqueIds.join(',') // ارسال به صورت رشته‌ای جدا شده با کاما
+    }
+  });
   return response.data;
 };
