@@ -178,5 +178,8 @@
     color: #e2e8f0;
 }
 
-
-
+@media (max-width: 768px) {
+    .ratingInput button{
+        padding: 0;
+    }
+}

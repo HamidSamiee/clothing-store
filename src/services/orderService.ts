@@ -80,8 +80,24 @@ interface GetOrdersParams {
   search?: string;
 }
 
+// export const getOrders = async (params?: GetOrdersParams): Promise<{data: Order[], total: number}> => {
+//   const response = await http.get('/orders', {
+//     params: {
+//       _page: params?.page,
+//       _limit: params?.perPage,
+//       q: params?.search,
+//       _expand: 'user' // اگر نیاز به اطلاعات کاربر دارید
+//     }
+//   });
+  
+//   return {
+//     data: response.data,
+//     total: parseInt(response.headers['x-total-count'] || '0', 10)
+//   };
+// };
+
 export const getOrders = async (params?: GetOrdersParams): Promise<{data: Order[], total: number}> => {
-  const response = await http.get('/orders', {
+  const response = await http.get('/.netlify/functions/getOrders', {
     params: {
       _page: params?.page,
       _limit: params?.perPage,
@@ -96,8 +112,13 @@ export const getOrders = async (params?: GetOrdersParams): Promise<{data: Order[
   };
 };
 
+// export const updateOrderStatus = async (orderId: number, newStatus: string): Promise<Order> => {
+//   const response = await http.patch(`/orders/${orderId}`, { status: newStatus });
+//   return response.data;
+// };
+
 export const updateOrderStatus = async (orderId: number, newStatus: string): Promise<Order> => {
-  const response = await http.patch(`/orders/${orderId}`, { status: newStatus });
+  const response = await http.patch(`./netlify/functions/updateOrderStatus?id=${orderId}`, { status: newStatus });
   return response.data;
 };
 
