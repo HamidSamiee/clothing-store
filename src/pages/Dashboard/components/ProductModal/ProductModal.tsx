@@ -86,26 +86,22 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
     }
   }, [productId, reset, fetchProduct]);
 
-  const onSubmit = async (data: Product | Omit<Product, 'id'>) => {
+  const onSubmit = async (data: ProductFormData) => {
     setIsLoading(true);
     
     try {
-      // پاکسازی سایزها و رنگ‌ها قبل از ارسال
-      const cleanedData = {
+      // تبدیل sizes و colors به آرایه معتبر
+      const processedData = {
         ...data,
-        sizes: data.sizes
-          ? [...new Set(data.sizes.map(s => s.toString().trim()).filter(s => s))]
-          : [],
-        colors: data.colors
-          ? [...new Set(data.colors.map(c => c.toString().trim()).filter(c => c))]
-          : []
+        sizes: convertToArray(data.sizes),
+        colors: convertToArray(data.colors)
       };
   
       if (productId) {
-        await updateProduct(productId, cleanedData as Product);
-        toast.success('محصول با موفقیت آپدیت شد');
+        await updateProduct(productId, processedData);
+        toast.success('محصول با موفقیت به‌روزرسانی شد');
       } else {
-        await addProduct(cleanedData);
+        await addProduct(processedData);
         toast.success('محصول با موفقیت اضافه شد');
       }
       
@@ -118,6 +114,14 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
       setIsLoading(false);
     }
   };
+  
+  // تابع کمکی برای تبدیل به آرایه
+  function convertToArray(input: unknown): string[] {
+    if (!input) return [];
+    if (Array.isArray(input)) return input.map(item => String(item?.toString().trim()));
+    if (typeof input === 'string') return input.split(',').map(item => item.trim());
+    return [String(input)];
+  }
 
   const getSafeArray = (value: unknown): string[] => {
     if (Array.isArray(value)) return value.map(String);

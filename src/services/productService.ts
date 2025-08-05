@@ -219,12 +219,14 @@ export const normalizeProduct = (product: RawProduct): Product => {
 
 export const addProduct = async (productData: Omit<Product, 'id'>): Promise<Product> => {
   try {
-    const response = await http.post('/.netlify/functions/addProduct', {
+    // اطمینان از اینکه sizes و colors آرایه هستند
+    const dataToSend = {
       ...productData,
-      sizes: productData.sizes || [],
-      colors: productData.colors || [],
-      reviews: productData.reviews ? JSON.stringify(productData.reviews) : '[]'
-    });
+      sizes: Array.isArray(productData.sizes) ? productData.sizes : [],
+      colors: Array.isArray(productData.colors) ? productData.colors : []
+    };
+
+    const response = await http.post('/.netlify/functions/addProduct', dataToSend);
     return normalizeProduct(response.data);
   } catch (error) {
     console.error('Add product error:', error);
@@ -234,15 +236,14 @@ export const addProduct = async (productData: Omit<Product, 'id'>): Promise<Prod
 
 export const updateProduct = async (id: string | number, productData: Partial<Product>): Promise<Product> => {
   try {
-    // تبدیل داده‌ها به فرمت مناسب برای دیتابیس
-    const updateData = {
+    // اطمینان از اینکه sizes و colors آرایه هستند
+    const dataToSend = {
       ...productData,
-      sizes: productData.sizes || undefined,
-      colors: productData.colors || undefined,
-      reviews: productData.reviews ? JSON.stringify(productData.reviews) : undefined
+      sizes: productData.sizes ? (Array.isArray(productData.sizes) ? productData.sizes : []) : undefined,
+      colors: productData.colors ? (Array.isArray(productData.colors) ? productData.colors : []) : undefined
     };
 
-    const response = await http.patch(`/.netlify/functions/updateProduct?id=${id}`, updateData);
+    const response = await http.patch(`/.netlify/functions/updateProduct?id=${id}`, dataToSend);
     return normalizeProduct(response.data);
   } catch (error) {
     console.error('Update product error:', error);
