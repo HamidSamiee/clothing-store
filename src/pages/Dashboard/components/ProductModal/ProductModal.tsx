@@ -90,17 +90,30 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
     setIsLoading(true);
     
     try {
+      // پاکسازی سایزها و رنگ‌ها قبل از ارسال
+      const cleanedData = {
+        ...data,
+        sizes: data.sizes
+          ? [...new Set(data.sizes.map(s => s.toString().trim()).filter(s => s))]
+          : [],
+        colors: data.colors
+          ? [...new Set(data.colors.map(c => c.toString().trim()).filter(c => c))]
+          : []
+      };
+  
       if (productId) {
-        await updateProduct(productId, data as Product);
-        toast.success('محصول با موفقیت آپدیت شد')
+        await updateProduct(productId, cleanedData as Product);
+        toast.success('محصول با موفقیت آپدیت شد');
       } else {
-        await addProduct(data as Omit<Product, 'id'>);
-        toast.success('محصول با موفقیت اضافه شد')
+        await addProduct(cleanedData);
+        toast.success('محصول با موفقیت اضافه شد');
       }
+      
       onSuccess();
       onClose();
     } catch (error) {
       console.error('Error saving product:', error);
+      toast.error('خطا در ذخیره محصول');
     } finally {
       setIsLoading(false);
     }
