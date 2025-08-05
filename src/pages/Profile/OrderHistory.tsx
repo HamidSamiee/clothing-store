@@ -10,14 +10,16 @@ import styles from './UserProfile.module.css';
 import { getProductsByIds } from '@/services/orderService';
 import { Product } from '@/types/Product';
 import { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 const OrderHistory = () => {
   const { t } = useTranslation();
+  const { user } = useAuth(); 
   const [productsMap, setProductsMap] = useState<Record<number, Product>>({});
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['orders'],
-    queryFn: () => getOrders(),
+    queryKey: ['orders', user?.id],
+    queryFn: () => user ? getOrders({ userId: Number(user.id) }) : Promise.resolve({ data: [], total: 0 }),
   });
 
   const orders = useMemo(() => data?.data || [], [data]);

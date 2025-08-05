@@ -28,20 +28,21 @@ const OrdersManagement = () => {
         perPage: ORDERS_PER_PAGE,
         search: searchTerm
       });
+      
       setOrders(response.data);
+      
       const allProductIds = response.data.flatMap(order => 
         order.items.map(item => item.productId)
       );
       
-      const fetchedProducts = await getProductsByIds(allProductIds);
-      
-      // ساخت map: { 1: {id:1,name:'x'}, 2: {...} }
-      const productsRecord: Record<number, Product> = {};
-      fetchedProducts.forEach(p => {
-        productsRecord[Number(p.id)] = p;
-      });
-      
-      setProductsMap(productsRecord);
+      if (allProductIds.length > 0) {
+        const fetchedProducts = await getProductsByIds(allProductIds);
+        const productsRecord: Record<number, Product> = {};
+        fetchedProducts.forEach(p => {
+          productsRecord[Number(p.id)] = p;
+        });
+        setProductsMap(productsRecord);
+      }
       
       setTotalOrders(response.total);
     } catch (error) {

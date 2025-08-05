@@ -1,4 +1,4 @@
-import { Order, OrderItem } from "@/types/Order";
+import { Order, OrderItem, OrderStatus } from "@/types/Order";
 import { Product } from "@/types/Product";
 import { User } from "@/types/User";
 import http from "./httpService";
@@ -6,6 +6,73 @@ import http from "./httpService";
 const ORDERS_KEY = "ecommerce_orders";
 const PRODUCTS_KEY = "ecommerce_products";
 const USERS_KEY = "users";
+
+export interface GetOrdersParams {
+  page?: number;
+  perPage?: number;
+  search?: string;
+  userId?: number; 
+}
+
+interface ApiOrder {
+  id: number;
+  user_id: number;
+  created_at: string;
+  total: number;
+  status: OrderStatus;
+  payment_method: string;
+  shipping_address?: string;
+  items: Array<{
+    id: number;
+    product_id: number;
+    quantity: number;
+    price: number;
+  }>;
+  user_name?: string;
+  user_email?: string;
+}
+
+export interface OrderResponse extends Order {
+  userName?: string;
+  userEmail?: string;
+}
+
+export const getOrders = async (params?: GetOrdersParams): Promise<{data: OrderResponse[], total: number}> => {
+  const response = await http.get<{data: ApiOrder[], total: number}>('/.netlify/functions/getOrders', {
+    params: {
+      _page: params?.page,
+      _limit: params?.perPage,
+      q: params?.search,
+      userId: params?.userId
+    }
+  });
+  
+
+const transformedData: OrderResponse[] = response.data.data.map((order) => ({
+  id: order.id,
+  userId: order.user_id,
+  date: order.created_at,
+  total: order.total,
+  status: order.status,
+  paymentMethod: order.payment_method,
+  shippingAddress: order.shipping_address || undefined,
+  items: order.items.map(item => ({
+    id: item.id,
+    orderId: order.id,  
+    productId: item.product_id,
+    quantity: item.quantity,
+    price: item.price
+  })),
+  userName: order.user_name || undefined,
+  userEmail: order.user_email || undefined
+}));
+  
+  return {
+    data: transformedData,
+    total: response.data.total
+  };
+};
+
 
 export const getOrdersByUser = async (userId: number): Promise<Order[]> => {
   const orders: Order[] = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
@@ -74,11 +141,11 @@ export const cancelOrder = async (orderId: number): Promise<void> => {
 };
 
 
-interface GetOrdersParams {
-  page?: number;
-  perPage?: number;
-  search?: string;
-}
+// interface GetOrdersParams {
+//   page?: number;
+//   perPage?: number;
+//   search?: string;
+// }
 
 // export const getOrders = async (params?: GetOrdersParams): Promise<{data: Order[], total: number}> => {
 //   const response = await http.get('/orders', {
@@ -96,21 +163,6 @@ interface GetOrdersParams {
 //   };
 // };
 
-export const getOrders = async (params?: GetOrdersParams): Promise<{data: Order[], total: number}> => {
-  const response = await http.get('/.netlify/functions/getOrders', {
-    params: {
-      _page: params?.page,
-      _limit: params?.perPage,
-      q: params?.search,
-      _expand: 'user' // اگر نیاز به اطلاعات کاربر دارید
-    }
-  });
-  
-  return {
-    data: response.data,
-    total: parseInt(response.headers['x-total-count'] || '0', 10)
-  };
-};
 
 // export const updateOrderStatus = async (orderId: number, newStatus: string): Promise<Order> => {
 //   const response = await http.patch(`/orders/${orderId}`, { status: newStatus });
