@@ -7,6 +7,14 @@ interface UpdateStatusData {
 }
 
 const handler: Handler = async (event) => {
+  // اجازه دادن به متد PATCH
+  if (event.httpMethod !== 'PATCH') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ message: 'Method Not Allowed' })
+    };
+  }
+
   const orderId = event.queryStringParameters?.id;
   
   if (!orderId || !event.body) {
@@ -19,7 +27,6 @@ const handler: Handler = async (event) => {
   try {
     const { status } = JSON.parse(event.body) as UpdateStatusData;
     
-    // اعتبارسنجی وضعیت
     const validStatuses: OrderStatus[] = ['processing', 'shipped', 'delivered', 'cancelled'];
     if (!validStatuses.includes(status)) {
       return {
@@ -44,7 +51,8 @@ const handler: Handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify(result.rows[0])
     };
-  } catch  {
+  } catch (error) {
+    console.error('Update order status error:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: 'خطا در به‌روزرسانی وضعیت سفارش' })

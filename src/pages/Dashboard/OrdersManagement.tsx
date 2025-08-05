@@ -7,6 +7,7 @@ import { Order } from '@/types/Order';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import { getOrders, getProductsByIds, updateOrderStatus } from '@/services/orderService';
 import { Product } from '@/types/Product';
+import { toast } from 'react-toastify';
 
 const ORDERS_PER_PAGE = 2;
 
@@ -67,12 +68,13 @@ const OrdersManagement = () => {
 
   const handleStatusChange = async (orderId: number, newStatus: string) => {
     try {
-      await updateOrderStatus(orderId, newStatus);
+      const updatedOrder = await updateOrderStatus(orderId, newStatus);
       setOrders(orders.map(order => 
-        order.id === orderId ? { ...order, status: order.status as 'processing' | 'shipped' | 'delivered' | 'cancelled' } : order
+        order.id === orderId ? updatedOrder : order
       ));
     } catch (error) {
       console.error('Error updating order status:', error);
+      toast.error('خطا در به‌روزرسانی وضعیت سفارش');
     }
   };
 

@@ -170,8 +170,17 @@ export const cancelOrder = async (orderId: number): Promise<void> => {
 // };
 
 export const updateOrderStatus = async (orderId: number, newStatus: string): Promise<Order> => {
-  const response = await http.patch(`./netlify/functions/updateOrderStatus?id=${orderId}`, { status: newStatus });
-  return response.data;
+  try {
+    const response = await http.patch(
+      '/.netlify/functions/updateOrderStatus',
+      { status: newStatus },
+      { params: { id: orderId } }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    throw error;
+  }
 };
 
 export const getOrderDetails = async (orderId: number): Promise<Order> => {
