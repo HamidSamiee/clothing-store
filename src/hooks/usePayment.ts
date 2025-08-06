@@ -2,12 +2,12 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { createOrder } from '@/services/orderService';
-import { Order } from '@/types/Order';
+import { OrderData } from '@/types/Order';
 
-interface PaymentResponse {
-  url: string;
-  orderId: number;
-}
+// interface PaymentResponse {
+//   url: string;
+//   orderId: number;
+// }
 
 export const usePayment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,21 +16,12 @@ export const usePayment = () => {
   const initiatePayment = async (
     amount: number,
     description: string,
-    orderData: Omit<Order, 'id' | 'date' | 'status' | 'userName' | 'userEmail'>
-  ): Promise<void> => {
+    orderData: OrderData
+  ) => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // اعتبارسنجی داده‌ها
-      if (!amount || amount <= 0) {
-        throw new Error('مبلغ پرداخت نامعتبر است');
-      }
-
-      if (!orderData.total || orderData.total <= 0) {
-        throw new Error('مبلغ سفارش نامعتبر است');
-      }
-
       const res = await fetch('/.netlify/functions/payment', {
         method: 'POST',
         headers: {
@@ -46,10 +37,22 @@ export const usePayment = () => {
         }),
       });
 
-      const data: PaymentResponse = await res.json();
-
       if (!res.ok) {
-        throw new Error('خطا در پرداخت');
+        // تلاش برای خواندن پیام خطا از سرور
+        let errorMessage = 'خطا در پرداخت';
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          console.error('Failed to parse error response:', e);
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await res.json();
+
+      if (!data?.url) {
+        throw new Error('پاسخ نامعتبر از سرور دریافت شد');
       }
 
       localStorage.setItem('zarinpalPayment', JSON.stringify({ 
@@ -60,9 +63,10 @@ export const usePayment = () => {
       
       window.location.href = data.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطا در پرداخت');
+      const errorMessage = err instanceof Error ? err.message : 'خطا در پرداخت';
+      setError(errorMessage);
       console.error('Payment error:', err);
-      throw err;
+      throw err; // پرتاب مجدد خطا برای مدیریت در کامپوننت
     } finally {
       setIsLoading(false);
     }

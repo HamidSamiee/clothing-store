@@ -5,7 +5,7 @@ import { usePayment } from '@/hooks/usePayment';
 import styles from './Checkout.module.css';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddressForm from '@/components/AddressForm/AddressForm';
 import DeliveryMethod from '@/components/DeliveryMethod/DeliveryMethod';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
@@ -37,12 +37,8 @@ const Checkout = () => {
   const [address, setAddress] = useState<Address | null>(null);
   const [deliveryMethod, setDeliveryMethod] = useState<string>('');
 
-  const handlePayment = useCallback(async () => {
+  const handlePayment = async () => {
     try {
-      if (!currentUser) throw new Error('لطفا لاگین کنید');
-      if (!address) throw new Error('لطفا آدرس رو وارد کنید');
-      if (cartItems.length === 0) throw new Error('سبد خرید شما خالی است');
-
       const orderItems: OrderItem[] = cartItems.map(item => ({
         productId: Number(item.id),
         quantity: item.quantity,
@@ -50,26 +46,47 @@ const Checkout = () => {
         orderId: 0,
         id: 0
       }));
-
+  
       const orderData = {
-        userId: Number(currentUser.id),
+        userId: Number(currentUser!.id),
         items: orderItems,
         total: cartTotal,
         paymentMethod: 'zarinpal',
-        shippingAddress: `${address.street}, ${address.city}, ${address.postalCode}`
+        shippingAddress: `${address!.street}, ${address!.city}`
       };
-
+  
       await initiatePayment(
         cartTotal,
-        t('checkout.paymentDescription'),
+        `پرداخت سفارش #${Date.now()}`,
         orderData
       );
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('checkout.paymentError'));
+      let errorMessage = 'خطا در پرداخت';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        
+        // نمایش جزئیات بیشتر برای خطاهای خاص
+        if (error.message.includes('داده‌های سفارش ناقص')) {
+          errorMessage = 'اطلاعات سفارش کامل نیست. لطفا دوباره تلاش کنید';
+        } else if (error.message.includes('اتصال اینترنت')) {
+          errorMessage = 'مشکل در اتصال به اینترنت. لطفا ارتباط شبکه را بررسی کنید';
+        }
+      }
+  
+      toast.error(errorMessage, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+  
       console.error('Checkout error:', error);
     }
-  }, [currentUser, address, cartItems, cartTotal, initiatePayment, t]);
-  
+  };
+
   const steps = [
     { id: 'auth', label: t('checkout.authStep') },
     { id: 'address', label: t('checkout.addressStep') },

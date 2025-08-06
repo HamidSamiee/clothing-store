@@ -5,7 +5,14 @@ export interface OrderItem {
   quantity: number;
   price: number;
 }
-  
+
+export interface OrderData {
+  userId: number;
+  items: OrderItem[];
+  total: number;
+  paymentMethod: string;
+  shippingAddress?: string;
+}  
 
 export type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled';
 

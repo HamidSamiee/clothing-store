@@ -22,6 +22,7 @@ interface PaymentRequest {
 }
 
 export const handler: Handler = async (event) => {
+  // بررسی وجود body
   if (!event.body) {
     return {
       statusCode: 400,
@@ -29,26 +30,26 @@ export const handler: Handler = async (event) => {
     };
   }
 
-  const { amount, description, orderData } = JSON.parse(event.body) as PaymentRequest;
-
-  // اعتبارسنجی داده‌های ورودی
-  if (!amount || !description || !orderData) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'داده‌های ناقص' })
-    };
-  }
-
-  if (!orderData.userId || !orderData.total || !orderData.paymentMethod) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'داده‌های سفارش ناقص' })
-    };
-  }
-
-  const client = await getClient();
-  
+  let client;
   try {
+    // پارس و اعتبارسنجی داده‌های ورودی
+    const { amount, description, orderData } = JSON.parse(event.body) as PaymentRequest;
+    
+    if (!amount || !description || !orderData) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'داده‌های ناقص' })
+      };
+    }
+
+    if (!orderData.userId || !orderData.total || !orderData.paymentMethod) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'داده‌های سفارش ناقص' })
+      };
+    }
+
+    client = await getClient();
     await client.query('BEGIN');
 
     // ثبت سفارش در دیتابیس
@@ -59,7 +60,7 @@ export const handler: Handler = async (event) => {
       [
         orderData.userId,
         orderData.total,
-        'pending', // وضعیت اولیه
+        'pending',
         orderData.paymentMethod,
         orderData.shippingAddress || null
       ]
@@ -87,7 +88,10 @@ export const handler: Handler = async (event) => {
       await client.query('ROLLBACK');
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'خطا در درخواست پرداخت' })
+        body: JSON.stringify({ 
+          error: 'خطا در درخواست پرداخت',
+          details: response 
+        })
       };
     }
 
@@ -101,13 +105,24 @@ export const handler: Handler = async (event) => {
       })
     };
   } catch (err) {
-    await client.query('ROLLBACK');
-    console.error('Payment error:', err);
+    console.error('Payment processing error:', err);
+    if (client) {
+      await client.query('ROLLBACK').catch(e => console.error('Rollback error:', e));
+    }
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'خطا در سرور' })
+      body: JSON.stringify({ 
+        error: 'خطا در پردازش پرداخت',
+        message: err instanceof Error ? err.message : 'Unknown error'
+      })
     };
   } finally {
-    client.release();
+    if (client) {
+      try {
+        await client.release();
+      } catch (e: unknown) {
+        console.error('Client release error:', e instanceof Error ? e.message : String(e));
+      }
+    }
   }
 };
