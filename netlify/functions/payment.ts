@@ -3,7 +3,7 @@ import { Handler } from '@netlify/functions';
 import { getClient } from './db';
 import ZarinPal from 'zarinpal-checkout';
 
-const zarinpal = ZarinPal.create('YOUR_MERCHANT_ID', true);
+const zarinpal = ZarinPal.create("e6965f6e-b82e-11e9-b17a-000c29344814", true);
 
 interface PaymentRequest {
   amount: number;
