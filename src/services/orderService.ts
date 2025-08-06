@@ -1,5 +1,5 @@
 import { Order, OrderItem, OrderStatus } from "@/types/Order";
-import { Product } from "@/types/Product";
+import { Product, RawProduct } from "@/types/Product";
 import { User } from "@/types/User";
 import http from "./httpService";
 
@@ -216,38 +216,71 @@ export const getProductsForOrder = async (orderId: number): Promise<Product[]> =
 // };
 
 // services/orderService.ts
+
 export const getProductsByIds = async (ids: (number | string)[]): Promise<Product[]> => {
   try {
-    // 1. بررسی وجود آرایه و حذف مقادیر نامعتبر
-    const validIds = Array.isArray(ids) 
-      ? ids
-          .map(id => {
-            // تبدیل به عدد در صورت امکان
-            const num = Number(id);
-            return isNaN(num) ? null : num;
-          })
-          .filter(Boolean) // حذف null/undefined
-      : [];
+    // 1. اعتبارسنجی و تبدیل IDs
+    const validIds = (Array.isArray(ids) ? ids : [])
+      .map(id => String(id)) // تبدیل همه به رشته برای اطمینان
+      .filter(id => id.trim() !== ''); // حذف مقادیر خالی
 
-    // 2. حذف تکراری‌ها
-    const uniqueIds = [...new Set(validIds)];
+    if (validIds.length === 0) return [];
 
-    // 3. اگر آرایه خالی بود، خروجی بگیرید
-    if (uniqueIds.length === 0) {
-      return [];
-    }
-
-    // 4. درخواست به سرور
-    const response = await http.get(`/.netlify/functions/getProductsByIds`, {
-      params: {
-        ids: uniqueIds.join(',')
-      }
+    // 2. درخواست به سرور
+    const response = await http.get<RawProduct | RawProduct[]>(`/.netlify/functions/getProductsByIds`, {
+      params: { ids: validIds.join(',') }
     });
 
-    // 5. بررسی پاسخ سرور و برگشت داده ایمن
-    return Array.isArray(response?.data) ? response.data : [];
+    // 3. پردازش پاسخ سرور
+    if (!response?.data) return [];
+
+    const rawProducts = Array.isArray(response.data) ? response.data : [response.data];
+
+    // 4. تبدیل به Product[]
+    return rawProducts.map((item): Product => {
+      // تبدیل فیلدهای اصلی
+      const product: Product = {
+        id: String(item.id ?? ''),
+        name: item.name ?? 'نامشخص',
+        price: Number(item.price) || 0,
+        description: item.description ?? '',
+        category: item.category ?? 'دسته‌بندی نشده',
+        image: item.image ?? '/default-product.jpg',
+        rating: Math.min(5, Math.max(0, Number(item.rating) || 0)), // محدود به بازه 0-5
+        sizes: Array.isArray(item.sizes) ? item.sizes : 
+              typeof item.sizes === 'string' ? [item.sizes] : [],
+        colors: Array.isArray(item.colors) ? item.colors : 
+               typeof item.colors === 'string' ? [item.colors] : [],
+        stock: Math.max(0, Number(item.stock) || 0) // حداقل 0
+      };
+
+      // فیلدهای اختیاری
+      if (item.discount) product.discount = Number(item.discount);
+      if (item.specifications) product.specifications = item.specifications;
+      if (item.featured) product.featured = Boolean(item.featured);
+      if (item.shareUrl) product.shareUrl = String(item.shareUrl);
+
+      // پردازش reviews اگر وجود دارد
+      if (item.reviews) {
+        try {
+          product.reviews = typeof item.reviews === 'string' ? 
+            JSON.parse(item.reviews) : 
+            item.reviews;
+        } catch {
+          product.reviews = [];
+        }
+      }
+
+      // محاسبه averageRating اگر وجود ندارد
+      product.averageRating = product.reviews?.length ? 
+        product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length :
+        product.rating;
+
+      return product;
+    });
+
   } catch (error) {
-    console.error('Error in getProductsByIds:', error);
-    return []; // برگشت آرایه خالی در صورت خطا
+    console.error('Error fetching products by IDs:', error);
+    return [];
   }
 };
