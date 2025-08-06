@@ -5,11 +5,13 @@ import { usePayment } from '@/hooks/usePayment';
 import styles from './Checkout.module.css';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AddressForm from '@/components/AddressForm/AddressForm';
 import DeliveryMethod from '@/components/DeliveryMethod/DeliveryMethod';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import { toast } from 'react-toastify';
+import {  OrderItem } from '@/types/Order';
+
 
 interface Address {
   street: string;
@@ -27,13 +29,47 @@ interface Address {
 const Checkout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth(); // Removed unused 'user' variable
-  const { items, total } = useCart();
-  const { initiatePayment } = usePayment();
+  const { isAuthenticated, user: currentUser } = useAuth();
+  const { items: cartItems, total: cartTotal } = useCart();
+  const { initiatePayment, isLoading } = usePayment();
+  
   const [step, setStep] = useState<'auth' | 'address' | 'delivery' | 'payment'>('auth');
   const [address, setAddress] = useState<Address | null>(null);
   const [deliveryMethod, setDeliveryMethod] = useState<string>('');
 
+  const handlePayment = useCallback(async () => {
+    try {
+      if (!currentUser) throw new Error('لطفا لاگین کنید');
+      if (!address) throw new Error('لطفا آدرس رو وارد کنید');
+      if (cartItems.length === 0) throw new Error('سبد خرید شما خالی است');
+
+      const orderItems: OrderItem[] = cartItems.map(item => ({
+        productId: Number(item.id),
+        quantity: item.quantity,
+        price: item.price,
+        orderId: 0,
+        id: 0
+      }));
+
+      const orderData = {
+        userId: Number(currentUser.id),
+        items: orderItems,
+        total: cartTotal,
+        paymentMethod: 'zarinpal',
+        shippingAddress: `${address.street}, ${address.city}, ${address.postalCode}`
+      };
+
+      await initiatePayment(
+        cartTotal,
+        t('checkout.paymentDescription'),
+        orderData
+      );
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t('checkout.paymentError'));
+      console.error('Checkout error:', error);
+    }
+  }, [currentUser, address, cartItems, cartTotal, initiatePayment, t]);
+  
   const steps = [
     { id: 'auth', label: t('checkout.authStep') },
     { id: 'address', label: t('checkout.addressStep') },
@@ -114,14 +150,6 @@ const Checkout = () => {
     setDeliveryMethod(method);
   };
 
-  const handlePayment = async () => {
-    try {
-      await initiatePayment(total, 'پرداخت سفارش');
-    } catch  {
-      toast.error('خطا در اتصال به درگاه پرداخت');
-    }
-  };
-
   if (!isAuthenticated) {
     return (
       <div className={styles.checkoutContainer}>
@@ -174,9 +202,9 @@ const Checkout = () => {
       <h1 className={styles.checkoutTitle}>{t('checkout.reviewOrder')}</h1>
       <div className={styles.containerContinueBtn}>
           <div className={styles.orderSummary}>
-            <h3>{t('checkout.orderItems')} ({items.length})</h3>
+            <h3>{t('checkout.orderItems')} ({cartItems.length})</h3>
             <ul className={styles.itemsList}>
-              {items.map(item => (
+              {cartItems.map(item => (
                 <li key={item.id} className={styles.item}>
                   <span>{item.name}</span>
                   <span>{item.quantity} × {item.price.toLocaleString()} {t('product.currency')}</span>
@@ -196,11 +224,15 @@ const Checkout = () => {
             
             <div className={styles.totalAmount}>
               <h3>{t('cart.total')}:</h3>
-              <span>{total.toLocaleString()} {t('product.currency')}</span>
+              <span>{cartTotal.toLocaleString()} {t('product.currency')}</span>
             </div>
           </div>
           
-          <button onClick={handlePayment} className={styles.paymentButton}>
+          <button 
+            onClick={handlePayment} 
+            className={styles.paymentButton}  
+            disabled={isLoading}
+          >
             {t('checkout.payWithZarinpal')}
           </button>
       </div>
