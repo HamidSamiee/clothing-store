@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FiSearch, FiEye, FiTruck, FiCheck, FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import OrdersModal from './components/OrdersModal/OrdersModal';
 import styles from './AdminComponents.module.css';
-import { Order } from '@/types/Order';
+import { Order, OrderStatus } from '@/types/Order';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import { getOrders, getProductsByIds, updateOrderStatus } from '@/services/orderService';
 import { Product } from '@/types/Product';
@@ -72,17 +72,26 @@ const OrdersManagement = () => {
     setCurrentPage(newPage);
   };
 
-  const handleStatusChange = async (orderId: number, newStatus: string) => {
+  const handleStatusChange = async (orderId: number, newStatus: OrderStatus) => {
     try {
       const updatedOrder = await updateOrderStatus(orderId, newStatus);
-      if (updatedOrder) {
-        setOrders(orders.map(order => 
-          order?.id === orderId ? updatedOrder : order
-        ));
-      }
+      
+      setOrders(prevOrders => 
+        prevOrders.map(order => 
+          order.id === updatedOrder.id 
+            ? { ...order, status: updatedOrder.status }
+            : order
+        )
+      );
+      
+      toast.success(`وضعیت سفارش به "${statusTranslations[newStatus]}" تغییر یافت`);
     } catch (error) {
-      console.error('Error updating order status:', error);
-      toast.error('خطا در به‌روزرسانی وضعیت سفارش');
+      console.error('Update failed:', error);
+      toast.error(
+        error instanceof Error 
+          ? error.message 
+          : 'خطا در تغییر وضعیت سفارش'
+      );
     }
   };
 

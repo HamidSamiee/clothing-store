@@ -169,19 +169,35 @@ export const cancelOrder = async (orderId: number): Promise<void> => {
 //   return response.data;
 // };
 
-export const updateOrderStatus = async (orderId: number, newStatus: string): Promise<Order> => {
+export const updateOrderStatus = async (orderId: number, newStatus: OrderStatus): Promise<Order> => {
   try {
-    const response = await http.patch(
+    const response = await http.patch<Order>(
       '/.netlify/functions/updateOrderStatus',
       { status: newStatus },
       { params: { id: orderId } }
     );
-    return response.data;
+    
+    if (!response.data?.id) {
+      throw new Error('پاسخ نامعتبر از سرور');
+    }
+
+    return {
+      ...response.data,
+      // تبدیل نوع برای فیلدهای عددی
+      items: response.data.items?.map(item => ({
+        ...item,
+        price: Number(item.price) || 0,
+        quantity: Number(item.quantity) || 0
+      })) || []
+    };
   } catch (error) {
-    console.error('Error updating order status:', error);
-    throw error;
+    console.error('Update error:', error);
+    throw new Error(
+      error instanceof Error ? error.message : 'خطا در به‌روزرسانی وضعیت سفارش'
+    );
   }
 };
+
 
 export const getOrderDetails = async (orderId: number): Promise<Order> => {
   const response = await http.get(`/orders/${orderId}`);
