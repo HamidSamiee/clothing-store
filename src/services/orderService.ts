@@ -190,7 +190,7 @@ export const getOrderDetails = async (orderId: number): Promise<Order> => {
 
 export const getProductsForOrder = async (orderId: number): Promise<Product[]> => {
   // دریافت سفارش
-  const orderResponse = await http.get(`/orders/${orderId}`);
+  const orderResponse = await http.get(`/.netlify/functions/getProductsForOrder?id=${orderId}`);
   const order: Order = orderResponse.data;
   
   // دریافت اطلاعات محصولات
