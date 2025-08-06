@@ -1,7 +1,5 @@
 // hooks/usePayment.ts
 import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { createOrder } from '@/services/orderService';
 import { OrderData } from '@/types/Order';
 
 // interface PaymentResponse {
@@ -9,13 +7,13 @@ import { OrderData } from '@/types/Order';
 //   orderId: number;
 // }
 
-interface VerifyPaymentResponse {
-  success: boolean;
-  orderId?: number;
-  amount?: number;
-  authority?: string | null;
-  error?: string;
-}
+// interface VerifyPaymentResponse {
+//   success: boolean;
+//   orderId?: number;
+//   amount?: number;
+//   authority?: string | null;
+//   error?: string;
+// }
 
 export const usePayment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,11 +62,14 @@ export const usePayment = () => {
       }
 
       localStorage.setItem('zarinpalPayment', JSON.stringify({ 
-        amount,
+        amount: Number(amount), // ذخیره به صورت عدد
         authority: data.url.split('/').pop(),
-        orderId: data.orderId,
         userId: orderData.userId,
-        items: orderData.items, // ذخیره آیتم‌ها به صورت آرایه
+        items: orderData.items.map(item => ({
+          productId: Number(item.productId),
+          quantity: Number(item.quantity),
+          price: Number(item.price)
+        })),
         shippingAddress: orderData.shippingAddress
       }));
       
@@ -84,7 +85,7 @@ export const usePayment = () => {
     }
   };
 
-  const verifyPayment = async (authority?: string, status?: string): Promise<VerifyPaymentResponse> => {
+  const verifyPayment = async (authority?: string, status?: string) => {
     setIsLoading(true);
     setError(null);
     
@@ -96,8 +97,13 @@ export const usePayment = () => {
       if (paymentStatus === 'OK') {
         const paymentData = JSON.parse(localStorage.getItem('zarinpalPayment') || '{}');
         
-        // تعیین نوع برای item
-        const orderItems = Array.isArray(paymentData.items) 
+        // اعتبارسنجی و تبدیل مقادیر
+        const total = Number(paymentData.amount);
+        if (isNaN(total)) {
+          throw new Error('مبلغ پرداخت نامعتبر است');
+        }
+  
+        const orderItems = Array.isArray(paymentData.items)
           ? paymentData.items.map((item: { productId: number; quantity: number; price: number }) => ({
               productId: Number(item.productId),
               quantity: Number(item.quantity),
@@ -105,24 +111,33 @@ export const usePayment = () => {
             }))
           : [];
   
-        const orderResponse = await createOrder({
-          userId: Number(paymentData.userId),
-          items: orderItems,
-          total: Number(paymentData.amount),
-          paymentMethod: 'zarinpal',
-          shippingAddress: paymentData.shippingAddress
+        const orderResponse = await fetch('/.netlify/functions/createOrder', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: Number(paymentData.userId),
+            items: orderItems,
+            total: total,
+            paymentMethod: 'zarinpal',
+            shippingAddress: paymentData.shippingAddress
+          }),
         });
   
-        if (orderResponse.success) {
-          toast.success("پرداخت و ثبت سفارش با موفقیت انجام شد");
-          localStorage.removeItem('zarinpalPayment');
-          return {
-            success: true,
-            orderId: orderResponse.data?.id, // استفاده از data.id به جای orderId
-            amount: paymentData.amount,
-            authority: paymentAuthority
-          };
+        const responseData = await orderResponse.json();
+  
+        if (!orderResponse.ok) {
+          throw new Error(responseData.message || 'خطا در ثبت سفارش');
         }
+  
+        localStorage.removeItem('zarinpalPayment');
+        return {
+          success: true,
+          orderId: responseData.orderId,
+          amount: total,
+          authority: paymentAuthority
+        };
       }
       
       return { success: false };

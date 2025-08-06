@@ -1,17 +1,20 @@
 // netlify/functions/createOrder.ts
 import { Handler } from '@netlify/functions';
 import { getClient } from './db';
-import { OrderItem } from '@/types/Order';
 
 interface CreateOrderRequest {
   userId: number;
-  items: OrderItem[]; // تعریف صریح نوع items
+  items: Array<{
+    productId: number;
+    quantity: number;
+    price: number;
+  }>;
   total: number;
   paymentMethod: string;
   shippingAddress?: string;
 }
 
-const handler: Handler = async (event) => {
+export const handler: Handler = async (event) => {
   const client = await getClient();
   
   try {
@@ -26,21 +29,33 @@ const handler: Handler = async (event) => {
     const { userId, items, total, paymentMethod, shippingAddress } = 
       JSON.parse(event.body) as CreateOrderRequest;
 
-    // اعتبارسنجی items
-    if (!Array.isArray(items)) {
+    // اعتبارسنجی مقادیر اجباری
+    if (
+      userId === undefined ||
+      total === undefined ||
+      !Array.isArray(items) ||
+      paymentMethod === undefined
+    ) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: 'آیتم‌های سفارش باید به صورت آرایه ارسال شوند' })
+        body: JSON.stringify({ message: 'داده‌های ناقص' })
       };
     }
 
     await client.query('BEGIN');
     
+    // ثبت سفارش
     const orderResult = await client.query(
       `INSERT INTO orders (user_id, total, status, payment_method, shipping_address)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id, created_at`,
-      [userId, total, 'processing', paymentMethod, shippingAddress || null]
+      [
+        userId,
+        Number(total), // تبدیل صریح به عدد
+        'processing',
+        paymentMethod,
+        shippingAddress || null
+      ]
     );
 
     const orderId = orderResult.rows[0].id;
@@ -50,7 +65,12 @@ const handler: Handler = async (event) => {
       await client.query(
         `INSERT INTO order_items (order_id, product_id, quantity, price)
          VALUES ($1, $2, $3, $4)`,
-        [orderId, item.productId, item.quantity, item.price]
+        [
+          orderId,
+          Number(item.productId),
+          Number(item.quantity),
+          Number(item.price)
+        ]
       );
     }
 
@@ -58,9 +78,11 @@ const handler: Handler = async (event) => {
 
     return {
       statusCode: 201,
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         success: true,
-        orderId
+        orderId,
+        total,
+        status: 'processing'
       })
     };
   } catch (err) {
@@ -74,8 +96,6 @@ const handler: Handler = async (event) => {
       })
     };
   } finally {
-    client.release();
+    await client.release();
   }
 };
-
-export { handler };
