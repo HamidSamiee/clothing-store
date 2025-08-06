@@ -30,20 +30,20 @@ const OrdersManagement = () => {
         search: searchTerm
       });
       
-      // اضافه کردن بررسی null/undefined
-      const ordersData = response?.data || [];
+      const ordersData = Array.isArray(response?.data) ? response.data : [];
       setOrders(ordersData);
       
-      // استخراج productIdها با بررسی وجود items
       const allProductIds = ordersData.flatMap(order => 
-        order?.items?.map(item => item?.productId) || []
-      ).filter(Boolean); // حذف مقادیر null/undefined
+        Array.isArray(order?.items) ? 
+          order.items.map(item => item?.productId).filter(Boolean) : 
+          []
+      );
       
       if (allProductIds.length > 0) {
         const fetchedProducts = await getProductsByIds(allProductIds);
         const productsRecord: Record<number, Product> = {};
         fetchedProducts.forEach(p => {
-          if (p?.id) { // بررسی وجود id
+          if (p?.id) {
             productsRecord[Number(p.id)] = p;
           }
         });
@@ -75,9 +75,11 @@ const OrdersManagement = () => {
   const handleStatusChange = async (orderId: number, newStatus: string) => {
     try {
       const updatedOrder = await updateOrderStatus(orderId, newStatus);
-      setOrders(orders.map(order => 
-        order.id === orderId ? updatedOrder : order
-      ));
+      if (updatedOrder) {
+        setOrders(orders.map(order => 
+          order?.id === orderId ? updatedOrder : order
+        ));
+      }
     } catch (error) {
       console.error('Error updating order status:', error);
       toast.error('خطا در به‌روزرسانی وضعیت سفارش');
@@ -92,11 +94,17 @@ const OrdersManagement = () => {
     setSelectedOrder(null);
   };
 
-  const filteredOrders = (orders || []).filter(order =>
-    order?.id?.toString().includes(searchTerm) ||
-    order?.userId?.toString().includes(searchTerm) ||
-    order?.status?.includes(searchTerm)
+const filteredOrders = (orders || []).filter(order => {
+  const safeId = order?.id?.toString() || '';
+  const safeUserId = order?.userId?.toString() || '';
+  const safeStatus = order?.status || '';
+  
+  return (
+    safeId.includes(searchTerm) ||
+    safeUserId.includes(searchTerm) ||
+    safeStatus.includes(searchTerm)
   );
+});
 
   const statusClasses = {
     'delivered': styles.delivered,

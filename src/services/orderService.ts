@@ -217,11 +217,37 @@ export const getProductsForOrder = async (orderId: number): Promise<Product[]> =
 
 // services/orderService.ts
 export const getProductsByIds = async (ids: (number | string)[]): Promise<Product[]> => {
-  const uniqueIds = Array.from(new Set(ids)); // حذف تکراری‌ها
-  const response = await http.get(`/.netlify/functions/getProductsByIds`, {
-    params: {
-      ids: uniqueIds.join(',') // ارسال به صورت رشته‌ای جدا شده با کاما
+  try {
+    // 1. بررسی وجود آرایه و حذف مقادیر نامعتبر
+    const validIds = Array.isArray(ids) 
+      ? ids
+          .map(id => {
+            // تبدیل به عدد در صورت امکان
+            const num = Number(id);
+            return isNaN(num) ? null : num;
+          })
+          .filter(Boolean) // حذف null/undefined
+      : [];
+
+    // 2. حذف تکراری‌ها
+    const uniqueIds = [...new Set(validIds)];
+
+    // 3. اگر آرایه خالی بود، خروجی بگیرید
+    if (uniqueIds.length === 0) {
+      return [];
     }
-  });
-  return response.data;
+
+    // 4. درخواست به سرور
+    const response = await http.get(`/.netlify/functions/getProductsByIds`, {
+      params: {
+        ids: uniqueIds.join(',')
+      }
+    });
+
+    // 5. بررسی پاسخ سرور و برگشت داده ایمن
+    return Array.isArray(response?.data) ? response.data : [];
+  } catch (error) {
+    console.error('Error in getProductsByIds:', error);
+    return []; // برگشت آرایه خالی در صورت خطا
+  }
 };
