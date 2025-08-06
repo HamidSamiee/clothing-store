@@ -1,10 +1,11 @@
-import { getClient } from './db';
+// netlify/functions/createOrder.ts
 import { Handler } from '@netlify/functions';
-import { Order, OrderItem, OrderStatus } from '@/types/Order';
+import { getClient } from './db';
+import { OrderItem } from '@/types/Order';
 
 interface CreateOrderRequest {
   userId: number;
-  items: OrderItem[];
+  items: OrderItem[]; // تعریف صریح نوع items
   total: number;
   paymentMethod: string;
   shippingAddress?: string;
@@ -12,63 +13,65 @@ interface CreateOrderRequest {
 
 const handler: Handler = async (event) => {
   const client = await getClient();
+  
   try {
+    // اعتبارسنجی وجود body
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'بدون داده' })
+      };
+    }
+
     const { userId, items, total, paymentMethod, shippingAddress } = 
-      JSON.parse(event.body || '{}') as CreateOrderRequest;
-    
+      JSON.parse(event.body) as CreateOrderRequest;
+
+    // اعتبارسنجی items
+    if (!Array.isArray(items)) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'آیتم‌های سفارش باید به صورت آرایه ارسال شوند' })
+      };
+    }
+
     await client.query('BEGIN');
     
-    const orderResult = await client.query<{ id: number; created_at: string }>(
+    const orderResult = await client.query(
       `INSERT INTO orders (user_id, total, status, payment_method, shipping_address)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id, created_at`,
-      [userId, total, 'processing' as OrderStatus, paymentMethod, shippingAddress]
+      [userId, total, 'processing', paymentMethod, shippingAddress || null]
     );
-    
+
     const orderId = orderResult.rows[0].id;
-    const createdAt = orderResult.rows[0].created_at;
-    
+
+    // ثبت آیتم‌های سفارش
     for (const item of items) {
       await client.query(
         `INSERT INTO order_items (order_id, product_id, quantity, price)
          VALUES ($1, $2, $3, $4)`,
         [orderId, item.productId, item.quantity, item.price]
       );
-      
-      await client.query(
-        'UPDATE products SET stock = stock - $1 WHERE id = $2',
-        [item.quantity, item.productId]
-      );
     }
-    
-    await client.query(
-      'INSERT INTO user_orders (user_id, order_id) VALUES ($1, $2)',
-      [userId, orderId]
-    );
-    
+
     await client.query('COMMIT');
-    
-    const response: Order = {
-      id: orderId,
-      userId,
-      date: createdAt,
-      items,
-      total,
-      status: 'processing',
-      paymentMethod,
-      shippingAddress
-    };
-    
+
     return {
       statusCode: 201,
-      body: JSON.stringify(response)
+      body: JSON.stringify({ 
+        success: true,
+        orderId
+      })
     };
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('Create order error:', err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'خطای سرور' })
+      body: JSON.stringify({ 
+        message: 'خطای سرور در ایجاد سفارش',
+        error: err instanceof Error ? err.message : 'Unknown error'
+      })
     };
   } finally {
     client.release();

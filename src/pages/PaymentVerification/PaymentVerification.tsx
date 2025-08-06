@@ -19,9 +19,19 @@ const PaymentVerification = () => {
         const result = await verifyPayment(authority, status);
         
         if (result.success) {
-          navigate('/payment-success', { state: { order: result.order } });
+          navigate('/payment-success', { 
+            state: { 
+              orderId: result.orderId,
+              amount: result.amount,
+              authority: result.authority
+            } 
+          });
         } else {
-          navigate('/payment-failed');
+          navigate('/payment-failed', {
+            state: {
+              error: result.error
+            }
+          });
         }
       } else {
         navigate('/');
