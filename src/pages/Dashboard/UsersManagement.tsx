@@ -10,21 +10,30 @@ import {
   FiChevronRight,
   FiChevronLeft
 } from 'react-icons/fi';
-import { User } from '@/types/User';
-import http from '@/services/httpService';
+import { SafeUser, User } from '@/types/User';
 import styles from './AdminComponents.module.css';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import { PersianTooltip } from '@/ui/Tooltip/Tooltip';
 import UserModal from './components/UserModal/UserModal';
 import { useDebounce } from '@/hooks/useDebounce';
+import { createUser, deleteUser, getUsers, updateUser } from '@/services/userService';
 
 const UsersManagement = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<SafeUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<SafeUser & { password?: string }>({
+    id: 0,
+    name: '',
+    email: '',
+    password: '',
+    address: '',
+    phone: '',
+    orders: [],
+    role: 'user'
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'view' | 'edit' | 'add'>('view');
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // تاخیر 500 میلی‌ثانیه
@@ -35,21 +44,19 @@ const UsersManagement = () => {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await http.get('/users', {
-        params: {
-          _page: currentPage,
-          _limit: USERS_PER_PAGE,
-          q: debouncedSearchTerm
-        }
+      const response = await getUsers({
+        page: currentPage,
+        perPage: USERS_PER_PAGE,
+        search: debouncedSearchTerm
       });
       setUsers(response.data);
-      setTotalUsers(parseInt(response.headers['x-total-count'] || '0', 10));
+      setTotalUsers(response.total);
     } catch (error) {
       console.error('Error fetching users:', error);
     } finally {
       setLoading(false);
     }
-  },[currentPage,debouncedSearchTerm])
+  }, [currentPage, debouncedSearchTerm]);
 
   useEffect(() => {
     fetchUsers();
@@ -64,32 +71,38 @@ const UsersManagement = () => {
     setCurrentPage(newPage);
   };
 
-  const handleOpenModal = (type: 'view' | 'edit' | 'add', user?: User) => {
+  const handleOpenModal = (type: 'view' | 'edit' | 'add', user?: SafeUser) => {
     setModalType(type);
-    setSelectedUser(user || {
-      id: 0,
-      name: '',
-      email: '',
-      password: '',
-      address: '',
-      phone: '',
-      orders: [],
-      role: 'user'
-    });
+    if (user) {
+      setSelectedUser({
+        ...user,
+        password: '' // مقدار پیش‌فرض برای رمز عبور
+      });
+    } else {
+      setSelectedUser({
+        id: 0,
+        name: '',
+        email: '',
+        password: '',
+        address: '',
+        phone: '',
+        orders: [],
+        role: 'user'
+      });
+    }
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedUser(null);
   };
 
   const handleSubmit = async (userData: User) => {
     try {
       if (modalType === 'add') {
-        await http.post('/users', userData);
+        await createUser(userData);
       } else if (modalType === 'edit') {
-        await http.patch(`/users/${userData.id}`, userData);
+        await updateUser(userData.id, userData);
       }
       fetchUsers();
       handleCloseModal();
@@ -101,7 +114,7 @@ const UsersManagement = () => {
 
   const handleDelete = async (userId: string | number) => {
     try {
-      await http.delete(`/users/${userId}`);
+      await deleteUser(userId);
       fetchUsers();
     } catch (error) {
       console.error('Error deleting user:', error);

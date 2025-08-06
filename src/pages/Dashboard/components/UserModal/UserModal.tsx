@@ -1,4 +1,4 @@
-import { User } from '@/types/User';
+import { SafeUser, User } from '@/types/User';
 import { useEffect, useRef, useState } from 'react';
 import TextField from '@/ui/TextField/TextField';
 import { useForm } from 'react-hook-form';
@@ -9,8 +9,8 @@ import RHFSelect from '@/ui/RHFSelect/RHFselect';
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (user: User) => Promise<void>;
-  user: User | null;
+  onSubmit: (userData: SafeUser & { password?: string }) => Promise<void>;
+  user: SafeUser & { password?: string };
   mode: 'view' | 'edit' | 'add';
 }
 

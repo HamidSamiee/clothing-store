@@ -2,7 +2,7 @@ export interface User {
   id: string | number;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   address?: string;
   phone?: string;
   orders?: number[];
