@@ -1,27 +1,25 @@
-// netlify/functions/login.ts
 import { query } from './db';
+import { Handler } from '@netlify/functions';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Handler } from '@netlify/functions';
-import { LoginData, SafeUser, User } from '@/types/User';
 
-interface LoginResponse {
-  user: SafeUser;
-  token: string;
+interface LoginData {
+  email: string;
+  password: string;
 }
 
 const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ message: 'متد غیرمجاز' })
+      body: JSON.stringify({ message: 'Method Not Allowed' })
     };
   }
 
   try {
-    const { email, password } = JSON.parse(event.body || '{}') as LoginData;
-    
-    // اعتبارسنجی فیلدهای ورودی
+    const { email, password }: LoginData = JSON.parse(event.body || '{}');
+
+    // اعتبارسنجی ورودی‌ها
     if (!email || !password) {
       return {
         statusCode: 400,
@@ -29,74 +27,50 @@ const handler: Handler = async (event) => {
       };
     }
 
-    const userResult = await query<User>(
-      'SELECT id, name, email, password, role FROM users WHERE email = $1',
+    // جستجوی کاربر در دیتابیس
+    const userResult = await query<{
+      id: number;
+      email: string;
+      password: string;
+      role: string;
+    }>(
+      'SELECT id, email, password, role FROM users WHERE email = $1',
       [email]
     );
-    
+
     if (userResult.rows.length === 0) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ message: 'ایمیل یا رمز عبور اشتباه است' })
+        body: JSON.stringify({ message: 'کاربری با این ایمیل یافت نشد' })
       };
     }
-    
+
     const user = userResult.rows[0];
-    const isValid = await bcrypt.compare(password, user.password);
-    
-    if (!isValid) {
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
       return {
         statusCode: 401,
-        body: JSON.stringify({ message: 'ایمیل یا رمز عبور اشتباه است' })
+        body: JSON.stringify({ message: 'رمز عبور نادرست است' })
       };
     }
-    
-    // اطمینان از وجود JWT_SECRET
-    if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET not configured');
-    }
-    
+
+    // ایجاد توکن JWT
     const token = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
+      { userId: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '1d' }
     );
-    
-    const safeUser: SafeUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role || 'user' // مقدار پیش‌فرض برای نقش
-    };
-    
-    const response: LoginResponse = {
-      user: safeUser,
-      token
-    };
-    
+
     return {
       statusCode: 200,
-      body: JSON.stringify(response),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      body: JSON.stringify({ token, user: { id: user.id, email: user.email, role: user.role } })
     };
-  } catch (err) {
-    console.error('Login error:', err);
-    
-    let errorMessage = 'خطای سرور';
-    if (err instanceof Error) {
-      errorMessage = err.message;
-    } else if (typeof err === 'string') {
-      errorMessage = err;
-    }
-  
+  } catch (error) {
+    console.error('Login error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ 
-        message: errorMessage,
-        details: process.env.NODE_ENV === 'development' ? String(err) : undefined
-      })
+      body: JSON.stringify({ message: 'خطا در ورود به سیستم' })
     };
   }
 };
