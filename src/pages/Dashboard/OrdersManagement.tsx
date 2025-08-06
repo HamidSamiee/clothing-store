@@ -30,24 +30,30 @@ const OrdersManagement = () => {
         search: searchTerm
       });
       
-      setOrders(response.data);
+      // اضافه کردن بررسی null/undefined
+      const ordersData = response?.data || [];
+      setOrders(ordersData);
       
-      const allProductIds = response.data.flatMap(order => 
-        order.items.map(item => item.productId)
-      );
+      // استخراج productIdها با بررسی وجود items
+      const allProductIds = ordersData.flatMap(order => 
+        order?.items?.map(item => item?.productId) || []
+      ).filter(Boolean); // حذف مقادیر null/undefined
       
       if (allProductIds.length > 0) {
         const fetchedProducts = await getProductsByIds(allProductIds);
         const productsRecord: Record<number, Product> = {};
         fetchedProducts.forEach(p => {
-          productsRecord[Number(p.id)] = p;
+          if (p?.id) { // بررسی وجود id
+            productsRecord[Number(p.id)] = p;
+          }
         });
         setProductsMap(productsRecord);
       }
       
-      setTotalOrders(response.total);
+      setTotalOrders(response?.total || 0);
     } catch (error) {
       console.error('Error fetching orders:', error);
+      toast.error('خطا در دریافت سفارشات');
     } finally {
       setIsLoading(false);
     }
@@ -86,10 +92,10 @@ const OrdersManagement = () => {
     setSelectedOrder(null);
   };
 
-  const filteredOrders = orders.filter(order =>
-    order.id.toString().includes(searchTerm) ||
-    order.userId.toString().includes(searchTerm) ||
-    order.status.includes(searchTerm)
+  const filteredOrders = (orders || []).filter(order =>
+    order?.id?.toString().includes(searchTerm) ||
+    order?.userId?.toString().includes(searchTerm) ||
+    order?.status?.includes(searchTerm)
   );
 
   const statusClasses = {
@@ -129,9 +135,9 @@ const OrdersManagement = () => {
         <div className={styles.loading}>در حال بارگذاری سفارشات...</div>
       ) : (
         <>
-          <div className={styles.ordersGrid}>
-            {filteredOrders.map(order => (
-              <div key={order.id} className={styles.orderCard}>
+         <div className={styles.ordersGrid}>
+            {filteredOrders?.map(order => (
+              <div key={order?.id || Math.random()} className={styles.orderCard}>
                 <div className={styles.orderHeader}>
                   <span>سفارش #{toPersianNumbers(order.id)}</span>
                   <span className={`${styles.status} ${statusClasses[order.status]}`}>
@@ -147,15 +153,20 @@ const OrdersManagement = () => {
                 </div>
                 
                 <div className={styles.orderItems}>
-                  <h4>محصولات:</h4>
-                  {order.items.map(item => (
-                    <div key={item.productId} className={styles.orderItem}>
-                      <span>{productsMap[item.productId]?.name || `محصول #${toPersianNumbers(item.productId)}`}</span>
-                      <span>{toPersianNumbers(item.quantity)} عدد</span>
-                      <span>{toPersianNumbers(item.price.toLocaleString())} تومان</span>
-                    </div>
-                  ))}
-                </div>
+                    <h4>محصولات:</h4>
+                    {order?.items?.map(item => (
+                      <div key={item?.productId || Math.random()} className={styles.orderItem}>
+                        <span>
+                          {item?.productId ? 
+                            (productsMap[item.productId]?.name || `محصول #${toPersianNumbers(item.productId)}`) :
+                            'محصول ناشناخته'
+                          }
+                        </span>
+                        <span>{toPersianNumbers(item?.quantity || 0)} عدد</span>
+                        <span>{toPersianNumbers((item?.price || 0).toLocaleString())} تومان</span>
+                      </div>
+                    ))}
+                  </div>
                 
                 <div className={styles.orderActions}>
                   <button 
