@@ -1,5 +1,6 @@
 import http from '@/services/httpService';
 import { User, SafeUser } from '@/types/User';
+import { toast } from 'react-toastify';
 
 export const getUsers = async (params: {
     page?: number;
@@ -24,6 +25,7 @@ export const getUsers = async (params: {
 export const createUser = async (userData: Omit<User, 'id'>): Promise<SafeUser> => {
   try {
     const response = await http.post('/.netlify/functions/manageUser', userData);
+    toast.success(' کاربر با موفقیت اضافه شد')
     return response.data;
   } catch (error) {
     console.error('Error creating user:', error);
@@ -36,6 +38,7 @@ export const updateUser = async (userId: string | number, userData: Partial<User
     const response = await http.patch('/.netlify/functions/manageUser', userData, {
       params: { id: userId }
     });
+    toast.success('اطلاعات کاربر با موفقیت آپدیت شد')
     return response.data;
   } catch (error) {
     console.error('Error updating user:', error);
@@ -48,6 +51,7 @@ export const deleteUser = async (userId: string | number): Promise<void> => {
     await http.delete('/.netlify/functions/manageUser', {
       params: { id: userId }
     });
+    toast.info(' کاربر حذف شد')
   } catch (error) {
     console.error('Error deleting user:', error);
     throw error;
