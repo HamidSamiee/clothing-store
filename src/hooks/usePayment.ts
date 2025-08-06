@@ -24,6 +24,8 @@ export const usePayment = () => {
     description: string,
     orderData: OrderData
   ) => {
+    if (isLoading) return;
+    
     setIsLoading(true);
     setError(null);
     

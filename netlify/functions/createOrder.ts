@@ -2,6 +2,8 @@
 import { Handler } from '@netlify/functions';
 import { getClient } from './db';
 
+let orderProcessed = false;
+
 interface CreateOrderRequest {
   userId: number;
   items: Array<{
@@ -17,7 +19,15 @@ interface CreateOrderRequest {
 export const handler: Handler = async (event) => {
   const client = await getClient();
   
+  if (orderProcessed) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'سفارش در حال پردازش است' })
+    };
+  }
+
   try {
+    orderProcessed = true;
     // اعتبارسنجی وجود body
     if (!event.body) {
       return {
@@ -42,6 +52,19 @@ export const handler: Handler = async (event) => {
       };
     }
 
+    // بررسی سفارش تکراری - این بخش اضافه شده
+    const existingOrder = await client.query(
+      `SELECT id FROM orders WHERE user_id = $1 AND total = $2 AND status = 'pending' LIMIT 1`,
+      [userId, total]
+    );
+
+    if (existingOrder.rows.length > 0) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'این سفارش قبلا ثبت شده است' })
+      };
+    }
+
     await client.query('BEGIN');
     
     // ثبت سفارش
@@ -51,7 +74,7 @@ export const handler: Handler = async (event) => {
        RETURNING id, created_at`,
       [
         userId,
-        Number(total), // تبدیل صریح به عدد
+        Number(total),
         'processing',
         paymentMethod,
         shippingAddress || null
@@ -97,5 +120,6 @@ export const handler: Handler = async (event) => {
     };
   } finally {
     await client.release();
+    orderProcessed = false;
   }
 };

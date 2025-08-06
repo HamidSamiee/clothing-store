@@ -32,12 +32,16 @@ const Checkout = () => {
   const { isAuthenticated, user: currentUser } = useAuth();
   const { items: cartItems, total: cartTotal } = useCart();
   const { initiatePayment, isLoading } = usePayment();
-  
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const [step, setStep] = useState<'auth' | 'address' | 'delivery' | 'payment'>('auth');
   const [address, setAddress] = useState<Address | null>(null);
   const [deliveryMethod, setDeliveryMethod] = useState<string>('');
 
   const handlePayment = async () => {
+    if (isProcessing) return;
+
+    setIsProcessing(true);
     try {
       const orderItems: OrderItem[] = cartItems.map(item => ({
         productId: Number(item.id),
@@ -84,6 +88,8 @@ const Checkout = () => {
       });
   
       console.error('Checkout error:', error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -248,9 +254,9 @@ const Checkout = () => {
           <button 
             onClick={handlePayment} 
             className={styles.paymentButton}  
-            disabled={isLoading}
+            disabled={isLoading || isProcessing}
           >
-            {t('checkout.payWithZarinpal')}
+            {(isLoading || isProcessing) ? 'در حال پردازش...' : 'پرداخت'}
           </button>
       </div>
     </div>
