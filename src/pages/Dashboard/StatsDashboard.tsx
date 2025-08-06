@@ -1,6 +1,5 @@
 import { FiBarChart2, FiDollarSign, FiShoppingCart, FiUser } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
-import http from '@/services/httpService';
 import styles from './AdminComponents.module.css';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import { Bar } from 'react-chartjs-2';
@@ -16,6 +15,8 @@ import {
 } from 'chart.js';
 import { Order } from '@/types/Order';
 import { User } from '@/types/User';
+import { getOrders } from '@/services/orderService';
+import { getUsers } from '@/services/userService';
 
 ChartJS.register(
   CategoryScale,
@@ -44,7 +45,7 @@ const StatsDashboard = () => {
   const fetchStats = async () => {
     try {
       // محاسبه فروش ماه
-      const ordersResponse = await http.get('/orders');
+      const ordersResponse = await getOrders();
       const monthlySales = ordersResponse.data.reduce((sum: number, order: Order) => {
         const orderDate = new Date(order.date);
         const currentDate = new Date();
@@ -64,7 +65,7 @@ const StatsDashboard = () => {
       }).length;
 
       // تعداد کاربران جدید
-      const usersResponse = await http.get('/users');
+      const usersResponse = await getUsers({});
       const newUsers = usersResponse.data.filter((user: User) => {
         const userDate = new Date(typeof user.id === 'number' ? user.id : parseInt(user.id));
         const currentDate = new Date();
@@ -90,7 +91,7 @@ const StatsDashboard = () => {
 
   const fetchSalesData = async () => {
     try {
-      const ordersResponse = await http.get('/orders');
+      const ordersResponse = await getOrders();
       const currentDate = new Date();
       const lastThreeMonths = Array(3).fill(0).map((_, i) => {
         const date = new Date(currentDate);
