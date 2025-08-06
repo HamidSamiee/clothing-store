@@ -1,4 +1,4 @@
-import { Order, OrderItem, OrderStatus } from "@/types/Order";
+import { Order, OrderItem, OrderProductResponse, OrderStatus } from "@/types/Order";
 import { Product, RawProduct } from "@/types/Product";
 import { User } from "@/types/User";
 import http from "./httpService";
@@ -188,23 +188,23 @@ export const getOrderDetails = async (orderId: number): Promise<Order> => {
   return response.data;
 };
 
-export const getProductsForOrder = async (orderId: number): Promise<Product[]> => {
-  // دریافت سفارش
-  const orderResponse = await http.get(`/.netlify/functions/getProductsForOrder?id=${orderId}`);
-  const order: Order = orderResponse.data;
+// export const getProductsForOrder = async (orderId: number): Promise<Product[]> => {
+//   // دریافت سفارش
+//   const orderResponse = await http.get(`/orders/${orderId}`);
+//   const order: Order = orderResponse.data;
   
-  // دریافت اطلاعات محصولات
-  const productIds = order.items.map(item => item.productId);
-  // console.log(productIds)
-  const productsResponse = await http.get('/products', {
-    params: {
-      id: productIds
-    }
-  });
-//  console.log(productsResponse)
+//   // دریافت اطلاعات محصولات
+//   const productIds = order.items.map(item => item.productId);
+//   // console.log(productIds)
+//   const productsResponse = await http.get('/products', {
+//     params: {
+//       id: productIds
+//     }
+//   });
+// //  console.log(productsResponse)
   
-  return productsResponse.data;
-};
+//   return productsResponse.data;
+// };
 
 // services/orderService.ts
 // export const getProductsByIds = async (ids: number[]): Promise<Product[]> => {
@@ -216,6 +216,44 @@ export const getProductsForOrder = async (orderId: number): Promise<Product[]> =
 // };
 
 // services/orderService.ts
+
+export const getProductsForOrder = async (orderId: number): Promise<Product[]> => {
+  try {
+    const response = await http.get<OrderProductResponse[]>(`/.netlify/functions/getProductsForOrder?id=${orderId}`);
+    
+    if (!response.data || !Array.isArray(response.data)) {
+      throw new Error('فرمت پاسخ سرور نامعتبر است');
+    }
+
+    return response.data.map((item: OrderProductResponse) => {
+      const baseProduct: Product = {
+        id: item.id.toString(),
+        name: item.name || 'نامشخص',
+        price: Number(item.order_price || item.price) || 0,
+        description: item.description || '',
+        category: item.category || 'دسته‌بندی نشده',
+        image: item.image || '/default-product.jpg',
+        rating: Math.min(5, Math.max(0, Number(item.rating) || 0)),
+        sizes: Array.isArray(item.sizes) ? item.sizes.filter(Boolean) : [],
+        colors: Array.isArray(item.colors) ? item.colors.filter(Boolean) : [],
+        stock: Math.max(0, Number(item.stock) || 0),
+        specifications: item.specifications || {},
+      };
+
+      // فیلدهای اختیاری
+      if (item.discount) {
+        return {
+          ...baseProduct,
+          discount: Number(item.discount)
+        };
+      }
+      return baseProduct;
+    });
+  } catch (error) {
+    console.error('Error fetching order products:', error);
+    return [];
+  }
+};
 
 export const getProductsByIds = async (ids: (number | string)[]): Promise<Product[]> => {
   try {

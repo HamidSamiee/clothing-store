@@ -22,3 +22,19 @@ export interface Order {
   userEmail?: string;
 }
   
+export interface OrderProductResponse {
+  id: number;
+  name: string;
+  price: number | string;
+  order_price?: number | string;
+  description?: string;
+  category?: string;
+  image?: string;
+  rating?: number | string;
+  sizes?: string[];
+  colors?: string[];
+  stock?: number | string;
+  order_quantity?: number;
+  specifications?: Record<string, string>;
+  discount?: number | string;
+}
