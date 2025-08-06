@@ -1,11 +1,9 @@
-import { Order, OrderItem, OrderProductResponse, OrderStatus } from "@/types/Order";
+import { OrderProductResponse, OrderStatus } from "@/types/Order";
 import { Product, RawProduct } from "@/types/Product";
-import { User } from "@/types/User";
 import http from "./httpService";
 
 const ORDERS_KEY = "ecommerce_orders";
 const PRODUCTS_KEY = "ecommerce_products";
-const USERS_KEY = "users";
 
 export interface GetOrdersParams {
   page?: number;
@@ -79,42 +77,80 @@ export const getOrdersByUser = async (userId: number): Promise<Order[]> => {
   return orders.filter((order) => order.userId === userId);
 };
 
-export const createOrder = async (orderData: Omit<Order, "id">): Promise<Order> => {
-  const orders: Order[] = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
+// export const createOrder = async (orderData: Omit<Order, "id">): Promise<Order> => {
+//   const orders: Order[] = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
 
-  const newOrder: Order = {
-    ...orderData,
-    id: Date.now(),
-  };
+//   const newOrder: Order = {
+//     ...orderData,
+//     id: Date.now(),
+//   };
 
-  // کاهش موجودی محصولات
-  const products: Product[] = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || "[]");
-  orderData.items.forEach((item: OrderItem) => {
-    const productIndex = products.findIndex((p) => Number(p.id) === item.productId);
-    if (productIndex !== -1) {
-      products[productIndex].stock -= item.quantity;
+//   // کاهش موجودی محصولات
+//   const products: Product[] = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || "[]");
+//   orderData.items.forEach((item: OrderItem) => {
+//     const productIndex = products.findIndex((p) => Number(p.id) === item.productId);
+//     if (productIndex !== -1) {
+//       products[productIndex].stock -= item.quantity;
+//     }
+//   });
+
+//   localStorage.setItem(ORDERS_KEY, JSON.stringify([...orders, newOrder]));
+//   localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+
+//   // اضافه کردن سفارش به کاربر
+//   const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+//   const userIndex = users.findIndex((u) => u.id === orderData.userId);
+//   if (userIndex !== -1) {
+//     users[userIndex].orders = [...(users[userIndex].orders || []), newOrder.id];
+//     localStorage.setItem(USERS_KEY, JSON.stringify(users));
+
+//     // به‌روزرسانی کاربر جاری
+//     const currentUser: User = JSON.parse(localStorage.getItem("user") || "{}");
+//     if (currentUser.id === orderData.userId) {
+//       localStorage.setItem("user", JSON.stringify(users[userIndex]));
+//     }
+//   }
+
+//   return newOrder;
+// };
+
+import { Order, OrderItem } from '@/types/Order';
+
+interface CreateOrderResponse {
+  success: boolean;
+  data?: Order;
+  message?: string;
+}
+
+export const createOrder = async (orderData: {
+  userId: number;
+  items: OrderItem[];
+  total: number;
+  paymentMethod: string;
+  shippingAddress?: string;
+}): Promise<CreateOrderResponse> => {
+  try {
+    const response = await fetch('/.netlify/functions/createOrder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      return { success: true, data };
+    } else {
+      return { success: false, message: data.message || 'خطا در ثبت سفارش' };
     }
-  });
-
-  localStorage.setItem(ORDERS_KEY, JSON.stringify([...orders, newOrder]));
-  localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
-
-  // اضافه کردن سفارش به کاربر
-  const users: User[] = JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
-  const userIndex = users.findIndex((u) => u.id === orderData.userId);
-  if (userIndex !== -1) {
-    users[userIndex].orders = [...(users[userIndex].orders || []), newOrder.id];
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-
-    // به‌روزرسانی کاربر جاری
-    const currentUser: User = JSON.parse(localStorage.getItem("user") || "{}");
-    if (currentUser.id === orderData.userId) {
-      localStorage.setItem("user", JSON.stringify(users[userIndex]));
-    }
+  } catch (error) {
+    console.error('خطا در ایجاد سفارش:', error);
+    return { success: false, message: 'خطا در ارتباط با سرور' };
   }
-
-  return newOrder;
 };
+
 
 export const cancelOrder = async (orderId: number): Promise<void> => {
   const orders: Order[] = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");

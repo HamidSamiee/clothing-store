@@ -1,57 +1,79 @@
-import ZarinPal from 'zarinpal-checkout';
+// netlify/functions/createOrder.ts
+import { getClient } from './db';
 import { Handler } from '@netlify/functions';
+import { OrderItem, OrderStatus } from '@/types/Order';
 
-const zarinpal = ZarinPal.create('eaa1ef97-2c45-11e8-b7f0-005056a205be', true);
-
-interface PaymentRequest {
-  amount: number;
-  description: string;
+interface CreateOrderRequest {
+  userId: number;
+  items: OrderItem[];
+  total: number;
+  paymentMethod: string;
+  shippingAddress?: string;
 }
 
-export const handler: Handler = async (event) => {
+const handler: Handler = async (event) => {
+  const client = await getClient();
   try {
-    // بررسی وجود body در event
-    if (!event.body) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'بدون داده' })
-      };
+    const { userId, items, total, paymentMethod, shippingAddress } = 
+      JSON.parse(event.body || '{}') as CreateOrderRequest;
+    
+    await client.query('BEGIN');
+    
+    const orderResult = await client.query<{ id: number; created_at: string }>(
+      `INSERT INTO orders (user_id, total, status, payment_method, shipping_address)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, created_at`,
+      [userId, total, 'processing' as OrderStatus, paymentMethod, shippingAddress]
+    );
+    
+    const orderId = orderResult.rows[0].id;
+    const createdAt = orderResult.rows[0].created_at;
+    
+    for (const item of items) {
+      await client.query(
+        `INSERT INTO order_items (order_id, product_id, quantity, price)
+         VALUES ($1, $2, $3, $4)`,
+        [orderId, item.productId, item.quantity, item.price]
+      );
+      
+      await client.query(
+        'UPDATE products SET stock = stock - $1 WHERE id = $2',
+        [item.quantity, item.productId]
+      );
     }
-
-    const { amount, description }: PaymentRequest = JSON.parse(event.body);
-
-    // اعتبارسنجی مقادیر ورودی
-    if (!amount || !description) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'مقادیر amount و description الزامی هستند' })
-      };
-    }
-
-    const response = await zarinpal.PaymentRequest({
-      Amount: amount * 10, // تبدیل به ریال
-      CallbackURL: `${process.env.BASE_URL}/verify`,
-      Description: description,
-    });
-
-    if (response.status === 100) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          url: `https://sandbox.zarinpal.com/pg/StartPay/${response.authority}`,
-        }),
-      };
-    }
-
+    
+    await client.query(
+      'INSERT INTO user_orders (user_id, order_id) VALUES ($1, $2)',
+      [userId, orderId]
+    );
+    
+    await client.query('COMMIT');
+    
+    const response = {
+      id: orderId,
+      userId,
+      date: createdAt,
+      items,
+      total,
+      status: 'processing',
+      paymentMethod,
+      shippingAddress
+    };
+    
     return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'خطا در پرداخت' }),
+      statusCode: 201,
+      body: JSON.stringify(response)
     };
   } catch (err) {
-    console.error('Payment error:', err);
+    await client.query('ROLLBACK');
+    console.error('خطا در ایجاد سفارش:', err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'خطا در سرور پرداخت' }),
+      body: JSON.stringify({ message: 'خطای سرور در ایجاد سفارش' })
     };
+  } finally {
+    client.release();
   }
 };
+
+export { handler };

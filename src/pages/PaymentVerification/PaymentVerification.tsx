@@ -1,3 +1,4 @@
+// components/PaymentVerification.tsx
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePayment } from '@/hooks/usePayment';
@@ -15,10 +16,10 @@ const PaymentVerification = () => {
 
     const verify = async () => {
       if (authority && status) {
-        const result = verifyPayment(authority, status);
-        console.log('Payment result:', result); 
+        const result = await verifyPayment(authority, status);
+        
         if (result.success) {
-          navigate('/payment-success');
+          navigate('/payment-success', { state: { order: result.order } });
         } else {
           navigate('/payment-failed');
         }
@@ -33,7 +34,7 @@ const PaymentVerification = () => {
   return (
     <div className={styles.verificationContainer}>
       {isLoading ? (
-        <div className={styles.loadingMessage}>در حال تایید پرداخت...</div>
+        <div className={styles.loadingMessage}>در حال تایید پرداخت و ثبت سفارش...</div>
       ) : error ? (
         <div className={styles.errorMessage}>{error}</div>
       ) : (
@@ -41,6 +42,6 @@ const PaymentVerification = () => {
       )}
     </div>
   );
-} 
+};
 
 export default PaymentVerification;
