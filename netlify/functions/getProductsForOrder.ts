@@ -13,7 +13,6 @@ const handler: Handler = async (event) => {
   }
 
   try {
-    // اعتبارسنجی و تبدیل orderId به عدد
     const orderIdNum = parseInt(orderId);
     if (isNaN(orderIdNum)) {
       return {
@@ -29,9 +28,9 @@ const handler: Handler = async (event) => {
               oi.quantity as order_quantity,
               oi.price as order_price
        FROM products p
-       JOIN order_items oi ON p.id = oi.product_id
-       LEFT JOIN product_sizes ps ON p.id = ps.product_id
-       LEFT JOIN product_colors pc ON p.id = pc.product_id
+       JOIN order_items oi ON p.id::varchar = oi.product_id::varchar
+       LEFT JOIN product_sizes ps ON p.id::varchar = ps.product_id::varchar
+       LEFT JOIN product_colors pc ON p.id::varchar = pc.product_id::varchar
        WHERE oi.order_id = $1
        GROUP BY p.id, oi.id, oi.quantity, oi.price`,
       [orderIdNum]
@@ -49,10 +48,21 @@ const handler: Handler = async (event) => {
       body: JSON.stringify(result.rows)
     };
   } catch (error) {
+    // مدیریت نوع unknown با type guard
+    let errorMessage = 'خطا در دریافت محصولات سفارش';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    }
+
     console.error('Database error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'خطا در دریافت محصولات سفارش' })
+      body: JSON.stringify({ 
+        message: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error : undefined
+      })
     };
   }
 };
