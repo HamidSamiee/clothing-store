@@ -1,7 +1,6 @@
+// netlify/functions/createOrder.ts
 import { Handler } from '@netlify/functions';
 import { getClient } from './db';
-
-let orderProcessed = false;
 
 interface CreateOrderRequest {
   userId: number;
@@ -13,76 +12,69 @@ interface CreateOrderRequest {
   total: number;
   paymentMethod: string;
   shippingAddress?: string;
-  authority?: string; // اضافه کردن authority به اینترفیس
+  authority?: string; // شناسه پرداخت زرین‌پال
 }
 
 export const handler: Handler = async (event) => {
-  const client = await getClient();
-  
-  if (orderProcessed) {
+  if (!event.body) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ message: 'سفارش در حال پردازش است' })
+      body: JSON.stringify({ message: 'بدون داده' })
     };
   }
 
+  const client = await getClient();
+  
   try {
-    orderProcessed = true;
-    
-    if (!event.body) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'بدون داده' })
-      };
-    }
-
     const { 
       userId, 
       items, 
       total, 
       paymentMethod, 
       shippingAddress,
-      authority // دریافت authority از بدنه درخواست
+      authority 
     } = JSON.parse(event.body) as CreateOrderRequest;
 
-    if (
-      userId === undefined ||
-      total === undefined ||
-      !Array.isArray(items) ||
-      paymentMethod === undefined
-    ) {
+    // اعتبارسنجی داده‌های ورودی
+    if (!userId || !items || !total || !paymentMethod) {
       return {
         statusCode: 400,
         body: JSON.stringify({ message: 'داده‌های ناقص' })
       };
     }
 
-    const existingOrder = await client.query(
-      `SELECT id FROM orders 
-       WHERE user_id = $1 
-       AND ABS(total - $2) < 0.01 
-       AND status IN ('pending', 'processing')
-       LIMIT 1`,
-      [userId, total]
-    );
+    await client.query('BEGIN');
 
-    if (existingOrder.rows.length > 0) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'این سفارش قبلا ثبت شده است' })
-      };
+    // 1. بررسی سفارش بر اساس authority (اگر وجود دارد)
+    if (authority) {
+      const existingByAuthority = await client.query(
+        `SELECT o.id FROM orders o
+         JOIN order_meta om ON o.id = om.order_id
+         WHERE om.meta_key = 'authority' AND om.meta_value = $1
+         LIMIT 1`,
+        [authority]
+      );
+
+      if (existingByAuthority.rows.length > 0) {
+        return {
+          statusCode: 200, // 200 به جای 400 چون سفارش معتبر است
+          body: JSON.stringify({
+            success: true,
+            orderId: existingByAuthority.rows[0].id,
+            isExisting: true
+          })
+        };
+      }
     }
 
-    await client.query('BEGIN');
-    
-    // ثبت سفارش اصلی
+    // 2. ثبت سفارش جدید
     const orderResult = await client.query(
       `INSERT INTO orders (user_id, total, status, payment_method, shipping_address)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id, created_at`,
       [
         userId,
-        Number(total),
+        total,
         'processing',
         paymentMethod,
         shippingAddress || null
@@ -91,7 +83,7 @@ export const handler: Handler = async (event) => {
 
     const orderId = orderResult.rows[0].id;
 
-    // ثبت متادیتای سفارش (authority) اگر وجود دارد
+    // ثبت متادیتای سفارش (authority)
     if (authority) {
       await client.query(
         `INSERT INTO order_meta (order_id, meta_key, meta_value)
@@ -105,12 +97,7 @@ export const handler: Handler = async (event) => {
       await client.query(
         `INSERT INTO order_items (order_id, product_id, quantity, price)
          VALUES ($1, $2, $3, $4)`,
-        [
-          orderId,
-          Number(item.productId),
-          Number(item.quantity),
-          Number(item.price)
-        ]
+        [orderId, item.productId, item.quantity, item.price]
       );
     }
 
@@ -125,6 +112,7 @@ export const handler: Handler = async (event) => {
         status: 'processing'
       })
     };
+
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('Create order error:', err);
@@ -137,6 +125,5 @@ export const handler: Handler = async (event) => {
     };
   } finally {
     await client.release();
-    orderProcessed = false;
   }
 };
