@@ -1,4 +1,3 @@
-// netlify/functions/createOrder.ts
 import { Handler } from '@netlify/functions';
 import { getClient } from './db';
 
@@ -14,6 +13,7 @@ interface CreateOrderRequest {
   total: number;
   paymentMethod: string;
   shippingAddress?: string;
+  authority?: string; // اضافه کردن authority به اینترفیس
 }
 
 export const handler: Handler = async (event) => {
@@ -28,7 +28,7 @@ export const handler: Handler = async (event) => {
 
   try {
     orderProcessed = true;
-    // اعتبارسنجی وجود body
+    
     if (!event.body) {
       return {
         statusCode: 400,
@@ -36,10 +36,15 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    const { userId, items, total, paymentMethod, shippingAddress } = 
-      JSON.parse(event.body) as CreateOrderRequest;
+    const { 
+      userId, 
+      items, 
+      total, 
+      paymentMethod, 
+      shippingAddress,
+      authority // دریافت authority از بدنه درخواست
+    } = JSON.parse(event.body) as CreateOrderRequest;
 
-    // اعتبارسنجی مقادیر اجباری
     if (
       userId === undefined ||
       total === undefined ||
@@ -52,9 +57,12 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    // بررسی سفارش تکراری - این بخش اضافه شده
     const existingOrder = await client.query(
-      `SELECT id FROM orders WHERE user_id = $1 AND total = $2 AND status = 'pending' LIMIT 1`,
+      `SELECT id FROM orders 
+       WHERE user_id = $1 
+       AND ABS(total - $2) < 0.01 
+       AND status IN ('pending', 'processing')
+       LIMIT 1`,
       [userId, total]
     );
 
@@ -67,7 +75,7 @@ export const handler: Handler = async (event) => {
 
     await client.query('BEGIN');
     
-    // ثبت سفارش
+    // ثبت سفارش اصلی
     const orderResult = await client.query(
       `INSERT INTO orders (user_id, total, status, payment_method, shipping_address)
        VALUES ($1, $2, $3, $4, $5)
@@ -82,6 +90,15 @@ export const handler: Handler = async (event) => {
     );
 
     const orderId = orderResult.rows[0].id;
+
+    // ثبت متادیتای سفارش (authority) اگر وجود دارد
+    if (authority) {
+      await client.query(
+        `INSERT INTO order_meta (order_id, meta_key, meta_value)
+         VALUES ($1, 'authority', $2)`,
+        [orderId, authority]
+      );
+    }
 
     // ثبت آیتم‌های سفارش
     for (const item of items) {

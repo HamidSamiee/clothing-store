@@ -15,7 +15,7 @@ interface UserData {
 const UserProfile = () => {
   const { t } = useTranslation();
   const { user, updateUser } = useAuth();
-  console.log(user)
+  
   const { register, handleSubmit, formState: { errors } } = useForm<UserData>({
     defaultValues: {
       name: user?.name || '',
