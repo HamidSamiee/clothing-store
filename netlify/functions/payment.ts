@@ -1,6 +1,4 @@
-// netlify/functions/payment.ts
 import { Handler } from '@netlify/functions';
-import { getClient } from './db';
 import ZarinPal from 'zarinpal-checkout';
 
 const zarinpal = ZarinPal.create("e6965f6e-b82e-11e9-b17a-000c29344814", true);
@@ -8,121 +6,83 @@ const zarinpal = ZarinPal.create("e6965f6e-b82e-11e9-b17a-000c29344814", true);
 interface PaymentRequest {
   amount: number;
   description: string;
-  orderData: {
-    userId: number;
-    items: Array<{
+  userId: number;
+  callbackUrl: string;
+  metadata?: {
+    items?: Array<{
       productId: number;
       quantity: number;
       price: number;
     }>;
-    total: number;
-    paymentMethod: string;
     shippingAddress?: string;
   };
 }
 
 export const handler: Handler = async (event) => {
-  // بررسی وجود body
+  // 1. اعتبارسنجی اولیه
   if (!event.body) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'بدون داده' })
+      body: JSON.stringify({ error: 'بدون داده ارسالی' })
     };
   }
 
-  let client;
+  let parsedBody: PaymentRequest;
   try {
-    // پارس و اعتبارسنجی داده‌های ورودی
-    const { amount, description, orderData } = JSON.parse(event.body) as PaymentRequest;
-    
-    if (!amount || !description || !orderData) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'داده‌های ناقص' })
-      };
-    }
+    parsedBody = JSON.parse(event.body);
+  } catch {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'فرمت JSON نامعتبر' })
+    };
+  }
 
-    if (!orderData.userId || !orderData.total || !orderData.paymentMethod) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'داده‌های سفارش ناقص' })
-      };
-    }
+  // 2. اعتبارسنجی فیلدهای ضروری
+  const { amount, description, userId, callbackUrl } = parsedBody;
+  if (!amount || !description || !userId || !callbackUrl) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'فیلدهای ضروری ارسال نشده' })
+    };
+  }
 
-    client = await getClient();
-    await client.query('BEGIN');
-
-    // ثبت سفارش در دیتابیس
-    const orderResult = await client.query(
-      `INSERT INTO orders (user_id, total, status, payment_method, shipping_address)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING id, created_at`,
-      [
-        orderData.userId,
-        orderData.total,
-        'pending',
-        orderData.paymentMethod,
-        orderData.shippingAddress || null
-      ]
-    );
-
-    const orderId = orderResult.rows[0].id;
-
-    // ثبت آیتم‌های سفارش
-    for (const item of orderData.items) {
-      await client.query(
-        `INSERT INTO order_items (order_id, product_id, quantity, price)
-         VALUES ($1, $2, $3, $4)`,
-        [orderId, item.productId, item.quantity, item.price]
-      );
-    }
-
-    // درخواست پرداخت به زرین‌پال
+  try {
+    // 3. درخواست پرداخت به زرین‌پال
     const response = await zarinpal.PaymentRequest({
       Amount: amount * 10, // تبدیل به ریال
-      CallbackURL: `${process.env.BASE_URL}/verify?orderId=${orderId}`,
+      CallbackURL: callbackUrl,
       Description: description,
+      Metadata: parsedBody.metadata ? JSON.stringify(parsedBody.metadata) : undefined
     });
 
+    // 4. بررسی پاسخ زرین‌پال
     if (response.status !== 100) {
-      await client.query('ROLLBACK');
       return {
-        statusCode: 400,
-        body: JSON.stringify({ 
-          error: 'خطا در درخواست پرداخت',
-          details: response 
+        statusCode: 502,
+        body: JSON.stringify({
+          error: 'خطا در درگاه پرداخت',
+          details: response
         })
       };
     }
 
-    await client.query('COMMIT');
-
+    // 5. پاسخ موفق
     return {
       statusCode: 200,
       body: JSON.stringify({
-        url: `https://sandbox.zarinpal.com/pg/StartPay/${response.authority}`,
-        orderId
+        paymentUrl: `https://sandbox.zarinpal.com/pg/StartPay/${response.authority}`,
+        authority: response.authority
       })
     };
-  } catch (err) {
-    console.error('Payment processing error:', err);
-    if (client) {
-      await client.query('ROLLBACK').catch(e => console.error('Rollback error:', e));
-    }
+
+  } catch (error) {
+    console.error('Payment error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ 
-        error: 'خطا در پردازش پرداخت',
-        message: err instanceof Error ? err.message : 'Unknown error'
+      body: JSON.stringify({
+        error: 'خطای داخلی سرور',
+        details: error instanceof Error ? error.message : 'Unknown error'
       })
     };
-  } finally {
-    if (client) {
-      try {
-        await client.release();
-      } catch (e: unknown) {
-        console.error('Client release error:', e instanceof Error ? e.message : String(e));
-      }
-    }
   }
 };
