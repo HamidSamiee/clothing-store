@@ -299,3 +299,17 @@ export const getFeaturedProducts =  async () => {
     throw error;
   }
 };
+
+// productService.ts
+export const uploadProductImage = async (file: File): Promise<{ imagePath: string }> => {
+  const formData = new FormData();
+  formData.append('image', file);
+  
+  const response = await http.post('/.netlify/functions/uploadImage', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  
+  return response.data;
+};

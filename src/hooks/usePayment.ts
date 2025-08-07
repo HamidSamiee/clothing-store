@@ -1,18 +1,27 @@
-// hooks/usePayment.ts
 import { useState } from 'react';
 
-// interface PaymentResponse {
-//   url: string;
-//   orderId: number;
-// }
+interface PaymentSuccessResponse {
+  success: true;
+  paymentUrl: string;
+  authority: string;
+}
 
-// interface VerifyPaymentResponse {
-//   success: boolean;
-//   orderId?: number;
-//   amount?: number;
-//   authority?: string | null;
-//   error?: string;
-// }
+interface PaymentErrorResponse {
+  success: false;
+  error: string;
+  paymentUrl?: never;
+  authority?: never;
+}
+
+type PaymentResponse = PaymentSuccessResponse | PaymentErrorResponse;
+
+interface VerifyResponse {
+  success: boolean;
+  orderId?: number;
+  amount?: number;
+  authority?: string;
+  error?: string;
+}
 
 export const usePayment = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,9 +40,14 @@ export const usePayment = () => {
       shippingAddress: string;
       paymentMethod: string;
     }
-  ) => {
-    if (isLoading) return;
-    
+  ): Promise<PaymentResponse> => {
+    if (isLoading) {
+      return {
+        success: false,
+        error: 'در حال پردازش درخواست قبلی'
+      };
+    }
+  
     setIsLoading(true);
     setError(null);
     
@@ -60,37 +74,41 @@ export const usePayment = () => {
         throw new Error(data.error || 'خطا در پرداخت');
       }
   
-      if (!data?.paymentUrl) {
+      if (!data?.paymentUrl || !data?.authority) {
         throw new Error('پاسخ نامعتبر از سرور دریافت شد');
       }
-
-      localStorage.setItem('zarinpalPayment', JSON.stringify({ 
-        amount: Number(amount), // ذخیره به صورت عدد
-        authority: data.url.split('/').pop(),
+  
+      // ذخیره موقت داده‌های پرداخت
+      sessionStorage.setItem('paymentData', JSON.stringify({
+        amount: Number(amount),
         userId: orderData.userId,
-        items: orderData.items.map(item => ({
-          productId: Number(item.productId),
-          quantity: Number(item.quantity),
-          price: Number(item.price)
-        })),
+        items: orderData.items,
         shippingAddress: orderData.shippingAddress,
-        expiresAt: Date.now() + 3600000 
+        authority: data.authority
       }));
-      
-      window.location.href = data.paymentUrl;
-
+  
+      return {
+        success: true,
+        paymentUrl: data.paymentUrl,
+        authority: data.authority
+      };
+  
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'خطا در پرداخت';
       setError(errorMessage);
-      console.error('Payment error:', err);
-      throw err; // پرتاب مجدد خطا برای مدیریت در کامپوننت
+      return {
+        success: false,
+        error: errorMessage
+      };
     } finally {
       setIsLoading(false);
     }
   };
 
-
-  const verifyPayment = async (authority?: string, status?: string) => {
+  const verifyPayment = async (
+    authority?: string, 
+    status?: string
+  ): Promise<VerifyResponse> => {
     setIsLoading(true);
     setError(null);
     
@@ -102,55 +120,50 @@ export const usePayment = () => {
       if (paymentStatus !== 'OK') {
         return { success: false, error: 'پرداخت ناموفق بود' };
       }
-  
-      // بازیابی و اعتبارسنجی داده‌های پرداخت
-      const paymentDataStr = localStorage.getItem('zarinpalPayment');
+
+      // بازیابی داده‌های پرداخت
+      const paymentDataStr = sessionStorage.getItem('paymentData');
       if (!paymentDataStr) {
-        throw new Error('اطلاعات پرداخت یافت نشد. لطفاً مجدداً تلاش کنید.');
+        throw new Error('اطلاعات پرداخت یافت نشد');
       }
-  
+
       const paymentData = JSON.parse(paymentDataStr);
       
-      // اعتبارسنجی مقادیر ضروری
-      if (!paymentData.userId || !paymentData.amount) {
+      // اعتبارسنجی داده‌ها
+      if (!paymentData.userId || !paymentData.amount || !paymentAuthority) {
         throw new Error('اطلاعات پرداخت ناقص است');
       }
-  
-      const total = Number(paymentData.amount);
-      const userId = Number(paymentData.userId);
-  
-      if (isNaN(total) || isNaN(userId)) {
-        throw new Error('مقادیر پرداخت نامعتبر است');
-      }
-  
-      // ارسال درخواست ایجاد سفارش
+
+      // ثبت سفارش نهایی
       const orderResponse = await fetch('/.netlify/functions/createOrder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId,
+          userId: Number(paymentData.userId),
           items: paymentData.items || [],
-          total,
+          total: Number(paymentData.amount),
           paymentMethod: 'zarinpal',
           shippingAddress: paymentData.shippingAddress,
           authority: paymentAuthority
         }),
       });
-  
+
       const responseData = await orderResponse.json();
-  
+
       if (!orderResponse.ok) {
         throw new Error(responseData.message || 'خطا در ثبت سفارش');
       }
-  
-      
+
+      // پاک کردن داده‌های موقت
+      sessionStorage.removeItem('paymentData');
+
       return {
         success: true,
         orderId: responseData.orderId,
-        amount: total,
-        authority: paymentAuthority
+        amount: responseData.amount,
+        authority: responseData.authority
       };
-  
+
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'خطا در تأیید پرداخت';
       setError(errorMessage);

@@ -55,8 +55,9 @@ const Checkout = () => {
       //   paymentMethod: 'zarinpal',
       //   shippingAddress: `${address!.street}, ${address!.city}`
       // };
-  
-      await initiatePayment(
+     
+
+      const { paymentUrl } = await initiatePayment(
         cartTotal,
         `پرداخت سفارش #${Date.now()}`,
         {
@@ -66,6 +67,11 @@ const Checkout = () => {
           paymentMethod: 'zarinpal'
         }
       );
+
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+      } 
+      
     } catch (error) {
       let errorMessage = 'خطا در پرداخت';
       

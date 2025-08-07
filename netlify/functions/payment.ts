@@ -3,6 +3,8 @@ import ZarinPal from 'zarinpal-checkout';
 
 const zarinpal = ZarinPal.create("e6965f6e-b82e-11e9-b17a-000c29344814", true);
 
+
+
 interface PaymentRequest {
   amount: number; // مبلغ به تومان
   description: string;
@@ -105,12 +107,14 @@ export const handler: Handler = async (event) => {
     // 4. پاسخ موفقیت‌آمیز
     return {
       statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify({
         success: true,
         paymentUrl: `https://sandbox.zarinpal.com/pg/StartPay/${response.authority}`,
-        authority: response.authority,
-        amount: parsedBody.amount,
-        userId: parsedBody.userId
+        authority: response.authority // اضافه کردن این خط
       })
     };
 
