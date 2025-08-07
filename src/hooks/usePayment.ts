@@ -161,7 +161,7 @@ export const usePayment = () => {
         authority: responseData.authority
       };   
 
-      sessionStorage.removeItem('paymentData');
+      // sessionStorage.removeItem('paymentData');
       
       return result
 
