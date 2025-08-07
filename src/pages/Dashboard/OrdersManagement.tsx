@@ -30,30 +30,33 @@ const OrdersManagement = () => {
         search: searchTerm
       });
       
+      // اعتبارسنجی مضاعف
       const ordersData = Array.isArray(response?.data) ? response.data : [];
       setOrders(ordersData);
       
+      // استخراج productIdها با اعتبارسنجی کامل
       const allProductIds = ordersData.flatMap(order => 
-        Array.isArray(order?.items) ? 
-          order.items.map(item => item?.productId).filter(Boolean) : 
-          []
+        Array.isArray(order?.items) 
+          ? order.items
+              .filter(item => item?.productId)
+              .map(item => item.productId)
+          : []
       );
-      
+  
       if (allProductIds.length > 0) {
         const fetchedProducts = await getProductsByIds(allProductIds);
         const productsRecord: Record<number, Product> = {};
         fetchedProducts.forEach(p => {
-          if (p?.id) {
-            productsRecord[Number(p.id)] = p;
-          }
+          if (p?.id) productsRecord[Number(p.id)] = p;
         });
         setProductsMap(productsRecord);
       }
       
       setTotalOrders(response?.total || 0);
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      console.error('Error details:', error);
       toast.error('خطا در دریافت سفارشات');
+      setOrders([]); // تنظیم آرایه خالی در صورت خطا
     } finally {
       setIsLoading(false);
     }

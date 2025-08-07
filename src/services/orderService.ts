@@ -36,39 +36,57 @@ export interface OrderResponse extends Order {
 }
 
 export const getOrders = async (params?: GetOrdersParams): Promise<{data: OrderResponse[], total: number}> => {
-  const response = await http.get<{data: ApiOrder[], total: number}>('/.netlify/functions/getOrders', {
-    params: {
-      _page: params?.page,
-      _limit: params?.perPage,
-      q: params?.search,
-      userId: params?.userId
-    }
-  });
-  
+  try {
+    const response = await http.get<{data: ApiOrder[], total: number}>('/.netlify/functions/getOrders', {
+      params: {
+        _page: params?.page,
+        _limit: params?.perPage,
+        q: params?.search,
+        userId: params?.userId
+      }
+    });
 
-const transformedData: OrderResponse[] = response.data.data.map((order) => ({
-  id: order.id,
-  userId: order.user_id,
-  date: order.created_at,
-  total: order.total,
-  status: order.status,
-  paymentMethod: order.payment_method,
-  shippingAddress: order.shipping_address || undefined,
-  items: order.items.map(item => ({
-    id: item.id,
-    orderId: order.id,  
-    productId: item.product_id,
-    quantity: item.quantity,
-    price: item.price
-  })),
-  userName: order.user_name || undefined,
-  userEmail: order.user_email || undefined
-}));
-  
-  return {
-    data: transformedData,
-    total: response.data.total
-  };
+    // اعتبارسنجی کامل پاسخ سرور
+    if (!response.data || !Array.isArray(response.data.data)) {
+      throw new Error('Invalid response format from server');
+    }
+
+    const transformedData: OrderResponse[] = response.data.data.map((order) => {
+      // اعتبارسنجی آیتم‌ها
+      const safeItems = Array.isArray(order.items) ? order.items : [];
+      
+      return {
+        id: order.id,
+        userId: order.user_id,
+        date: order.created_at,
+        total: order.total,
+        status: order.status,
+        paymentMethod: order.payment_method,
+        shippingAddress: order.shipping_address || undefined,
+        items: safeItems.map(item => ({
+          id: item.id,
+          orderId: order.id,  
+          productId: item.product_id,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        userName: order.user_name || undefined,
+        userEmail: order.user_email || undefined
+      };
+    });
+    
+    return {
+      data: transformedData,
+      total: response.data.total || 0 // مقدار پیش‌فرض برای total
+    };
+  } catch (error) {
+    console.error('Failed to fetch orders:', error);
+    // بازگرداندن ساختار خالی در صورت خطا
+    return {
+      data: [],
+      total: 0
+    };
+  }
 };
 
 

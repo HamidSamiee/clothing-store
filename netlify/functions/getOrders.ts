@@ -45,28 +45,31 @@ const handler: Handler = async (event) => {
       ? `WHERE ${searchConditions.join(' AND ')}` 
       : '';
     
-    const result = await query<OrderResult>(`
-      SELECT 
-        o.*,
-        u.name as user_name,
-        u.email as user_email,
-        (
-          SELECT json_agg(json_build_object(
-            'id', oi.id,
-            'product_id', oi.product_id,
-            'quantity', oi.quantity,
-            'price', oi.price
-          ))
-          FROM order_items oi
-          WHERE oi.order_id = o.id
-        ) as items
-      FROM orders o
-      JOIN users u ON o.user_id = u.id
-      ${whereClause}
-      ORDER BY o.created_at DESC
-      LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`,
-      [...queryParams, perPage, (page - 1) * perPage]
-    );
+      const result = await query<OrderResult>(`
+        SELECT 
+          o.*,
+          u.name as user_name,
+          u.email as user_email,
+          COALESCE(
+            (
+              SELECT json_agg(json_build_object(
+                'id', oi.id,
+                'product_id', oi.product_id,
+                'quantity', oi.quantity,
+                'price', oi.price
+              ))
+              FROM order_items oi
+              WHERE oi.order_id = o.id
+            ), 
+            '[]'::json
+          ) as items
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        ${whereClause}
+        ORDER BY o.created_at DESC
+        LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`,
+        [...queryParams, perPage, (page - 1) * perPage]
+      );
     
     const countResult = await query<{count: string}>(
       `SELECT COUNT(*) 

@@ -1,9 +1,30 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
 import { CartItem } from "@/types/Cart";
 
+const CART_STORAGE_KEY = "cart_items";
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
+
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(CART_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({
+        items,
+        expires: Date.now() + 24* 60 * 60 * 1000
+      }));
+    } catch (error) {
+      console.error("خطا در ذخیره سبد خرید:", error);
+    }
+  }, [items]);
+
 
   const total = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
