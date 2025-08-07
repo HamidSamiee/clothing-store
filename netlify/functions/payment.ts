@@ -4,9 +4,9 @@ import ZarinPal from 'zarinpal-checkout';
 const zarinpal = ZarinPal.create("e6965f6e-b82e-11e9-b17a-000c29344814", true);
 
 interface PaymentRequest {
-  amount: number;
+  amount: number; // مبلغ به تومان
   description: string;
-  userId: number;
+  userId: number; // مطابق با user_id در دیتابیس (int8)
   callbackUrl: string;
   metadata?: {
     items?: Array<{
@@ -14,7 +14,8 @@ interface PaymentRequest {
       quantity: number;
       price: number;
     }>;
-    shippingAddress?: string;
+    shippingAddress?: string; // متن مطابق با فیلد shipping_address
+    paymentMethod?: string; // متن مطابق با فیلد payment_method
   };
 }
 
@@ -23,66 +24,112 @@ export const handler: Handler = async (event) => {
   if (!event.body) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'بدون داده ارسالی' })
+      body: JSON.stringify({ 
+        error: 'بدون داده ارسالی',
+        code: 'MISSING_BODY'
+      })
     };
   }
 
   let parsedBody: PaymentRequest;
   try {
     parsedBody = JSON.parse(event.body);
-  } catch {
+  } catch  {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'فرمت JSON نامعتبر' })
+      body: JSON.stringify({ 
+        error: 'فرمت JSON نامعتبر',
+        code: 'INVALID_JSON'
+      })
     };
   }
 
   // 2. اعتبارسنجی فیلدهای ضروری
-  const { amount, description, userId, callbackUrl } = parsedBody;
-  if (!amount || !description || !userId || !callbackUrl) {
+  const validationErrors: Record<string, string> = {};
+  
+  if (!parsedBody.amount || isNaN(parsedBody.amount) || parsedBody.amount <= 0) {
+    validationErrors.amount = 'مبلغ باید عددی مثبت باشد';
+  }
+
+  if (!parsedBody.description || parsedBody.description.trim().length < 5) {
+    validationErrors.description = 'توضیحات باید حداقل ۵ کاراکتر داشته باشد';
+  }
+
+  if (!parsedBody.userId || isNaN(parsedBody.userId)) {
+    validationErrors.userId = 'شناسه کاربر نامعتبر است';
+  }
+
+  if (!parsedBody.callbackUrl || !isValidUrl(parsedBody.callbackUrl)) {
+    validationErrors.callbackUrl = 'آدرس بازگشت نامعتبر است';
+  }
+
+  if (Object.keys(validationErrors).length > 0) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'فیلدهای ضروری ارسال نشده' })
+      body: JSON.stringify({
+        error: 'اعتبارسنجی ناموفق',
+        code: 'VALIDATION_FAILED',
+        validationErrors
+      })
     };
   }
 
   try {
     // 3. درخواست پرداخت به زرین‌پال
     const response = await zarinpal.PaymentRequest({
-      Amount: amount * 10, // تبدیل به ریال
-      CallbackURL: callbackUrl,
-      Description: description,
+      Amount: parsedBody.amount * 10, // تبدیل به ریال
+      CallbackURL: parsedBody.callbackUrl,
+      Description: parsedBody.description,
       Metadata: parsedBody.metadata ? JSON.stringify(parsedBody.metadata) : undefined
     });
 
-    // 4. بررسی پاسخ زرین‌پال
     if (response.status !== 100) {
       return {
         statusCode: 502,
         body: JSON.stringify({
           error: 'خطا در درگاه پرداخت',
-          details: response
+          code: 'GATEWAY_ERROR',
+          gatewayResponse: {
+            status: response.status,
+            error: response.error || 'خطای نامشخص از درگاه پرداخت'
+          }
         })
       };
     }
 
-    // 5. پاسخ موفق
+    // 4. پاسخ موفقیت‌آمیز
     return {
       statusCode: 200,
       body: JSON.stringify({
+        success: true,
         paymentUrl: `https://sandbox.zarinpal.com/pg/StartPay/${response.authority}`,
-        authority: response.authority
+        authority: response.authority,
+        amount: parsedBody.amount,
+        userId: parsedBody.userId
       })
     };
 
   } catch (error) {
-    console.error('Payment error:', error);
+    console.error('Payment processing error:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         error: 'خطای داخلی سرور',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        code: 'INTERNAL_SERVER_ERROR',
+        details: process.env.NODE_ENV === 'development' ? 
+          (error instanceof Error ? error.message : 'خطای نامشخص') : 
+          undefined
       })
     };
   }
 };
+
+// تابع کمکی برای بررسی URL
+function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
