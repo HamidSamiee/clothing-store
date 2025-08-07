@@ -17,7 +17,7 @@ const PaymentVerification = () => {
     const verify = async () => {
       if (authority && status) {
         const result = await verifyPayment(authority, status);
-        
+        console.log(result)
         if (result.success) {
           navigate('/payment-success', { 
             state: { 
