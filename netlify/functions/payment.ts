@@ -20,6 +20,11 @@ interface PaymentRequest {
 }
 
 export const handler: Handler = async (event) => {
+  console.log('Received request:', {
+    headers: event.headers,
+    body: event.body
+  });
+
   // 1. اعتبارسنجی اولیه
   if (!event.body) {
     return {
@@ -64,11 +69,11 @@ export const handler: Handler = async (event) => {
   }
 
   if (Object.keys(validationErrors).length > 0) {
+    console.log('Validation errors:', validationErrors);
     return {
       statusCode: 400,
       body: JSON.stringify({
         error: 'اعتبارسنجی ناموفق',
-        code: 'VALIDATION_FAILED',
         validationErrors
       })
     };

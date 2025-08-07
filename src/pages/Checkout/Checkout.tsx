@@ -10,7 +10,6 @@ import AddressForm from '@/components/AddressForm/AddressForm';
 import DeliveryMethod from '@/components/DeliveryMethod/DeliveryMethod';
 import { toPersianNumbers } from '@/utils/toPersianNumbers';
 import { toast } from 'react-toastify';
-import {  OrderItem } from '@/types/Order';
 
 
 interface Address {
@@ -43,26 +42,29 @@ const Checkout = () => {
 
     setIsProcessing(true);
     try {
-      const orderItems: OrderItem[] = cartItems.map(item => ({
+      const orderItems = cartItems.map(item => ({
         productId: Number(item.id),
         quantity: item.quantity,
-        price: item.price,
-        orderId: 0,
-        id: 0
+        price: item.price
       }));
   
-      const orderData = {
-        userId: Number(currentUser!.id),
-        items: orderItems,
-        total: cartTotal,
-        paymentMethod: 'zarinpal',
-        shippingAddress: `${address!.street}, ${address!.city}`
-      };
+      // const orderData = {
+      //   userId: Number(currentUser!.id),
+      //   items: orderItems,
+      //   total: cartTotal,
+      //   paymentMethod: 'zarinpal',
+      //   shippingAddress: `${address!.street}, ${address!.city}`
+      // };
   
       await initiatePayment(
         cartTotal,
         `پرداخت سفارش #${Date.now()}`,
-        orderData
+        {
+          userId: Number(currentUser!.id),
+          items: orderItems,
+          shippingAddress: `${address!.street}, ${address!.city}`,
+          paymentMethod: 'zarinpal'
+        }
       );
     } catch (error) {
       let errorMessage = 'خطا در پرداخت';

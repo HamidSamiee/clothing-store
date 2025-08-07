@@ -1,6 +1,5 @@
 // hooks/usePayment.ts
 import { useState } from 'react';
-import { OrderData } from '@/types/Order';
 
 // interface PaymentResponse {
 //   url: string;
@@ -22,7 +21,16 @@ export const usePayment = () => {
   const initiatePayment = async (
     amount: number,
     description: string,
-    orderData: OrderData
+    orderData: {
+      userId: number;
+      items: Array<{
+        productId: number;
+        quantity: number;
+        price: number;
+      }>;
+      shippingAddress: string;
+      paymentMethod: string;
+    }
   ) => {
     if (isLoading) return;
     
@@ -32,34 +40,27 @@ export const usePayment = () => {
     try {
       const res = await fetch('/.netlify/functions/payment', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           amount: Number(amount),
           description,
-          orderData: {
-            ...orderData,
-            total: Number(orderData.total)
+          userId: Number(orderData.userId),
+          callbackUrl: `${window.location.origin}/verify`,
+          metadata: {
+            items: orderData.items,
+            shippingAddress: orderData.shippingAddress,
+            paymentMethod: orderData.paymentMethod
           }
         }),
       });
-
-      if (!res.ok) {
-        // تلاش برای خواندن پیام خطا از سرور
-        let errorMessage = 'خطا در پرداخت';
-        try {
-          const errorData = await res.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch (e) {
-          console.error('Failed to parse error response:', e);
-        }
-        throw new Error(errorMessage);
-      }
-
+  
       const data = await res.json();
-
-      if (!data?.url) {
+  
+      if (!res.ok) {
+        throw new Error(data.error || 'خطا در پرداخت');
+      }
+  
+      if (!data?.paymentUrl) {
         throw new Error('پاسخ نامعتبر از سرور دریافت شد');
       }
 
@@ -76,7 +77,7 @@ export const usePayment = () => {
         expiresAt: Date.now() + 3600000 
       }));
       
-      window.location.href = data.url;
+      window.location.href = data.paymentUrl;
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'خطا در پرداخت';
