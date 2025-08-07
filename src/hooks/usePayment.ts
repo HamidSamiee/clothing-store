@@ -72,7 +72,8 @@ export const usePayment = () => {
           quantity: Number(item.quantity),
           price: Number(item.price)
         })),
-        shippingAddress: orderData.shippingAddress
+        shippingAddress: orderData.shippingAddress,
+        expiresAt: Date.now() + 3600000 
       }));
       
       window.location.href = data.url;
@@ -141,7 +142,7 @@ export const usePayment = () => {
         throw new Error(responseData.message || 'خطا در ثبت سفارش');
       }
   
-      localStorage.removeItem('zarinpalPayment');
+      
       return {
         success: true,
         orderId: responseData.orderId,
@@ -160,6 +161,6 @@ export const usePayment = () => {
       setIsLoading(false);
     }
   };
-  
+
   return { initiatePayment, verifyPayment, isLoading, error };
 };

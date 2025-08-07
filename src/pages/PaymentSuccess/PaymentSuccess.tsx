@@ -2,6 +2,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './PaymentSuccess.module.css';
 import { FaCheckCircle } from 'react-icons/fa';
+import { useEffect } from 'react';
 
 interface PaymentData {
     amount?: number;
@@ -12,7 +13,10 @@ const PaymentSuccess = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const paymentData = location.state as PaymentData || {};
-
+    useEffect(() => {
+        localStorage.removeItem('zarinpalPayment');
+      }, []);
+      
     return (
         <div className={styles.container}>
             <FaCheckCircle className={styles.successIcon} />
