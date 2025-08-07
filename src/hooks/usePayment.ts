@@ -88,57 +88,78 @@ export const usePayment = () => {
   };
 
 
-const verifyPayment = async (authority?: string, status?: string) => {
-  setIsLoading(true);
-  setError(null);
+  const verifyPayment = async (authority?: string, status?: string) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentAuthority = authority || urlParams.get('Authority');
+      const paymentStatus = status || urlParams.get('Status');
   
-  try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentAuthority = authority || urlParams.get('Authority');
-    const paymentStatus = status || urlParams.get('Status');
-
-    if (paymentStatus !== 'OK') {
-      return { success: false, error: 'پرداخت ناموفق بود' };
+      if (paymentStatus !== 'OK') {
+        return { success: false, error: 'پرداخت ناموفق بود' };
+      }
+  
+      // بازیابی و اعتبارسنجی داده‌های پرداخت
+      const paymentDataStr = localStorage.getItem('zarinpalPayment');
+      if (!paymentDataStr) {
+        throw new Error('اطلاعات پرداخت یافت نشد. لطفاً مجدداً تلاش کنید.');
+      }
+  
+      const paymentData = JSON.parse(paymentDataStr);
+      
+      // اعتبارسنجی مقادیر ضروری
+      if (!paymentData.userId || !paymentData.amount) {
+        throw new Error('اطلاعات پرداخت ناقص است');
+      }
+  
+      const total = Number(paymentData.amount);
+      const userId = Number(paymentData.userId);
+  
+      if (isNaN(total) || isNaN(userId)) {
+        throw new Error('مقادیر پرداخت نامعتبر است');
+      }
+  
+      // ارسال درخواست ایجاد سفارش
+      const orderResponse = await fetch('/.netlify/functions/createOrder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          items: paymentData.items || [],
+          total,
+          paymentMethod: 'zarinpal',
+          shippingAddress: paymentData.shippingAddress,
+          authority: paymentAuthority
+        }),
+      });
+  
+      const responseData = await orderResponse.json();
+  
+      if (!orderResponse.ok) {
+        throw new Error(responseData.message || 'خطا در ثبت سفارش');
+      }
+  
+      localStorage.removeItem('zarinpalPayment');
+      return {
+        success: true,
+        orderId: responseData.orderId,
+        amount: total,
+        authority: paymentAuthority
+      };
+  
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'خطا در تأیید پرداخت';
+      setError(errorMessage);
+      return { 
+        success: false,
+        error: errorMessage
+      };
+    } finally {
+      setIsLoading(false);
     }
-
-    const paymentData = JSON.parse(localStorage.getItem('zarinpalPayment') || '{}');
-    
-    // ارسال درخواست با authority به سرور
-    const orderResponse = await fetch('/.netlify/functions/createOrder', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: Number(paymentData.userId),
-        items: paymentData.items,
-        total: Number(paymentData.amount),
-        paymentMethod: 'zarinpal',
-        shippingAddress: paymentData.shippingAddress,
-        authority: paymentAuthority // ارسال authority به سرور
-      }),
-    });
-
-    const responseData = await orderResponse.json();
-
-    if (!orderResponse.ok) {
-      throw new Error(responseData.message || 'خطا در ثبت سفارش');
-    }
-
-    localStorage.removeItem('zarinpalPayment');
-    return {
-      success: true,
-      orderId: responseData.orderId,
-      amount: Number(paymentData.amount),
-      authority: paymentAuthority
-    };
-    
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'خطا در تأیید پرداخت';
-    setError(errorMessage);
-    return { success: false, error: errorMessage };
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
+  
   return { initiatePayment, verifyPayment, isLoading, error };
 };
