@@ -84,7 +84,7 @@ export const usePayment = () => {
         userId: orderData.userId,
         items: orderData.items,
         shippingAddress: orderData.shippingAddress,
-        authority: data.authority
+        authority: data.authority,
       }));
   
       return {
@@ -123,6 +123,7 @@ export const usePayment = () => {
 
       // بازیابی داده‌های پرداخت
       const paymentDataStr = sessionStorage.getItem('paymentData');
+
       if (!paymentDataStr) {
         throw new Error('اطلاعات پرداخت یافت نشد');
       }
@@ -153,16 +154,16 @@ export const usePayment = () => {
       if (!orderResponse.ok) {
         throw new Error(responseData.message || 'خطا در ثبت سفارش');
       }
-
-      // پاک کردن داده‌های موقت
-      sessionStorage.removeItem('paymentData');
-
-      return {
+       const result= {
         success: true,
         orderId: responseData.orderId,
         amount: responseData.amount,
         authority: responseData.authority
-      };
+      };   
+
+      sessionStorage.removeItem('paymentData');
+      
+      return result
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'خطا در تأیید پرداخت';
