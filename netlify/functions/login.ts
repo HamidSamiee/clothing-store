@@ -30,11 +30,14 @@ const handler: Handler = async (event) => {
     // جستجوی کاربر در دیتابیس
     const userResult = await query<{
       id: number;
+      name:string;
       email: string;
       password: string;
+      address:string;
+      phone:string;
       role: string;
     }>(
-      'SELECT id, email, password, role FROM users WHERE email = $1',
+      'SELECT id, name, email, password, address, phone ,role FROM users WHERE email = $1',
       [email]
     );
 
@@ -64,7 +67,7 @@ const handler: Handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ token, user: { id: user.id, email: user.email, role: user.role } })
+      body: JSON.stringify({ token, user: { id: user.id, name: user.name, email: user.email, address: user.address, phone:user.phone, role: user.role } })
     };
   } catch (error) {
     console.error('Login error:', error);
