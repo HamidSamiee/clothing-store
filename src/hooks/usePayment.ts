@@ -79,12 +79,13 @@ export const usePayment = () => {
       }
   
       // ذخیره موقت داده‌های پرداخت
-      sessionStorage.setItem('paymentData', JSON.stringify({
+      localStorage.setItem('paymentData', JSON.stringify({
         amount: Number(amount),
         userId: orderData.userId,
         items: orderData.items,
         shippingAddress: orderData.shippingAddress,
         authority: data.authority,
+        expires: Date.now() + 5 * 60 * 1000
       }));
   
       return {
@@ -122,7 +123,7 @@ export const usePayment = () => {
       }
 
       // بازیابی داده‌های پرداخت
-      const paymentDataStr = sessionStorage.getItem('paymentData');
+      const paymentDataStr = localStorage.getItem('paymentData');
 
       if (!paymentDataStr) {
         throw new Error('اطلاعات پرداخت یافت نشد');
