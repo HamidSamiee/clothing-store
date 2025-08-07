@@ -51,7 +51,7 @@ export const handler: Handler = async (event) => {
                 `SELECT o.id FROM orders o
                  JOIN order_meta om ON o.id = om.order_id
                  WHERE om.meta_key = 'authority' AND om.meta_value = $1
-                 AND o.status = 'pending'
+                 AND o.status = 'processing'
                  LIMIT 1`,
                 [authority]
             );
@@ -65,17 +65,17 @@ export const handler: Handler = async (event) => {
                         orderId: existingOrder.rows[0].id,
                         amount: total, 
                         authority: authority, 
-                        status: 'pending',
+                        status: 'processing',
                         message: 'سفارش قبلاً با این کد پرداخت ثبت شده است'
                     })
                 };
             }
         }
 
-        // ثبت سفارش جدید با وضعیت pending
+        // ثبت سفارش جدید با وضعیت processing
         const orderResult = await client.query(
             `INSERT INTO orders (user_id, total, status, payment_method, shipping_address)
-             VALUES ($1, $2, 'pending', $3, $4)
+             VALUES ($1, $2, 'processing', $3, $4)
              RETURNING id`,
             [
                 Number(userId),
@@ -135,7 +135,7 @@ export const handler: Handler = async (event) => {
                 orderId: orderId,
                 amount: Math.round(Number(total)), // برگشت مقدار صحیح
                 authority: authority, 
-                status: 'pending',
+                status: 'processing',
                 message: 'سفارش با موفقیت ثبت شد'
             })
         };

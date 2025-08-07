@@ -85,7 +85,7 @@ export const usePayment = () => {
         items: orderData.items,
         shippingAddress: orderData.shippingAddress,
         authority: data.authority,
-        expires: Date.now() + 5 * 60 * 1000
+        expires: Date.now() + 1 * 60 * 1000
       }));
   
       return {
