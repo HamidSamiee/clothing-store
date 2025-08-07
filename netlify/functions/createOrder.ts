@@ -63,7 +63,8 @@ export const handler: Handler = async (event) => {
                     body: JSON.stringify({ 
                         success: true,
                         orderId: existingOrder.rows[0].id,
-                        total: total,
+                        amount: total, 
+                        authority: authority, 
                         status: 'pending',
                         message: 'سفارش قبلاً با این کد پرداخت ثبت شده است'
                     })
@@ -132,7 +133,8 @@ export const handler: Handler = async (event) => {
             body: JSON.stringify({
                 success: true,
                 orderId: orderId,
-                total: Math.round(Number(total)), // برگشت مقدار صحیح
+                amount: Math.round(Number(total)), // برگشت مقدار صحیح
+                authority: authority, 
                 status: 'pending',
                 message: 'سفارش با موفقیت ثبت شد'
             })

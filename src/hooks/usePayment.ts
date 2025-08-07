@@ -158,12 +158,11 @@ export const usePayment = () => {
        const result= {
         success: true,
         orderId: responseData.orderId,
-        amount: responseData.amount,
-        authority: responseData.authority
+        amount: responseData.amount || responseData.total,
+        authority: responseData.authority || paymentAuthority
       };   
 
-      // sessionStorage.removeItem('paymentData');
-      
+   
       return result
 
     } catch (error) {
