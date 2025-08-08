@@ -21,6 +21,13 @@ const ImageUploader = ({
   const [inputKey, setInputKey] = useState(Date.now());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isUploading && fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -44,6 +51,7 @@ const ImageUploader = ({
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
+      formData.append('api_key', 'YOUR_API_KEY'); // اضافه کردن این خط
 
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
@@ -53,17 +61,17 @@ const ImageUploader = ({
         }
       );
 
-      const data = await response.json();
-      if (response.ok) {
-        onUploadSuccess(data.secure_url);
-        toast.success('تصویر با موفقیت آپلود شد');
-      } else {
-        throw new Error(data.message || 'خطا در آپلود تصویر');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'خطا در آپلود تصویر');
       }
+
+      const data = await response.json();
+      onUploadSuccess(data.secure_url);
+      toast.success('تصویر با موفقیت آپلود شد');
     } catch (error) {
       console.error('Upload error:', error);
       toast.error(error instanceof Error ? error.message : 'خطا در آپلود تصویر');
-      setPreviewUrl(initialImageUrl);
     } finally {
       setIsUploading(false);
       resetFileInput();
@@ -71,7 +79,7 @@ const ImageUploader = ({
   };
 
   const resetFileInput = () => {
-    setInputKey(Date.now()); // تغییر key برای رندر مجدد
+    setInputKey(Date.now());
   };
 
   return (
@@ -80,7 +88,7 @@ const ImageUploader = ({
         <span>تصویر محصول</span>
         <div 
           className={styles.uploadBox}
-          onClick={() => !isUploading && fileInputRef.current?.click()}
+          onClick={handleClick}
         >
           {isUploading ? (
             <div className={styles.uploadPlaceholder}>
