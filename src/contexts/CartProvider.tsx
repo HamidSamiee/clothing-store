@@ -9,27 +9,33 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(CART_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          return Array.isArray(parsed?.items) ? parsed.items : [];
+        } catch {
+          return [];
+        }
+      }
     }
     return [];
   });
 
   useEffect(() => {
     try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({
-        items,
-        expires: Date.now() + 24* 60 * 60 * 1000
-      }));
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
     } catch (error) {
       console.error("خطا در ذخیره سبد خرید:", error);
     }
   }, [items]);
 
-
-  const total = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  // محاسبه ایمن مجموع
+  const total = Array.isArray(items)
+    ? items.reduce(
+        (sum, item) => sum + (item.price || 0) * (item.quantity || 0),
+        0
+      )
+    : 0;
 
   // تابع برای ایجاد کلید یکتا ترکیبی
   const getUniqueKey = (item: CartItem) => `${item.id}_${item.size ?? ''}_${item.color ?? ''}`;
