@@ -26,11 +26,13 @@ const ImageUploader = ({
 
     if (!file.type.match('image.*')) {
       toast.error('فقط فایل‌های تصویری مجاز هستند');
+      resetFileInput();
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
       toast.error('حجم فایل باید کمتر از 2 مگابایت باشد');
+      resetFileInput();
       return;
     }
 
@@ -63,8 +65,16 @@ const ImageUploader = ({
       setPreviewUrl(initialImageUrl);
     } finally {
       setIsUploading(false);
+      resetFileInput();
     }
   };
+
+  const resetFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''; // ریست مقدار input
+    }
+  };
+
 
   return (
     <div className={styles.imageUploadSection}>
