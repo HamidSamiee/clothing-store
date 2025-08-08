@@ -26,7 +26,6 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
   const modalRef = useRef<HTMLDivElement>(null);
   useClickOutside<HTMLDivElement>(modalRef, onClose);
 
-
   const { 
     register, 
     handleSubmit, 
@@ -116,7 +115,7 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
       setIsLoading(false);
     }
   };
-
+  
   // تابع کمکی برای تبدیل به آرایه
   function convertToArray(input: unknown): string[] {
     if (!input) return [];
@@ -223,10 +222,10 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
               />
 
               <ImageUploader
-                onUploadSuccess={(imageUrl) => setValue('image', imageUrl)}
-                initialImageUrl={watch('image')}
                 uploadPreset={import.meta.env.VITE_UPLOAD_PRESET}
                 cloudName={import.meta.env.VITE_CLOUD_NAME}
+                onUploadSuccess={(url) => setValue('image', url)}
+                initialImageUrl={watch('image')}
               />
 
               <TextField

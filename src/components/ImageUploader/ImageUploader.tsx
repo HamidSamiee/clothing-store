@@ -1,6 +1,7 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import { FiUpload } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import styles from './ImageUploader.module.css';
 
 interface ImageUploaderProps {
   onUploadSuccess: (imageUrl: string) => void;
@@ -23,13 +24,11 @@ const ImageUploader = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // بررسی نوع فایل
     if (!file.type.match('image.*')) {
       toast.error('فقط فایل‌های تصویری مجاز هستند');
       return;
     }
 
-    // بررسی حجم فایل (حداکثر 2MB)
     if (file.size > 2 * 1024 * 1024) {
       toast.error('حجم فایل باید کمتر از 2 مگابایت باشد');
       return;
@@ -68,45 +67,45 @@ const ImageUploader = ({
   };
 
   return (
-    <div className="image-uploader">
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="image/*"
-        disabled={isUploading}
-        hidden
-      />
-      
-      <div 
-        className="upload-container"
-        onClick={() => !isUploading && fileInputRef.current?.click()}
-      >
-        {previewUrl ? (
-          <div className="image-preview">
-            <img
-              src={previewUrl}
-              alt="پیش‌نمایش تصویر"
-              className="preview-image"
-            />
-            {isUploading ? (
-              <div className="upload-overlay">
-                <span>در حال آپلود...</span>
-              </div>
-            ) : (
-              <div className="change-image">
-                <FiUpload />
-                <span>تغییر تصویر</span>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="upload-placeholder">
-            <FiUpload size={24} />
-            <span>{isUploading ? 'در حال آپلود...' : 'انتخاب تصویر'}</span>
-          </div>
-        )}
-      </div>
+    <div className={styles.imageUploadSection}>
+      <label className={styles.uploadLabel}>
+        <span>تصویر محصول</span>
+        <div 
+          className={styles.uploadBox}
+          onClick={() => !isUploading && fileInputRef.current?.click()}
+        >
+          {isUploading ? (
+            <div className={styles.uploadPlaceholder}>
+              <p>در حال آپلود...</p>
+            </div>
+          ) : previewUrl ? (
+            <div className={styles.imagePreview}>
+              <img 
+                src={previewUrl} 
+                alt="پیش‌نمایش محصول"
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          ) : (
+            <div className={styles.uploadPlaceholder}>
+              <FiUpload size={24} />
+              <p>برای آپلود کلیک کنید</p>
+            </div>
+          )}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            hidden
+            disabled={isUploading}
+          />
+        </div>
+      </label>
     </div>
   );
 };
