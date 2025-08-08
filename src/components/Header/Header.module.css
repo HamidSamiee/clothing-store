@@ -92,8 +92,15 @@
     cursor: pointer;
 }
 
-.topLink button {
-    color:#333333;
+.topLinkButton {
+    color:#333333 ;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+    font-family: 'VazirMatn';
+    cursor: pointer;
 }
 
 .mainHeader {

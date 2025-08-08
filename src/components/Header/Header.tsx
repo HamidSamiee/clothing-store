@@ -50,7 +50,7 @@ const Header = () => {
                 <Link to="/user" className={styles.topLink}>
                   <FaUser /> {user.name}
                 </Link>
-                <button onClick={logout} className={styles.topLink}>
+                <button onClick={logout} className={styles.topLinkButton}>
                   <FaSignOutAlt /> {t('header.logout')}
                 </button>
               </>
