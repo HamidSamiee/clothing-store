@@ -18,13 +18,12 @@ const ImageUploader = ({
 }: ImageUploaderProps) => {
   const [previewUrl, setPreviewUrl] = useState(initialImageUrl);
   const [isUploading, setIsUploading] = useState(false);
-  const [inputKey, setInputKey] = useState(Date.now());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  // تابع کاملاً اصلاح شده برای کنترل کلیک
+  const handleClick = () => {
     if (!isUploading && fileInputRef.current) {
+      fileInputRef.current.value = ''; // ریست مقدار input
       fileInputRef.current.click();
     }
   };
@@ -33,15 +32,14 @@ const ImageUploader = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // اعتبارسنجی فایل
     if (!file.type.match('image.*')) {
       toast.error('فقط فایل‌های تصویری مجاز هستند');
-      resetFileInput();
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
       toast.error('حجم فایل باید کمتر از 2 مگابایت باشد');
-      resetFileInput();
       return;
     }
 
@@ -52,7 +50,6 @@ const ImageUploader = ({
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
-      formData.append('api_key', 'YOUR_API_KEY'); // اضافه کردن این خط
 
       const response = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
@@ -62,25 +59,19 @@ const ImageUploader = ({
         }
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'خطا در آپلود تصویر');
-      }
-
       const data = await response.json();
-      onUploadSuccess(data.secure_url);
-      toast.success('تصویر با موفقیت آپلود شد');
+      if (response.ok) {
+        onUploadSuccess(data.secure_url);
+        toast.success('تصویر با موفقیت آپلود شد');
+      } else {
+        throw new Error(data.message || 'خطا در آپلود تصویر');
+      }
     } catch (error) {
       console.error('Upload error:', error);
       toast.error(error instanceof Error ? error.message : 'خطا در آپلود تصویر');
     } finally {
       setIsUploading(false);
-      resetFileInput();
     }
-  };
-
-  const resetFileInput = () => {
-    setInputKey(Date.now());
   };
 
   return (
@@ -114,12 +105,11 @@ const ImageUploader = ({
             </div>
           )}
           <input
-            key={inputKey}
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
             accept="image/*"
-            hidden
+            style={{ display: 'none' }}
             disabled={isUploading}
           />
         </div>
