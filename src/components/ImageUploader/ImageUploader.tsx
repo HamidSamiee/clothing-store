@@ -1,12 +1,25 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import { FiUpload } from 'react-icons/fi';
 import { toast } from 'react-toastify';
+import styles from './ImageUploader.module.css';
 
-const ImageUploader = ({ onUploadSuccess }: { onUploadSuccess: (url: string) => void }) => {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+interface ImageUploaderProps {
+  onUploadSuccess: (imageUrl: string) => void;
+  initialImageUrl?: string;
+  uploadPreset: string;
+  cloudName: string;
+}
+
+const ImageUploader = ({
+  onUploadSuccess,
+  initialImageUrl = '',
+  uploadPreset,
+  cloudName,
+}: ImageUploaderProps) => {
+  const [previewUrl, setPreviewUrl] = useState(initialImageUrl);
   const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [inputKey, setInputKey] = useState(Date.now());
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -20,7 +33,6 @@ const ImageUploader = ({ onUploadSuccess }: { onUploadSuccess: (url: string) => 
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // اعتبارسنجی فایل
     if (!file.type.match('image.*')) {
       toast.error('فقط فایل‌های تصویری مجاز هستند');
       resetFileInput();
@@ -39,11 +51,11 @@ const ImageUploader = ({ onUploadSuccess }: { onUploadSuccess: (url: string) => 
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', 'YOUR_UPLOAD_PRESET');
-      formData.append('cloud_name', 'YOUR_CLOUD_NAME');
+      formData.append('upload_preset', uploadPreset);
+      formData.append('api_key', 'YOUR_API_KEY'); // اضافه کردن این خط
 
       const response = await fetch(
-        `https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload`,
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         {
           method: 'POST',
           body: formData,
@@ -51,7 +63,8 @@ const ImageUploader = ({ onUploadSuccess }: { onUploadSuccess: (url: string) => 
       );
 
       if (!response.ok) {
-        throw new Error('خطا در ارتباط با سرور آپلود');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'خطا در آپلود تصویر');
       }
 
       const data = await response.json();
@@ -59,8 +72,7 @@ const ImageUploader = ({ onUploadSuccess }: { onUploadSuccess: (url: string) => 
       toast.success('تصویر با موفقیت آپلود شد');
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('خطا در آپلود تصویر. لطفاً مجدداً تلاش کنید');
-      setPreviewUrl(null);
+      toast.error(error instanceof Error ? error.message : 'خطا در آپلود تصویر');
     } finally {
       setIsUploading(false);
       resetFileInput();
@@ -72,42 +84,46 @@ const ImageUploader = ({ onUploadSuccess }: { onUploadSuccess: (url: string) => 
   };
 
   return (
-    <div className="image-uploader">
-      <input
-        key={inputKey}
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="image/*"
-        hidden
-        disabled={isUploading}
-      />
-      
-      <div 
-        className="upload-container"
-        onClick={handleClick}
-      >
-        {previewUrl ? (
-          <div className="image-preview">
-            <img
-              src={previewUrl}
-              alt="پیش‌نمایش تصویر"
-              className="preview-image"
-            />
-            {!isUploading && (
-              <div className="change-image">
-                <FiUpload />
-                <span>تغییر تصویر</span>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="upload-placeholder">
-            <FiUpload size={24} />
-            <span>{isUploading ? 'در حال آپلود...' : 'انتخاب تصویر'}</span>
-          </div>
-        )}
-      </div>
+    <div className={styles.imageUploadSection}>
+      <label className={styles.uploadLabel}>
+        <span>تصویر محصول</span>
+        <div 
+          className={styles.uploadBox}
+          onClick={handleClick}
+        >
+          {isUploading ? (
+            <div className={styles.uploadPlaceholder}>
+              <p>در حال آپلود...</p>
+            </div>
+          ) : previewUrl ? (
+            <div className={styles.imagePreview}>
+              <img 
+                src={previewUrl} 
+                alt="پیش‌نمایش محصول"
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+            </div>
+          ) : (
+            <div className={styles.uploadPlaceholder}>
+              <FiUpload size={24} />
+              <p>برای آپلود کلیک کنید</p>
+            </div>
+          )}
+          <input
+            key={inputKey}
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            hidden
+            disabled={isUploading}
+          />
+        </div>
+      </label>
     </div>
   );
 };
