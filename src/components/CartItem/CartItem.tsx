@@ -1,7 +1,6 @@
 // src/components/CartItem/CartItem.tsx
-import { useState, useEffect } from 'react';
 import styles from './CartItem.module.css';
-import { toPersianNumbersWithComma } from '@/utils/toPersianNumbers';
+import { toPersianNumbers, toPersianNumbersWithComma } from '@/utils/toPersianNumbers';
 
 interface CartItemProps {
   item: {
@@ -24,21 +23,7 @@ const CartItem = ({
   onQuantityChange,
   className = ''
 }: CartItemProps) => {
-  const [quantity, setQuantity] = useState(item.quantity);
 
-  // اگر مقدار quantity در props تغییر کرد، state هم آپدیت شود
-  useEffect(() => {
-    setQuantity(item.quantity);
-  }, [item.quantity]);
-
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newQuantity = parseInt(e.target.value);
-    if (isNaN(newQuantity) || newQuantity < 1) {
-      newQuantity = 1;
-    }
-    setQuantity(newQuantity);
-    onQuantityChange(newQuantity);
-  };
 
   return (
     <div className={`${styles.cartItem} ${className}`}>
@@ -54,13 +39,24 @@ const CartItem = ({
       </div>
       
       <div className={styles.quantityControl}>
-        <input
-          type="number"
-          min={1}
-          value={quantity}
-          onChange={handleQuantityChange}
-          className={styles.quantityInput}
-        />
+        <div className={styles.quantitySection}>
+              <div className={styles.quantityControl2}>
+                  <button 
+                      className={styles.quantityButton}
+                      onClick={() => onQuantityChange(item.quantity + 1)}
+                  >
+                      +
+                  </button>
+                  <span className={styles.quantityNumber}>{toPersianNumbers(item.quantity)}</span>
+                  <button 
+                      className={styles.quantityButton}
+                      onClick={() => onQuantityChange(item.quantity - 1)}
+                      disabled={item.quantity <= 1}
+                  >
+                      -
+                  </button>
+              </div>
+        </div>
         
         <button 
           onClick={onRemove}

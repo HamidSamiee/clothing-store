@@ -45,13 +45,35 @@
     align-items: center;
     gap: 10px;
 }
+.quantityControl2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
-.quantityInput {
-    width: 60px;
-    padding: 8px;
-    text-align: center;
+.quantityButton {
+    width: 36px;
+    height: 36px;
     border: 1px solid #ddd;
+    background: none;
+    font-size: 1.2rem;
+    cursor: pointer;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantityButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantityNumber {
+    font-size: 1.1rem;
+    min-width: 30px;
+    text-align: center;
+    font-family: 'VazirMatn';
 }
 
 .removeButton {

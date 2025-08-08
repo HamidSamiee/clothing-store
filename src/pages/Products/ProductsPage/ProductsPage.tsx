@@ -262,8 +262,8 @@ const ProductPage = () => {
         <ProductInfo
           product={product}
           finalPrice={product.discount 
-            ? product.price * (1 - product.discount / 100)
-            : product.price}
+            ? Math.floor(product.price * (1 - Number(product.discount) / 100))
+            : Number(product.price)}
           rating={calculateAverageRating()}
           stars={ratingStars}
           selectedSize={selectedSize}

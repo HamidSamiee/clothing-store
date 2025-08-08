@@ -146,17 +146,17 @@ const ProductInfo = ({
             <div className={styles.quantityControl}>
             <button 
                 className={styles.quantityButton}
-                onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
+                onClick={() => onQuantityChange( quantity + 1)}
             >
-                -
+                +
             </button>
             <span className={styles.quantityNumber}>{toPersianNumbers(quantity)}</span>
             <button 
                 className={styles.quantityButton}
-                onClick={() => onQuantityChange(quantity + 1)}
+                onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
                 disabled={quantity >= product.stock}
             >
-                +
+                -
             </button>
             </div>
         </div>

@@ -11,7 +11,7 @@ import styles from './ProductModal.module.css';
 import { Product } from '@/types/Product';
 import useClickOutside from '@/hooks/useClickOutside';
 import { toast } from 'react-toastify';
-import { FiUpload } from 'react-icons/fi'; 
+import ImageUploader from '@/components/ImageUploader/ImageUploader';
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -26,9 +26,6 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
   const modalRef = useRef<HTMLDivElement>(null);
   useClickOutside<HTMLDivElement>(modalRef, onClose);
 
-  const [isUploading, setIsUploading] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { 
     register, 
@@ -119,56 +116,6 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
       setIsLoading(false);
     }
   };
-  
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // بررسی نوع فایل
-    if (!file.type.match('image.*')) {
-      toast.error('فقط فایل‌های تصویری مجاز هستند');
-      return;
-    }
-
-    // بررسی حجم فایل (مثلاً حداکثر 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('حجم فایل باید کمتر از 2 مگابایت باشد');
-      return;
-    }
-
-    setIsUploading(true);
-    
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-      
-      // نمایش پیش‌نمایش قبل از آپلود
-      setPreviewImage(URL.createObjectURL(file));
-      
-      // آپلود به سرور
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        setValue('image', data.imagePath);
-        toast.success('عکس با موفقیت آپلود شد');
-      } else {
-        throw new Error(data.message || 'خطا در آپلود عکس');
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error(error instanceof Error ? error.message : 'خطا در آپلود عکس');
-      setPreviewImage(''); // حذف پیش‌نمایش در صورت خطا
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-
 
   // تابع کمکی برای تبدیل به آرایه
   function convertToArray(input: unknown): string[] {
@@ -275,56 +222,12 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
                 validationSchema={{ required: 'دسته‌بندی الزامی است' }}
               />
 
-              <div className={styles.imageUploadSection}>
-                    <label className={styles.uploadLabel}>
-                      <span>تصویر محصول</span>
-                      <div 
-                        className={styles.uploadBox}
-                        onClick={() => !isUploading && fileInputRef.current?.click()}
-                      >
-                        {isUploading ? (
-                          <div className={styles.uploadPlaceholder}>
-                            <p>در حال آپلود...</p>
-                          </div>
-                        ) : previewImage || watch('image') ? (
-                          <div className={styles.imagePreview}>
-                            {/* استفاده از تگ img معمولی به جای Image از Next.js */}
-                            <img 
-                              src={previewImage || watch('image')} 
-                              alt="پیش‌نمایش محصول"
-                              style={{ 
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'contain'
-                              }}
-                            />
-                          </div>
-                        ) : (
-                          <div className={styles.uploadPlaceholder}>
-                            <FiUpload size={24} />
-                            <p>برای آپلود کلیک کنید</p>
-                          </div>
-                        )}
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          onChange={handleImageUpload}
-                          accept="image/*"
-                          hidden
-                          disabled={isUploading}
-                        />
-                      </div>
-                    </label>
-                    
-                    <TextField
-                      label="آدرس تصویر"
-                      name="image"
-                      register={register}
-                      errors={errors}
-                      required
-                      validationSchema={{ required: 'آدرس تصویر الزامی است' }}
-                    />
-                  </div>
+              <ImageUploader
+                onUploadSuccess={(imageUrl) => setValue('image', imageUrl)}
+                initialImageUrl={watch('image')}
+                uploadPreset={import.meta.env.VITE_UPLOAD_PRESET}
+                cloudName={import.meta.env.VITE_CLOUD_NAME}
+              />
 
               <TextField
                 label="سایزها (با کاما جدا کنید)"

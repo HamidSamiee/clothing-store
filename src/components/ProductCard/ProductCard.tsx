@@ -3,33 +3,33 @@
 import { useTranslation } from 'react-i18next';
 import styles from './ProductCard.module.css';
 import { useTheme } from '@/hooks/useTheme';
-import { useCart } from '@/hooks/useCart';
+// import { useCart } from '@/hooks/useCart';
 import { ProductCardProps } from '@/types/Product';
 import { toPersianNumbersWithComma } from '@/utils/toPersianNumbers';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 
 
 
 const ProductCard = ({ product, showBadge = false }: ProductCardProps) => {
   const { t } = useTranslation();
   const { darkMode } = useTheme();
-  const { addToCart } = useCart();
+  // const { addToCart } = useCart();
 
   const finalPrice = product.discount 
-    ? product.price * (1 - product.discount / 100)
-    : product.price;
+  ? Math.floor(product.price * (1 - Number(product.discount) / 100))
+  : Number(product.price);
 
-  const handleAddToCart = () => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: finalPrice,
-      image: product.image,
-      quantity: 1
-    });
-    toast.success("محصول به سبد خرید اضافه شد")
-  };
+  // const handleAddToCart = () => {
+  //   addToCart({
+  //     id: product.id,
+  //     name: product.name,
+  //     price: finalPrice,
+  //     image: product.image,
+  //     quantity: 1
+  //   });
+  //   toast.success("محصول به سبد خرید اضافه شد")
+  // };
 
   return (
     <div className={`${styles.productCard} ${darkMode ? styles.dark : ''}`}>
@@ -77,12 +77,12 @@ const ProductCard = ({ product, showBadge = false }: ProductCardProps) => {
           </span>
         </div>
         
-        <button 
+        {/* <button 
           className={styles.addToCartBtn}
           onClick={handleAddToCart}
         >
           {t('product.addToCart')}
-        </button>
+        </button> */}
       </div>
     </div>
   );
