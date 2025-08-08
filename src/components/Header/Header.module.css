@@ -92,6 +92,10 @@
     cursor: pointer;
 }
 
+.topLink button {
+    color:#333333;
+}
+
 .mainHeader {
     padding: 1rem 0;
 }
