@@ -237,7 +237,6 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
                 />
               </div>
 
-              {/* جایگزینی فیلد دسته‌بندی با کامپوننت Select */}
               <RHFSelect
                 label="دسته‌بندی"
                 name="category"
