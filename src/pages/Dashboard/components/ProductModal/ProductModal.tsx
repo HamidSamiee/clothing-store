@@ -13,17 +13,23 @@ import useClickOutside from '@/hooks/useClickOutside';
 import { toast } from 'react-toastify';
 import ImageUploader from '@/components/ImageUploader/ImageUploader';
 
+import { getCategories } from '@/services/categoryService';
+import RHFSelect from '@/ui/RHFSelect/RHFselect';
+import { Category } from '@/types/Category';
+
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
-  productId?: string | number |undefined ;
+  productId?: string | number | undefined;
   onSuccess: () => void;
 }
 type ProductFormData = Omit<Product, 'id'>;
 
 const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalProps) => {
-
+  const [categories, setCategories] = useState<{value: string, label: string}[]>([]);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  
   useClickOutside<HTMLDivElement>(modalRef, onClose);
 
   const { 
@@ -35,20 +41,42 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
     setValue,
   } = useForm<ProductFormData>({
     defaultValues: {
-      sizes: [] as string[], // تعیین صریح نوع آرایه
+      sizes: [] as string[],
       colors: [] as string[],
+      category: 'men' // مقدار پیش‌فرض
     }
   });
 
   const [isLoading, setIsLoading] = useState(false);
 
-
+  // دریافت دسته‌بندی‌ها از API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setIsCategoriesLoading(true);
+      try {
+        const data: Category[] = await getCategories();
+        const formattedCategories = data.map((cat) => ({
+          value: cat.slug,
+          label: cat.name
+        }));
+        setCategories(formattedCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('خطا در دریافت دسته‌بندی‌ها');
+      } finally {
+        setIsCategoriesLoading(false);
+      }
+    };
+  
+    if (isOpen) {
+      fetchCategories();
+    }
+  }, [isOpen]);
 
   const fetchProduct = useCallback(async () => {
     setIsLoading(true);
     try {
       const data = await getProductById(productId!);
-      // صراحتاً تایپ هر پراپرتی بررسی می‌شود
       setValue('name', data.name);
       setValue('price', data.price);
       setValue('description', data.description);
@@ -65,8 +93,8 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
     } finally {
       setIsLoading(false);
     }
-  },[productId,setValue])
-  
+  }, [productId, setValue]);
+
   useEffect(() => {
     if (productId) {
       fetchProduct();
@@ -75,7 +103,7 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
         name: '',
         price: 0,
         description: '',
-        category: 'men',
+        category: categories[0]?.value || 'men',
         image: '',
         sizes: [],
         colors: [],
@@ -85,13 +113,12 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
         rating: 0
       });
     }
-  }, [productId, reset, fetchProduct]);
+  }, [productId, reset, fetchProduct, categories]);
 
   const onSubmit = async (data: ProductFormData) => {
     setIsLoading(true);
     
     try {
-      // تبدیل sizes و colors به آرایه معتبر
       const processedData = {
         ...data,
         sizes: convertToArray(data.sizes),
@@ -116,7 +143,6 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
     }
   };
   
-  // تابع کمکی برای تبدیل به آرایه
   function convertToArray(input: unknown): string[] {
     if (!input) return [];
     if (Array.isArray(input)) return input.map(item => String(item?.toString().trim()));
@@ -132,7 +158,6 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
   
   const sizesValue = getSafeArray(watch('sizes'));
   const colorsValue = getSafeArray(watch('colors'));
-
 
   if (!isOpen) return null;
 
@@ -212,13 +237,14 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
                 />
               </div>
 
-              <TextField
+              {/* جایگزینی فیلد دسته‌بندی با کامپوننت Select */}
+              <RHFSelect
                 label="دسته‌بندی"
                 name="category"
+                options={categories}
                 register={register}
-                errors={errors}
                 required
-                validationSchema={{ required: 'دسته‌بندی الزامی است' }}
+                disabled={isCategoriesLoading}
               />
 
               <ImageUploader
@@ -251,7 +277,6 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
                 }}
                 value={colorsValue.join(', ')} 
               />
-
 
               <TextField
                 label="توضیحات"
@@ -297,6 +322,3 @@ const ProductModal = ({ isOpen, onClose, productId, onSuccess }: ProductModalPro
 };
 
 export default ProductModal;
-
-
-

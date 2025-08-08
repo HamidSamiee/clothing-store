@@ -1,7 +1,7 @@
 import http from "./httpService";
 
 export const getCategories = async () => {
-      const response = await http.get('/categories');
+      const response = await http.get('/.netlify/functions/getCategories');
       return response.data;
     
   };
