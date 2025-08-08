@@ -18,6 +18,7 @@ const ImageUploader = ({
 }: ImageUploaderProps) => {
   const [previewUrl, setPreviewUrl] = useState(initialImageUrl);
   const [isUploading, setIsUploading] = useState(false);
+  const [inputKey, setInputKey] = useState(Date.now());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -70,11 +71,8 @@ const ImageUploader = ({
   };
 
   const resetFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''; // ریست مقدار input
-    }
+    setInputKey(Date.now()); // تغییر key برای رندر مجدد
   };
-
 
   return (
     <div className={styles.imageUploadSection}>
@@ -107,6 +105,7 @@ const ImageUploader = ({
             </div>
           )}
           <input
+            key={inputKey}
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
