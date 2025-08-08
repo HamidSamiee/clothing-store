@@ -1,27 +1,15 @@
 import { useState, useRef, ChangeEvent } from 'react';
 import { FiUpload } from 'react-icons/fi';
 import { toast } from 'react-toastify';
-import styles from './ImageUploader.module.css';
 
-interface ImageUploaderProps {
-  onUploadSuccess: (imageUrl: string) => void;
-  initialImageUrl?: string;
-  uploadPreset: string;
-  cloudName: string;
-}
-
-const ImageUploader = ({
-  onUploadSuccess,
-  initialImageUrl = '',
-  uploadPreset,
-  cloudName,
-}: ImageUploaderProps) => {
-  const [previewUrl, setPreviewUrl] = useState(initialImageUrl);
+const ImageUploader = ({ onUploadSuccess }: { onUploadSuccess: (url: string) => void }) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [inputKey, setInputKey] = useState(Date.now());
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [inputKey, setInputKey] = useState(Date.now());
 
   const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (!isUploading && fileInputRef.current) {
       fileInputRef.current.click();
@@ -32,6 +20,7 @@ const ImageUploader = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // اعتبارسنجی فایل
     if (!file.type.match('image.*')) {
       toast.error('فقط فایل‌های تصویری مجاز هستند');
       resetFileInput();
@@ -50,11 +39,11 @@ const ImageUploader = ({
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', uploadPreset);
-      formData.append('api_key', 'YOUR_API_KEY'); // اضافه کردن این خط
+      formData.append('upload_preset', 'YOUR_UPLOAD_PRESET');
+      formData.append('cloud_name', 'YOUR_CLOUD_NAME');
 
       const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        `https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload`,
         {
           method: 'POST',
           body: formData,
@@ -62,8 +51,7 @@ const ImageUploader = ({
       );
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'خطا در آپلود تصویر');
+        throw new Error('خطا در ارتباط با سرور آپلود');
       }
 
       const data = await response.json();
@@ -71,7 +59,8 @@ const ImageUploader = ({
       toast.success('تصویر با موفقیت آپلود شد');
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error(error instanceof Error ? error.message : 'خطا در آپلود تصویر');
+      toast.error('خطا در آپلود تصویر. لطفاً مجدداً تلاش کنید');
+      setPreviewUrl(null);
     } finally {
       setIsUploading(false);
       resetFileInput();
@@ -83,46 +72,42 @@ const ImageUploader = ({
   };
 
   return (
-    <div className={styles.imageUploadSection}>
-      <label className={styles.uploadLabel}>
-        <span>تصویر محصول</span>
-        <div 
-          className={styles.uploadBox}
-          onClick={handleClick}
-        >
-          {isUploading ? (
-            <div className={styles.uploadPlaceholder}>
-              <p>در حال آپلود...</p>
-            </div>
-          ) : previewUrl ? (
-            <div className={styles.imagePreview}>
-              <img 
-                src={previewUrl} 
-                alt="پیش‌نمایش محصول"
-                style={{ 
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain'
-                }}
-              />
-            </div>
-          ) : (
-            <div className={styles.uploadPlaceholder}>
-              <FiUpload size={24} />
-              <p>برای آپلود کلیک کنید</p>
-            </div>
-          )}
-          <input
-            key={inputKey}
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            hidden
-            disabled={isUploading}
-          />
-        </div>
-      </label>
+    <div className="image-uploader">
+      <input
+        key={inputKey}
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/*"
+        hidden
+        disabled={isUploading}
+      />
+      
+      <div 
+        className="upload-container"
+        onClick={handleClick}
+      >
+        {previewUrl ? (
+          <div className="image-preview">
+            <img
+              src={previewUrl}
+              alt="پیش‌نمایش تصویر"
+              className="preview-image"
+            />
+            {!isUploading && (
+              <div className="change-image">
+                <FiUpload />
+                <span>تغییر تصویر</span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="upload-placeholder">
+            <FiUpload size={24} />
+            <span>{isUploading ? 'در حال آپلود...' : 'انتخاب تصویر'}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
